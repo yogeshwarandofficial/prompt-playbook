@@ -1,11 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Clock, ArrowLeft, ArrowRight } from "lucide-react";
-import { TUTORIALS, DOMAIN_COLORS } from "@/data/content";
+import { TUTORIALS, DOMAIN_COLORS, type Tutorial } from "@/data/content";
 import { PageHeader } from "./roadmaps";
 import { DomainBadge } from "./index";
 
 export const Route = createFileRoute("/tutorials/$slug")({
-  loader: ({ params }) => {
+  loader: ({ params }): { tutorial: Tutorial } => {
     const tutorial = TUTORIALS.find((t) => t.slug === params.slug);
     if (!tutorial) throw notFound();
     return { tutorial };

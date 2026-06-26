@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TutorialsRouteImport } from './routes/tutorials'
 import { Route as RoadmapsRouteImport } from './routes/roadmaps'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TutorialsSlugRouteImport } from './routes/tutorials.$slug'
 
 const TutorialsRoute = TutorialsRouteImport.update({
   id: '/tutorials',
@@ -28,35 +29,43 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TutorialsSlugRoute = TutorialsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TutorialsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/roadmaps': typeof RoadmapsRoute
-  '/tutorials': typeof TutorialsRoute
+  '/tutorials': typeof TutorialsRouteWithChildren
+  '/tutorials/$slug': typeof TutorialsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/roadmaps': typeof RoadmapsRoute
-  '/tutorials': typeof TutorialsRoute
+  '/tutorials': typeof TutorialsRouteWithChildren
+  '/tutorials/$slug': typeof TutorialsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/roadmaps': typeof RoadmapsRoute
-  '/tutorials': typeof TutorialsRoute
+  '/tutorials': typeof TutorialsRouteWithChildren
+  '/tutorials/$slug': typeof TutorialsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/roadmaps' | '/tutorials'
+  fullPaths: '/' | '/roadmaps' | '/tutorials' | '/tutorials/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/roadmaps' | '/tutorials'
-  id: '__root__' | '/' | '/roadmaps' | '/tutorials'
+  to: '/' | '/roadmaps' | '/tutorials' | '/tutorials/$slug'
+  id: '__root__' | '/' | '/roadmaps' | '/tutorials' | '/tutorials/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RoadmapsRoute: typeof RoadmapsRoute
-  TutorialsRoute: typeof TutorialsRoute
+  TutorialsRoute: typeof TutorialsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -82,13 +91,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tutorials/$slug': {
+      id: '/tutorials/$slug'
+      path: '/$slug'
+      fullPath: '/tutorials/$slug'
+      preLoaderRoute: typeof TutorialsSlugRouteImport
+      parentRoute: typeof TutorialsRoute
+    }
   }
 }
+
+interface TutorialsRouteChildren {
+  TutorialsSlugRoute: typeof TutorialsSlugRoute
+}
+
+const TutorialsRouteChildren: TutorialsRouteChildren = {
+  TutorialsSlugRoute: TutorialsSlugRoute,
+}
+
+const TutorialsRouteWithChildren = TutorialsRoute._addFileChildren(
+  TutorialsRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RoadmapsRoute: RoadmapsRoute,
-  TutorialsRoute: TutorialsRoute,
+  TutorialsRoute: TutorialsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
