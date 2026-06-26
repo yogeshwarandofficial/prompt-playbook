@@ -4,8 +4,8 @@
 
 /*
  * Infynux Academy — Design System
- * Brand: violet→teal gradient, modern EdTech aesthetic.
- * All colors in oklch, mapped from spec hex values.
+ * Theme: Black & Gold — luxury EdTech aesthetic.
+ * All colors in oklch.
  */
 
 @theme inline {
@@ -54,50 +54,50 @@
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.45);
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.55);
-  --shadow-brand: 0 10px 30px oklch(0.62 0.13 70 / 0.45);
+  --shadow-brand: 0 10px 30px oklch(0.78 0.17 82 / 0.45);
 }
 
 :root {
-  /* Page — black base */
-  --background: oklch(0.14 0.012 60);                /* near-black warm */
-  --foreground: oklch(0.95 0.03 80);                 /* warm off-white */
-  --surface: oklch(0.18 0.015 60);
-  --surface-elevated: oklch(0.22 0.018 65);
+  /* Page — pure black base */
+  --background: oklch(0.04 0.005 80);                /* near-pure black */
+  --foreground: oklch(0.96 0.015 82);                /* warm white */
+  --surface: oklch(0.08 0.008 80);
+  --surface-elevated: oklch(0.12 0.012 82);
 
-  --card: oklch(0.18 0.015 60);
-  --card-foreground: oklch(0.95 0.03 80);
-  --popover: oklch(0.18 0.015 60);
-  --popover-foreground: oklch(0.95 0.03 80);
+  --card: oklch(0.08 0.008 80);
+  --card-foreground: oklch(0.96 0.015 82);
+  --popover: oklch(0.08 0.008 80);
+  --popover-foreground: oklch(0.96 0.015 82);
 
-  /* Brand — golden brown */
-  --primary: oklch(0.68 0.14 70);                    /* golden brown */
-  --primary-foreground: oklch(0.14 0.012 60);
-  --secondary: oklch(0.45 0.09 55);                  /* deep brown */
-  --secondary-foreground: oklch(0.95 0.03 80);
-  --accent: oklch(0.78 0.16 80);                     /* bright gold */
-  --accent-foreground: oklch(0.14 0.012 60);
+  /* Brand — rich gold */
+  --primary: oklch(0.78 0.17 82);                    /* bright gold */
+  --primary-foreground: oklch(0.04 0.005 80);
+  --secondary: oklch(0.22 0.06 78);                  /* dark gold surface */
+  --secondary-foreground: oklch(0.96 0.015 82);
+  --accent: oklch(0.85 0.19 82);                     /* vivid gold */
+  --accent-foreground: oklch(0.04 0.005 80);
 
-  --muted: oklch(0.24 0.014 60);
-  --muted-foreground: oklch(0.70 0.03 75);
+  --muted: oklch(0.14 0.012 80);
+  --muted-foreground: oklch(0.62 0.025 80);
 
   --destructive: oklch(0.58 0.22 27);
   --destructive-foreground: oklch(0.99 0 0);
   --success: oklch(0.66 0.15 145);
   --warning: oklch(0.82 0.14 80);
 
-  --border: oklch(0.30 0.02 65);
-  --input: oklch(0.28 0.018 65);
-  --ring: oklch(0.68 0.14 70);
+  --border: oklch(0.20 0.018 80);
+  --input: oklch(0.18 0.015 80);
+  --ring: oklch(0.78 0.17 82);
 
-  /* Domain accents — warm palette on dark */
-  --domain-web: oklch(0.70 0.13 75);
-  --domain-cloud: oklch(0.75 0.15 85);
-  --domain-app: oklch(0.65 0.12 60);
-  --domain-ai: oklch(0.72 0.16 70);
-  --domain-marketing: oklch(0.68 0.18 50);
+  /* Domain accents — gold family */
+  --domain-web: oklch(0.78 0.15 82);
+  --domain-cloud: oklch(0.75 0.14 85);
+  --domain-app: oklch(0.82 0.16 78);
+  --domain-ai: oklch(0.80 0.17 80);
+  --domain-marketing: oklch(0.76 0.18 75);
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.68 0.14 70) 0%, oklch(0.45 0.09 55) 60%, oklch(0.14 0.012 60) 100%);
-  --gradient-soft: linear-gradient(135deg, oklch(0.22 0.02 65) 0%, oklch(0.16 0.014 60) 100%);
+  --gradient-hero: linear-gradient(135deg, oklch(0.85 0.19 82) 0%, oklch(0.78 0.17 82) 40%, oklch(0.50 0.10 78) 100%);
+  --gradient-soft: linear-gradient(135deg, oklch(0.12 0.012 80) 0%, oklch(0.06 0.008 80) 100%);
 
   --radius: 0.625rem;
 }
@@ -122,7 +122,7 @@
     line-height: 1.15;
   }
   ::selection {
-    background: oklch(0.68 0.14 70 / 0.35);
+    background: oklch(0.78 0.17 82 / 0.35);
   }
 
 }
@@ -148,10 +148,10 @@
   color: transparent;
 }
 @utility glass {
-  background: rgba(20, 14, 8, 0.55);
+  background: rgba(10, 8, 4, 0.60);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid oklch(0.68 0.14 70 / 0.25);
+  border: 1px solid oklch(0.78 0.17 82 / 0.25);
 }
 
 @utility hover-lift {
