@@ -122,8 +122,9 @@
     line-height: 1.15;
   }
   ::selection {
-    background: oklch(0.55 0.22 285 / 0.20);
+    background: oklch(0.68 0.14 70 / 0.35);
   }
+
 }
 
 @utility container-page {
