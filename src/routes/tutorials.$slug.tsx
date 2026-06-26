@@ -33,7 +33,7 @@ export const Route = createFileRoute("/tutorials/$slug")({
 });
 
 function TutorialPage() {
-  const { tutorial } = Route.useLoaderData();
+  const { tutorial } = Route.useLoaderData() as { tutorial: Tutorial };
   const related = TUTORIALS.filter((t) => t.domain === tutorial.domain && t.slug !== tutorial.slug).slice(0, 3);
   return (
     <>
