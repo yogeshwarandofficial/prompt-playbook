@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TutorialsRouteImport } from './routes/tutorials'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RoadmapsRouteImport } from './routes/roadmaps'
 import { Route as InternshipsRouteImport } from './routes/internships'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -19,6 +20,11 @@ import { Route as TutorialsSlugRouteImport } from './routes/tutorials.$slug'
 const TutorialsRoute = TutorialsRouteImport.update({
   id: '/tutorials',
   path: '/tutorials',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RoadmapsRoute = RoadmapsRouteImport.update({
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/internships': typeof InternshipsRoute
   '/roadmaps': typeof RoadmapsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tutorials': typeof TutorialsRouteWithChildren
   '/tutorials/$slug': typeof TutorialsSlugRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/internships': typeof InternshipsRoute
   '/roadmaps': typeof RoadmapsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tutorials': typeof TutorialsRouteWithChildren
   '/tutorials/$slug': typeof TutorialsSlugRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/internships': typeof InternshipsRoute
   '/roadmaps': typeof RoadmapsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tutorials': typeof TutorialsRouteWithChildren
   '/tutorials/$slug': typeof TutorialsSlugRoute
 }
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/internships'
     | '/roadmaps'
+    | '/sitemap.xml'
     | '/tutorials'
     | '/tutorials/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/internships'
     | '/roadmaps'
+    | '/sitemap.xml'
     | '/tutorials'
     | '/tutorials/$slug'
   id:
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/internships'
     | '/roadmaps'
+    | '/sitemap.xml'
     | '/tutorials'
     | '/tutorials/$slug'
   fileRoutesById: FileRoutesById
@@ -104,6 +116,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   InternshipsRoute: typeof InternshipsRoute
   RoadmapsRoute: typeof RoadmapsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TutorialsRoute: typeof TutorialsRouteWithChildren
 }
 
@@ -114,6 +127,13 @@ declare module '@tanstack/react-router' {
       path: '/tutorials'
       fullPath: '/tutorials'
       preLoaderRoute: typeof TutorialsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/roadmaps': {
@@ -171,6 +191,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   InternshipsRoute: InternshipsRoute,
   RoadmapsRoute: RoadmapsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TutorialsRoute: TutorialsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
