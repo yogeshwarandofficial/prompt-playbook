@@ -9,38 +9,154 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TutorialsRouteImport } from './routes/tutorials'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RoadmapsRouteImport } from './routes/roadmaps'
+import { Route as InternshipsRouteImport } from './routes/internships'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TutorialsSlugRouteImport } from './routes/tutorials.$slug'
 
+const TutorialsRoute = TutorialsRouteImport.update({
+  id: '/tutorials',
+  path: '/tutorials',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoadmapsRoute = RoadmapsRouteImport.update({
+  id: '/roadmaps',
+  path: '/roadmaps',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InternshipsRoute = InternshipsRouteImport.update({
+  id: '/internships',
+  path: '/internships',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TutorialsSlugRoute = TutorialsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TutorialsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
+  '/internships': typeof InternshipsRoute
+  '/roadmaps': typeof RoadmapsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tutorials': typeof TutorialsRouteWithChildren
+  '/tutorials/$slug': typeof TutorialsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
+  '/internships': typeof InternshipsRoute
+  '/roadmaps': typeof RoadmapsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tutorials': typeof TutorialsRouteWithChildren
+  '/tutorials/$slug': typeof TutorialsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
+  '/internships': typeof InternshipsRoute
+  '/roadmaps': typeof RoadmapsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tutorials': typeof TutorialsRouteWithChildren
+  '/tutorials/$slug': typeof TutorialsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/contact'
+    | '/internships'
+    | '/roadmaps'
+    | '/sitemap.xml'
+    | '/tutorials'
+    | '/tutorials/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/contact'
+    | '/internships'
+    | '/roadmaps'
+    | '/sitemap.xml'
+    | '/tutorials'
+    | '/tutorials/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/contact'
+    | '/internships'
+    | '/roadmaps'
+    | '/sitemap.xml'
+    | '/tutorials'
+    | '/tutorials/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ContactRoute: typeof ContactRoute
+  InternshipsRoute: typeof InternshipsRoute
+  RoadmapsRoute: typeof RoadmapsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TutorialsRoute: typeof TutorialsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tutorials': {
+      id: '/tutorials'
+      path: '/tutorials'
+      fullPath: '/tutorials'
+      preLoaderRoute: typeof TutorialsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/roadmaps': {
+      id: '/roadmaps'
+      path: '/roadmaps'
+      fullPath: '/roadmaps'
+      preLoaderRoute: typeof RoadmapsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/internships': {
+      id: '/internships'
+      path: '/internships'
+      fullPath: '/internships'
+      preLoaderRoute: typeof InternshipsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +164,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tutorials/$slug': {
+      id: '/tutorials/$slug'
+      path: '/$slug'
+      fullPath: '/tutorials/$slug'
+      preLoaderRoute: typeof TutorialsSlugRouteImport
+      parentRoute: typeof TutorialsRoute
+    }
   }
 }
 
+interface TutorialsRouteChildren {
+  TutorialsSlugRoute: typeof TutorialsSlugRoute
+}
+
+const TutorialsRouteChildren: TutorialsRouteChildren = {
+  TutorialsSlugRoute: TutorialsSlugRoute,
+}
+
+const TutorialsRouteWithChildren = TutorialsRoute._addFileChildren(
+  TutorialsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ContactRoute: ContactRoute,
+  InternshipsRoute: InternshipsRoute,
+  RoadmapsRoute: RoadmapsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TutorialsRoute: TutorialsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
