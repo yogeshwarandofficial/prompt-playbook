@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TutorialsRouteImport } from './routes/tutorials'
 import { Route as RoadmapsRouteImport } from './routes/roadmaps'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TutorialsRoute = TutorialsRouteImport.update({
+  id: '/tutorials',
+  path: '/tutorials',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RoadmapsRoute = RoadmapsRouteImport.update({
   id: '/roadmaps',
   path: '/roadmaps',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/roadmaps': typeof RoadmapsRoute
+  '/tutorials': typeof TutorialsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/roadmaps': typeof RoadmapsRoute
+  '/tutorials': typeof TutorialsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/roadmaps': typeof RoadmapsRoute
+  '/tutorials': typeof TutorialsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/roadmaps'
+  fullPaths: '/' | '/roadmaps' | '/tutorials'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/roadmaps'
-  id: '__root__' | '/' | '/roadmaps'
+  to: '/' | '/roadmaps' | '/tutorials'
+  id: '__root__' | '/' | '/roadmaps' | '/tutorials'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RoadmapsRoute: typeof RoadmapsRoute
+  TutorialsRoute: typeof TutorialsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tutorials': {
+      id: '/tutorials'
+      path: '/tutorials'
+      fullPath: '/tutorials'
+      preLoaderRoute: typeof TutorialsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/roadmaps': {
       id: '/roadmaps'
       path: '/roadmaps'
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RoadmapsRoute: RoadmapsRoute,
+  TutorialsRoute: TutorialsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
