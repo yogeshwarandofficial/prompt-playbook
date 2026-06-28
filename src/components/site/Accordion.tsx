@@ -2,15 +2,25 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+type AccordionItem =
+  | { q: string; a: string }
+  | { question: string; answer: string };
+
+function getQA(item: AccordionItem): { q: string; a: string } {
+  if ("q" in item) return { q: item.q, a: item.a };
+  return { q: item.question, a: item.answer };
+}
+
 export function Accordion({
   items,
 }: {
-  items: { q: string; a: string }[];
+  items: AccordionItem[];
 }) {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
   return (
-    <div className="divide-y divide-border rounded-xl border border-border bg-surface">
+    <div className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm">
       {items.map((item, i) => {
+        const { q, a } = getQA(item);
         const open = openIdx === i;
         return (
           <div key={i}>
@@ -20,10 +30,10 @@ export function Accordion({
               aria-expanded={open}
               onClick={() => setOpenIdx(open ? null : i)}
             >
-              <span className="font-medium">{item.q}</span>
+              <span className="font-medium">{q}</span>
               <ChevronDown
                 className={cn(
-                  "h-4 w-4 text-muted-foreground transition-transform",
+                  "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
                   open && "rotate-180",
                 )}
               />
@@ -35,7 +45,7 @@ export function Accordion({
               )}
             >
               <div className="min-h-0">
-                <p className="text-sm text-muted-foreground">{item.a}</p>
+                <p className="text-sm text-muted-foreground">{a}</p>
               </div>
             </div>
           </div>
@@ -44,3 +54,4 @@ export function Accordion({
     </div>
   );
 }
+

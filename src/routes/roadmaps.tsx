@@ -4,6 +4,7 @@ import { X, ExternalLink, ArrowRight, ChevronRight } from "lucide-react";
 import { ROADMAPS, DOMAINS, DOMAIN_COLORS, type Roadmap } from "@/data/content";
 import { cn } from "@/lib/utils";
 
+
 export const Route = createFileRoute("/roadmaps")({
   head: () => ({
     meta: [
@@ -20,7 +21,6 @@ const TABS = ["Overview", "Curriculum", "Projects", "Resources", "Careers"] as c
 type Tab = (typeof TABS)[number];
 
 function RoadmapsPage() {
-  const [active, setActive] = useState<Roadmap | null>(null);
   return (
     <>
       <PageHeader
@@ -28,45 +28,47 @@ function RoadmapsPage() {
         title="Learning Roadmaps"
         subtitle="Structured paths from beginner to job-ready — pick a domain and start today."
       />
-      <section className="pb-24">
+      <section className="pb-24 pt-8">
         <div className="container-page grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {ROADMAPS.map((r) => {
             const d = DOMAINS.find((x) => x.key === r.domain)!;
             return (
-              <article key={r.slug} className="flex flex-col rounded-2xl border border-border bg-surface p-6 hover-lift">
+              <article key={r.slug} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(128,0,0,0.08)] hover:border-[#800000]/20 transition-all duration-300">
                 <span
                   className="grid h-12 w-12 place-items-center rounded-xl text-2xl"
                   style={{ background: `color-mix(in oklch, ${DOMAIN_COLORS[r.domain]} 18%, transparent)` }}
                 >
                   {d.icon}
                 </span>
-                <h2 className="mt-4 font-display text-lg font-semibold">{r.title}</h2>
-                <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{r.description}</p>
-                <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
-                  <span className="rounded-full bg-muted px-2.5 py-1 font-medium">{r.difficulty}</span>
-                  <span className="rounded-full bg-muted px-2.5 py-1 font-medium">{r.duration}</span>
+                <h2 className="mt-4 font-display text-lg font-semibold text-slate-800 font-orbitron">{r.title}</h2>
+                <p className="mt-2 text-sm text-slate-500 font-outfit line-clamp-3">{r.description}</p>
+                <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-orbitron">
+                  <span className="rounded-full bg-slate-100 border border-slate-200 px-2.5 py-1 font-medium text-slate-500">{r.difficulty}</span>
+                  <span className="rounded-full bg-slate-100 border border-slate-200 px-2.5 py-1 font-medium text-slate-500">{r.duration}</span>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {d.skills.slice(0, 3).map((s) => (
-                    <span key={s} className="rounded-md border border-border px-2 py-0.5 text-[11px] text-muted-foreground">{s}</span>
+                    <span key={s} className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-400 font-orbitron">{s}</span>
                   ))}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setActive(r)}
-                  className="mt-6 inline-flex items-center justify-center gap-1 rounded-md gradient-hero px-4 py-2.5 text-sm font-semibold text-white shadow-brand transition-transform hover:-translate-y-0.5"
-                >
-                  Start Learning <ArrowRight className="h-4 w-4" />
-                </button>
+                <div className="mt-6 flex gap-2">
+                  <Link
+                    to="/learn/$slug"
+                    params={{ slug: r.slug }}
+                    className="flex-1 inline-flex items-center justify-center gap-1 rounded-xl bg-[#800000] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_4px_15px_rgba(128,0,0,0.20)] hover:bg-[#6B0000] hover:shadow-[0_4px_20px_rgba(128,0,0,0.30)] transition-all font-orbitron"
+                  >
+                    Start Learning <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </article>
             );
           })}
         </div>
       </section>
-      {active && <RoadmapModal roadmap={active} onClose={() => setActive(null)} />}
     </>
   );
 }
+
 
 function RoadmapModal({ roadmap, onClose }: { roadmap: Roadmap; onClose: () => void }) {
   const [tab, setTab] = useState<Tab>("Overview");
@@ -198,21 +200,30 @@ export function PageHeader({
   subtitle?: string;
 }) {
   return (
-    <section className="border-b border-border gradient-soft">
-      <div className="container-page py-12 md:py-16">
-        <nav aria-label="Breadcrumb" className="text-xs text-muted-foreground">
-          <ol className="flex flex-wrap items-center gap-1">
+    <section className="relative overflow-hidden border-b border-slate-200 bg-white">
+      <div className="container-page py-12 md:py-16 text-left">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 font-orbitron">
+          <ol className="flex flex-wrap items-center gap-1.5">
             {crumbs.map((c, i) => (
-              <li key={i} className="flex items-center gap-1">
-                {c.to ? <Link to={c.to} className="hover:text-foreground">{c.label}</Link> : <span>{c.label}</span>}
-                {i < crumbs.length - 1 && <ChevronRight className="h-3 w-3" />}
+              <li key={i} className="flex items-center gap-1.5">
+                {c.to ? (
+                  <Link to={c.to} className="hover:text-[#800000] transition-colors">
+                    {c.label}
+                  </Link>
+                ) : (
+                  <span className="text-slate-600">{c.label}</span>
+                )}
+                {i < crumbs.length - 1 && <ChevronRight className="h-3 w-3 text-slate-300" />}
               </li>
             ))}
           </ol>
         </nav>
-        <h1 className="mt-3 font-display text-3xl font-extrabold sm:text-4xl">{title}</h1>
-        {subtitle && <p className="mt-3 max-w-2xl text-muted-foreground">{subtitle}</p>}
+        <h1 className="mt-4 font-display text-3xl font-black text-slate-900 sm:text-4xl font-orbitron tracking-wide">
+          {title}
+        </h1>
+        {subtitle && <p className="mt-3 max-w-2xl text-slate-500 text-sm md:text-base font-outfit leading-relaxed">{subtitle}</p>}
       </div>
     </section>
   );
 }
+

@@ -18,6 +18,10 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TutorialsSlugRouteImport } from './routes/tutorials.$slug'
+import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
+import { Route as ApiContactRouteImport } from './routes/api/contact'
+import { Route as ApiNewsletterSubscribeRouteImport } from './routes/api/newsletter/subscribe'
+import { Route as ApiInternshipsApplyRouteImport } from './routes/api/internships/apply'
 
 const TutorialsRoute = TutorialsRouteImport.update({
   id: '/tutorials',
@@ -64,6 +68,26 @@ const TutorialsSlugRoute = TutorialsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => TutorialsRoute,
 } as any)
+const LearnSlugRoute = LearnSlugRouteImport.update({
+  id: '/learn/$slug',
+  path: '/learn/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiContactRoute = ApiContactRouteImport.update({
+  id: '/api/contact',
+  path: '/api/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNewsletterSubscribeRoute = ApiNewsletterSubscribeRouteImport.update({
+  id: '/api/newsletter/subscribe',
+  path: '/api/newsletter/subscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiInternshipsApplyRoute = ApiInternshipsApplyRouteImport.update({
+  id: '/api/internships/apply',
+  path: '/api/internships/apply',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -74,7 +98,11 @@ export interface FileRoutesByFullPath {
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tutorials': typeof TutorialsRouteWithChildren
+  '/api/contact': typeof ApiContactRoute
+  '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
+  '/api/internships/apply': typeof ApiInternshipsApplyRoute
+  '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -85,7 +113,11 @@ export interface FileRoutesByTo {
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tutorials': typeof TutorialsRouteWithChildren
+  '/api/contact': typeof ApiContactRoute
+  '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
+  '/api/internships/apply': typeof ApiInternshipsApplyRoute
+  '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -97,7 +129,11 @@ export interface FileRoutesById {
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tutorials': typeof TutorialsRouteWithChildren
+  '/api/contact': typeof ApiContactRoute
+  '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
+  '/api/internships/apply': typeof ApiInternshipsApplyRoute
+  '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -110,7 +146,11 @@ export interface FileRouteTypes {
     | '/roadmaps'
     | '/sitemap.xml'
     | '/tutorials'
+    | '/api/contact'
+    | '/learn/$slug'
     | '/tutorials/$slug'
+    | '/api/internships/apply'
+    | '/api/newsletter/subscribe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -121,7 +161,11 @@ export interface FileRouteTypes {
     | '/roadmaps'
     | '/sitemap.xml'
     | '/tutorials'
+    | '/api/contact'
+    | '/learn/$slug'
     | '/tutorials/$slug'
+    | '/api/internships/apply'
+    | '/api/newsletter/subscribe'
   id:
     | '__root__'
     | '/'
@@ -132,7 +176,11 @@ export interface FileRouteTypes {
     | '/roadmaps'
     | '/sitemap.xml'
     | '/tutorials'
+    | '/api/contact'
+    | '/learn/$slug'
     | '/tutorials/$slug'
+    | '/api/internships/apply'
+    | '/api/newsletter/subscribe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -144,6 +192,10 @@ export interface RootRouteChildren {
   RoadmapsRoute: typeof RoadmapsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TutorialsRoute: typeof TutorialsRouteWithChildren
+  ApiContactRoute: typeof ApiContactRoute
+  LearnSlugRoute: typeof LearnSlugRoute
+  ApiInternshipsApplyRoute: typeof ApiInternshipsApplyRoute
+  ApiNewsletterSubscribeRoute: typeof ApiNewsletterSubscribeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -211,6 +263,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TutorialsSlugRouteImport
       parentRoute: typeof TutorialsRoute
     }
+    '/learn/$slug': {
+      id: '/learn/$slug'
+      path: '/learn/$slug'
+      fullPath: '/learn/$slug'
+      preLoaderRoute: typeof LearnSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/contact': {
+      id: '/api/contact'
+      path: '/api/contact'
+      fullPath: '/api/contact'
+      preLoaderRoute: typeof ApiContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/newsletter/subscribe': {
+      id: '/api/newsletter/subscribe'
+      path: '/api/newsletter/subscribe'
+      fullPath: '/api/newsletter/subscribe'
+      preLoaderRoute: typeof ApiNewsletterSubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/internships/apply': {
+      id: '/api/internships/apply'
+      path: '/api/internships/apply'
+      fullPath: '/api/internships/apply'
+      preLoaderRoute: typeof ApiInternshipsApplyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -235,7 +315,21 @@ const rootRouteChildren: RootRouteChildren = {
   RoadmapsRoute: RoadmapsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TutorialsRoute: TutorialsRouteWithChildren,
+  ApiContactRoute: ApiContactRoute,
+  LearnSlugRoute: LearnSlugRoute,
+  ApiInternshipsApplyRoute: ApiInternshipsApplyRoute,
+  ApiNewsletterSubscribeRoute: ApiNewsletterSubscribeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
