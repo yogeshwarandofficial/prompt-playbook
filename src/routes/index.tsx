@@ -156,7 +156,7 @@ function HeroSection() {
         </div>
 
         {/* Hero illustration card - Natural integration */}
-        <div className="hidden lg:flex relative items-center justify-center h-full w-full mt-8">
+        <div className="flex relative items-center justify-center h-full w-full mt-8 lg:mt-0">
           {/* Atmospheric Glow Behind Model */}
           <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-[120px] mix-blend-normal" />
           
@@ -177,7 +177,7 @@ function HeroSection() {
             </div>
             
             {/* Floating 10 Years Experience Badge */}
-            <div className="absolute right-0 bottom-24 translate-x-8 rounded-2xl border border-black bg-white/90 backdrop-blur-md px-5 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.06)] animate-float z-20">
+            <div className="absolute right-4 md:right-0 bottom-10 md:bottom-24 md:translate-x-8 rounded-2xl border border-slate-200 bg-white/90 backdrop-blur-md px-5 py-4 shadow-lg animate-float z-20">
               <div className="flex items-center gap-1 mb-1 justify-end">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="h-4 w-4 fill-primary text-primary" />
