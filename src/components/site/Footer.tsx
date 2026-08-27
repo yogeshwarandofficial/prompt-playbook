@@ -49,11 +49,9 @@ export function Footer() {
 
   return (
     <footer
-      className="relative border-t border-slate-200 bg-white/80 backdrop-blur-sm"
+      className="relative border-t-2 border-black bg-[#0A0A0A]"
       aria-label="Site footer"
     >
-      {/* Subtle maroon gradient top line */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#800000]/30 to-transparent" />
 
       <div className="container-page py-14">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5">
@@ -64,10 +62,10 @@ export function Footer() {
               className="inline-flex items-center gap-2.5 font-display font-bold hover:opacity-80 transition-opacity"
               aria-label="Infynux Academy home"
             >
-              <img src="/new-logo.png" alt="Infynux Academy Logo" className="h-14 w-auto object-contain drop-shadow-sm" />
-              <span className="font-orbitron text-lg text-[#800000]">Infynux Academy</span>
+              <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-14 w-auto object-contain drop-shadow-sm brightness-0 invert" />
+              <span className="font-orbitron text-lg text-white">Infynux Academy</span>
             </Link>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate-500 font-outfit">
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate-400 font-outfit">
               Free learning roadmaps, tutorials, and remote internships for students and freshers in India. Start your tech career today.
             </p>
 
@@ -76,24 +74,24 @@ export function Footer() {
               <li>
                 <a
                   href="mailto:support@infynuxsolutions.in"
-                  className="group inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[#800000] transition-colors"
+                  className="group inline-flex items-center gap-2 text-sm text-slate-400 hover:text-primary transition-colors"
                 >
-                  <Mail className="h-4 w-4 shrink-0 text-[#800000]/50 group-hover:text-[#800000] transition-colors" aria-hidden="true" />
+                  <Mail className="h-4 w-4 shrink-0 text-slate-500 group-hover:text-primary transition-colors" aria-hidden="true" />
                   support@infynuxsolutions.in
                 </a>
               </li>
               <li>
                 <a
                   href="tel:+919999999999"
-                  className="group inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[#800000] transition-colors"
+                  className="group inline-flex items-center gap-2 text-sm text-slate-400 hover:text-primary transition-colors"
                 >
-                  <Phone className="h-4 w-4 shrink-0 text-[#800000]/50 group-hover:text-[#800000] transition-colors" aria-hidden="true" />
+                  <Phone className="h-4 w-4 shrink-0 text-slate-500 group-hover:text-primary transition-colors" aria-hidden="true" />
                   +91 70108 50923
                 </a>
               </li>
               <li>
-                <span className="inline-flex items-center gap-2 text-sm text-slate-500">
-                  <MapPin className="h-4 w-4 shrink-0 text-[#800000]/50" aria-hidden="true" />
+                <span className="inline-flex items-center gap-2 text-sm text-slate-400">
+                  <MapPin className="h-4 w-4 shrink-0 text-slate-500" aria-hidden="true" />
                   India (Remote-first)
                 </span>
               </li>
@@ -108,7 +106,7 @@ export function Footer() {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={label}
-                    className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-white text-slate-400 transition-all hover:border-[#800000]/25 hover:text-[#800000] hover:bg-[#800000]/5 hover:shadow-[0_2px_8px_rgba(128,0,0,0.10)]"
+                    className="grid h-9 w-9 place-items-center rounded-xl border-2 border-black bg-[#111] text-slate-400 transition-all hover:bg-primary hover:text-black hover:border-black hover:shadow-sm"
                   >
                     <Icon className="h-4 w-4" aria-hidden="true" />
                   </a>
@@ -120,7 +118,7 @@ export function Footer() {
           {/* Nav sections */}
           {NAV_SECTIONS.map((section) => (
             <div key={section.title}>
-              <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-[#800000] font-orbitron">
+              <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-primary font-orbitron">
                 {section.title}
               </h3>
               <ul className="space-y-3" role="list">
@@ -128,7 +126,7 @@ export function Footer() {
                   <li key={link.label}>
                     <Link
                       to={link.to}
-                      className="group inline-flex items-center gap-1 text-sm text-slate-500 transition-colors hover:text-[#800000] font-outfit"
+                      className="group inline-flex items-center gap-1 text-sm text-slate-400 transition-colors hover:text-primary font-outfit"
                     >
                       {link.label}
                       <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
@@ -141,12 +139,9 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 flex flex-col items-center gap-2 border-t border-slate-200 pt-6 sm:flex-row sm:justify-between">
-          <p className="text-xs text-slate-400 font-outfit">
+        <div className="mt-12 flex flex-col items-center gap-2 border-t border-slate-800 pt-6 sm:flex-row sm:justify-between">
+          <p className="text-xs text-slate-500 font-outfit">
             © {year} Infynux Solutions. All rights reserved.
-          </p>
-          <p className="text-xs text-slate-400 font-outfit">
-            Made with ❤️ in India
           </p>
         </div>
       </div>

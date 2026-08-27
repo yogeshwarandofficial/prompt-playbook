@@ -52,30 +52,25 @@ export const Route = createFileRoute("/")({
 
 // Light-mode domain palette
 const DOMAIN_KEY_COLORS: Record<DomainKey, string> = {
-  web:       "rgba(59,  130, 246, 0.12)",
-  cloud:     "rgba(217, 119,   6, 0.12)",
-  app:       "rgba(5,   150, 105, 0.12)",
-  ai:        "rgba(124,  58, 237, 0.12)",
-  marketing: "rgba(225,  29,  72, 0.12)",
+  web:       "rgba(156, 255, 59, 0.12)",
+  cloud:     "rgba(182, 255, 74, 0.12)",
+  app:       "rgba(217, 255, 176, 0.12)",
+  ai:        "rgba(156, 255, 59, 0.12)",
+  marketing: "rgba(182, 255, 74, 0.12)",
 };
 
 const DOMAIN_TEXT_COLORS: Record<DomainKey, string> = {
-  web:       "#3B82F6",
-  cloud:     "#D97706",
-  app:       "#059669",
-  ai:        "#7C3AED",
-  marketing: "#E11D48",
+  web:       "#9CFF3B",
+  cloud:     "#B6FF4A",
+  app:       "#D9FFB0",
+  ai:        "#9CFF3B",
+  marketing: "#B6FF4A",
 };
 
 export function DomainBadge({ domain }: { domain: DomainKey }) {
   return (
     <span
-      className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold font-orbitron"
-      style={{
-        color: DOMAIN_TEXT_COLORS[domain],
-        background: DOMAIN_KEY_COLORS[domain],
-        border: `1px solid ${DOMAIN_TEXT_COLORS[domain]}33`,
-      }}
+      className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 tracking-widest uppercase shadow-sm"
     >
       {DOMAIN_NAME_MAP[domain]}
     </span>
@@ -104,110 +99,93 @@ function HomePage() {
 function HeroSection() {
   return (
     <section
-      className="relative overflow-hidden pb-16 pt-20 md:pb-24 md:pt-28 bg-gradient-to-br from-[#F8F6F4] via-white to-[#fdf0f0]"
+      className="relative overflow-hidden pb-32 pt-32 md:pb-40 md:pt-48 bg-white rounded-b-[40px] md:rounded-b-[80px] shadow-2xl z-10"
       aria-label="Hero"
     >
       {/* Decorative maroon gradient orb */}
-      <div className="pointer-events-none absolute right-0 top-0 h-[600px] w-[600px] -translate-y-1/4 translate-x-1/4 rounded-full bg-[#800000]/6 blur-[100px]" />
+      <div className="pointer-events-none absolute right-0 top-0 h-[700px] w-[700px] -translate-y-1/4 translate-x-1/4 rounded-full bg-primary/10 blur-[120px]" />
 
       <div className="container-page grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
         {/* Text column */}
-        <div className="max-w-xl animate-fade-up text-left space-y-7">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#800000]/20 bg-[#800000]/6 px-3.5 py-1.5 text-xs font-semibold text-[#800000] font-orbitron tracking-wider">
-            <Zap className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+        <div className="max-w-xl animate-fade-up text-left space-y-7 relative z-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-black font-orbitron tracking-wider">
+            <Zap className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
             FREE ACADEMIC PLATFORM
           </span>
-          <h1 className="font-display text-4xl font-black leading-[1.1] text-slate-900 sm:text-5xl lg:text-6xl tracking-tight">
+          <h1 className="font-display text-6xl font-black leading-[1.05] text-black sm:text-7xl lg:text-8xl tracking-tight">
             LEARN.<br />
-            <span className="bg-gradient-to-r from-[#800000] via-[#C41E3A] to-[#FF6B6B] bg-clip-text text-transparent">BUILD.</span><br />
+            <span className="bg-gradient-to-r from-primary via-emerald-400 to-green-500 bg-clip-text text-transparent">BUILD.</span><br />
             GET HIRED.
           </h1>
-          <p className="text-lg leading-relaxed text-slate-600 font-outfit">
+          <p className="text-lg leading-relaxed text-black font-outfit">
             Free structured roadmaps, hands-on tutorials, and real remote internships. Bridge the gap between university and industrial excellence.
           </p>
           <div className="flex flex-wrap gap-4 pt-1">
             <Link
               to="/roadmaps"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#800000] px-6 py-3.5 text-sm font-bold text-white shadow-[0_4px_20px_rgba(128,0,0,0.25)] transition-all hover:bg-[#6B0000] hover:shadow-[0_4px_28px_rgba(128,0,0,0.35)] hover:scale-[1.02] active:scale-[0.98] font-orbitron"
+              className="inline-flex items-center gap-2 rounded-full bg-primary text-black px-8 py-4 text-base font-black shadow-[0_4px_20px_rgba(156,255,59,0.25)] transition-all hover:bg-secondary hover:shadow-[0_4px_28px_rgba(156,255,59,0.35)] hover:scale-[1.02] active:scale-[0.98] font-orbitron"
             >
-              Explore Roadmaps <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              Explore Roadmaps <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </Link>
             <Link
               to="/internships"
-              className="inline-flex items-center gap-2 rounded-xl border border-[#800000]/20 bg-white px-6 py-3.5 text-sm font-bold text-[#800000] shadow-sm transition-all hover:border-[#800000]/40 hover:bg-[#800000]/5 hover:scale-[1.02] font-orbitron"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-black bg-transparent px-8 py-4 text-base font-black text-black shadow-sm transition-all hover:bg-black hover:text-white hover:scale-[1.02] font-orbitron"
             >
               Apply for Internship
             </Link>
           </div>
 
           {/* Trust bar */}
-          <div className="flex flex-wrap items-center gap-8 border-t border-slate-200 pt-8">
+          <div className="flex flex-wrap items-center gap-8 border-t border-black pt-8">
             {[
-              { icon: Users, value: "1,000+", label: "Students Trained" },
+              { icon: Users, value: "100+", label: "Students Trained" },
               { icon: BookOpen, value: "5", label: "Specializations" },
               { icon: Award, value: "100%", label: "Free Tuition" },
             ].map(({ icon: Icon, value, label }) => (
               <div key={label} className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#800000]/8 border border-[#800000]/12 text-[#800000]">
-                  <Icon className="h-5 w-5" aria-hidden="true" />
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 border border-primary/20 text-black">
+                  <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
                 </div>
                 <div>
-                  <span className="block text-sm font-black text-slate-900 font-orbitron">{value}</span>
-                  <span className="block text-xs text-slate-500 font-outfit">{label}</span>
+                  <span className="block text-sm font-black text-black font-orbitron">{value}</span>
+                  <span className="block text-xs text-black/70 font-outfit">{label}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Hero illustration card */}
-        <div className="hidden items-center justify-center lg:flex">
-          <div className="animate-float relative w-96">
-            <div className="relative rounded-2xl border border-slate-200 bg-white/90 backdrop-blur-xl p-8 shadow-[0_8px_40px_rgba(128,0,0,0.08)]">
-              <div className="mb-6 flex items-center gap-4">
-                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-tr from-[#800000] to-[#C41E3A] text-white shadow-[0_4px_15px_rgba(128,0,0,0.25)]">
-                  <Code2 className="h-6 w-6" />
-                </div>
-                <div>
-                  <div className="h-3 w-32 rounded bg-[#800000]/15" />
-                  <div className="mt-2 h-2.5 w-20 rounded bg-slate-200" />
-                </div>
-              </div>
-              <div className="space-y-4">
-                {(["web", "cloud", "ai"] as DomainKey[]).map((key, i) => (
-                  <div key={key} className="flex items-center justify-between gap-4">
-                    <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full"
-                        style={{ width: `${80 - i * 15}%`, backgroundColor: DOMAIN_TEXT_COLORS[key] }}
-                      />
-                    </div>
-                    <span className="text-xs font-semibold font-orbitron" style={{ color: DOMAIN_TEXT_COLORS[key] }}>
-                      {DOMAIN_NAME_MAP[key]}
-                    </span>
-                  </div>
+        {/* Hero illustration card - Natural integration */}
+        <div className="hidden lg:flex relative items-center justify-center h-full w-full mt-8">
+          {/* Atmospheric Glow Behind Model */}
+          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-[120px] mix-blend-normal" />
+          
+          <div className="relative w-full max-w-[550px] -translate-y-20">
+            {/* The model image using true transparent PNG */}
+            <img 
+              src="/female-professional-laptop.png" 
+              alt="Professional Model" 
+              className="w-full h-auto object-contain relative z-10"
+            />
+            
+            {/* Subtle decorative elements matching theme */}
+            <div className="absolute top-12 -left-6 text-primary animate-pulse z-0">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" strokeDasharray="4 4" />
+                <path d="M12 6v12M6 12h12" />
+              </svg>
+            </div>
+            
+            {/* Floating 10 Years Experience Badge */}
+            <div className="absolute right-0 bottom-24 translate-x-8 rounded-2xl border border-black bg-white/90 backdrop-blur-md px-5 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.06)] animate-float z-20">
+              <div className="flex items-center gap-1 mb-1 justify-end">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-primary text-primary" />
                 ))}
               </div>
-              <div className="mt-6 rounded-xl bg-[#800000]/5 border border-[#800000]/10 p-4">
-                <div className="flex justify-between text-xs text-slate-500 font-outfit">
-                  <span>Academy Average Progress</span>
-                  <span className="font-semibold text-[#800000]">84%</span>
-                </div>
-                <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-slate-200">
-                  <div className="h-full w-[84%] rounded-full bg-gradient-to-r from-[#800000] to-[#C41E3A] shadow-sm" />
-                </div>
-              </div>
-            </div>
-            <div className="absolute -left-10 -top-4 rounded-xl border border-slate-200 bg-white px-4 py-2.5 shadow-lg">
-              <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 font-orbitron">
-                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                VERIFIED CREDENTIALS
-              </div>
-            </div>
-            <div className="absolute -bottom-4 -right-8 rounded-xl border border-slate-200 bg-white px-4 py-2.5 shadow-lg">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-700 font-orbitron">
-                <Globe className="h-4 w-4 text-[#800000]" aria-hidden="true" />
-                <span>100% ONLINE</span>
+              <div className="text-right">
+                <p className="text-xl font-black text-black font-orbitron">2+ Years</p>
+                <span className="block text-xs text-black/70 font-outfit">Experience</span>
               </div>
             </div>
           </div>
@@ -229,25 +207,48 @@ const FEATURES = [
 
 function FeaturesSection() {
   return (
-    <section className="py-20 md:py-28 bg-white" aria-labelledby="features-heading">
-      <div className="container-page">
-        <SectionHeader
-          eyebrow="Why Infynux"
-          title="Engineered for career launch"
-          subtitle="A premium learning ecosystem built to transfer you from raw skills to corporate hires."
-          id="features-heading"
-        />
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map(({ icon: Icon, title, desc }) => (
+    <section className="relative overflow-hidden py-24 md:py-32 bg-[#0A0A0A]" aria-labelledby="features-heading">
+      {/* Background glow and dust could go here, but using subtle radial gradient */}
+      <div className="pointer-events-none absolute left-1/2 top-0 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[120px]" />
+      
+      {/* Peeking man blending from top right edge of screen */}
+      <img 
+        src="/peeking_man.png" 
+        alt="" 
+        className="absolute top-0 right-0 w-64 md:w-96 lg:w-[500px] object-contain hidden md:block opacity-60 mix-blend-screen pointer-events-none [mask-image:radial-gradient(ellipse_at_top_right,black_40%,transparent_70%)] z-0"
+        aria-hidden="true" 
+      />
+      
+      <div className="container-page relative z-10">
+        <div className="mb-14 relative">
+          <div className="flex items-center gap-2.5 mb-6 text-primary text-sm font-bold uppercase tracking-[0.2em] font-display">
+            <div className="h-[3px] w-[32px] bg-primary"></div>
+            Why Infynux
+          </div>
+          <h2 id="features-heading" className="font-display font-black text-5xl md:text-6xl lg:text-7xl leading-[1.05] text-white max-w-3xl mb-6 tracking-tight">
+            Everything you need, <span className="text-primary">floating in one place.</span>
+          </h2>
+          <p className="text-[#C7CBCE] text-xl font-bold leading-relaxed max-w-xl font-outfit">
+            A premium learning ecosystem built to transfer you from raw skills to corporate hires.
+          </p>
+        </div>
+
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {FEATURES.map(({ icon: Icon, title, desc }, idx) => (
             <div
               key={title}
-              className="glass rounded-2xl p-6 hover:bg-white/90 hover:-translate-y-1 hover:border-[#800000]/15 hover:shadow-[0_8px_30px_rgba(128,0,0,0.08)] transition-all duration-300 ease-out group"
+              className="group relative bg-[#0A0A0A] border-2 border-[#333] rounded-[24px] p-10 pb-9 transition-all duration-300 hover:border-primary hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(156,255,59,0.15)]"
+              style={{ animationDelay: `${idx * 150}ms` }}
             >
-              <div className="grid h-11 w-11 place-items-center rounded-xl bg-[#800000]/8 border border-[#800000]/12 text-[#800000] group-hover:bg-[#800000] group-hover:text-white group-hover:shadow-[0_4px_15px_rgba(128,0,0,0.25)] transition-all duration-300">
-                <Icon className="h-5 w-5" aria-hidden="true" />
+              <div className="h-14 w-14 rounded-2xl bg-primary flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(156,255,59,0.3)]">
+                <Icon className="h-7 w-7 text-black" aria-hidden="true" />
               </div>
-              <h3 className="mt-5 font-display text-base font-bold text-slate-800 font-orbitron">{title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-500 font-outfit">{desc}</p>
+              <h3 className="font-display text-2xl font-black text-white mb-3 tracking-tight">{title}</h3>
+              <p className="text-base font-bold leading-[1.7] text-[#C7CBCE] font-outfit">{desc}</p>
+              
+              {/* Hover shadow pulse */}
+              <div className="absolute left-1/2 bottom-[-20px] h-[24px] w-[80%] -translate-x-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100" 
+                   style={{ background: 'radial-gradient(ellipse, rgba(156,255,59,0.4) 0%, rgba(156,255,59,0) 72%)' }} />
             </div>
           ))}
         </div>
@@ -272,37 +273,52 @@ function DomainsSection() {
   }, {});
 
   return (
-    <section className="py-20 md:py-28 bg-[#F8F6F4]" aria-labelledby="domains-heading">
-      <div className="container-page">
+    <section className="relative overflow-hidden py-24 md:py-32 bg-[#F9FAF5]" aria-labelledby="domains-heading">
+      {/* Animated Mesh Blobs */}
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] mix-blend-multiply opacity-70 animate-pulse" />
+      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-cyan-400/20 rounded-full blur-[120px] mix-blend-multiply opacity-70" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-emerald-300/20 rounded-full blur-[120px] mix-blend-multiply opacity-50" />
+      
+      <div className="container-page relative z-10">
         <SectionHeader
           eyebrow="Popular Domains"
           title="Choose your learning path"
           subtitle="Explore five in-demand disciplines with structured roadmaps tuned for immediate application."
           id="domains-heading"
+          theme="light"
         />
-        <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-          {DOMAINS.map((domain) => (
-            <Link
-              key={domain.key}
-              to="/roadmaps"
-              className="flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-6 text-center hover:border-[#800000]/20 hover:scale-[1.02] hover:shadow-[0_8px_24px_rgba(128,0,0,0.08)] transition-all duration-300 ease-out group"
-            >
-              <div
-                className="grid h-12 w-12 place-items-center rounded-xl transition-all duration-300"
-                style={{
-                  background: DOMAIN_KEY_COLORS[domain.key],
-                  color: DOMAIN_TEXT_COLORS[domain.key],
-                }}
-                aria-hidden="true"
+        <div className="mt-16 relative">
+          {/* The "Rope" connecting the cards (only visible on large screens) */}
+          <div className="absolute top-[80px] left-0 right-0 hidden lg:flex items-center pointer-events-none z-0">
+             {/* Left tie knot */}
+             <div className="w-6 h-6 rounded-full border-[3px] border-black bg-primary shrink-0 -ml-3 shadow-sm" />
+             {/* The rope body */}
+             <div className="flex-1 h-2 bg-black opacity-100" />
+             {/* Right tie knot */}
+             <div className="w-6 h-6 rounded-full border-[3px] border-black bg-primary shrink-0 -mr-3 shadow-sm" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5 relative z-10">
+            {DOMAINS.map((domain) => (
+              <Link
+                key={domain.key}
+                to="/roadmaps"
+                className="flex flex-col items-center gap-6 rounded-3xl border-2 border-black bg-[#F4F7EB]/70 backdrop-blur-xl p-10 text-center hover:bg-[#F4F7EB]/90 hover:scale-[1.05] hover:shadow-[0_20px_50px_rgba(143,204,30,0.2)] hover:border-black transition-all duration-300 ease-out group relative"
               >
-                {DOMAIN_ICONS[domain.key]}
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-bold text-slate-800 font-orbitron group-hover:text-[#800000] transition-colors">{domain.name}</p>
-                <p className="text-xs text-slate-400 font-outfit">{tutorialCounts[domain.key] || 0} tutorials</p>
-              </div>
-            </Link>
-          ))}
+                <div
+                  className="grid h-20 w-20 place-items-center rounded-2xl shadow-sm transition-transform duration-300 group-hover:-translate-y-2 bg-primary border-2 border-black text-black relative z-10"
+                  aria-hidden="true"
+                >
+                  <div className="scale-150">{DOMAIN_ICONS[domain.key]}</div>
+                </div>
+                <div className="space-y-2 mt-4 relative z-10">
+                  <p className="text-xl font-black text-black font-orbitron leading-none">100+</p>
+                  <p className="text-2xl font-black text-black font-orbitron tracking-tight">{domain.name}</p>
+                  <p className="text-sm font-bold text-black font-outfit uppercase tracking-widest">{tutorialCounts[domain.key] || 0} tutorials</p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -319,29 +335,37 @@ const STEPS = [
 
 function ProcessSection() {
   return (
-    <section className="py-20 md:py-28 bg-white" aria-labelledby="process-heading">
-      <div className="container-page">
+    <section className="py-24 md:py-32 bg-black relative overflow-hidden" aria-labelledby="process-heading">
+      {/* Heavy maximalist glow behind the section */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[500px] bg-primary/5 rounded-[100%] blur-[120px] pointer-events-none" />
+      
+      <div className="container-page relative z-10">
         <SectionHeader
           eyebrow="The Pipeline"
           title="How it works"
           subtitle="Your four-stage pathway from basic syntax to verified engineering credentials."
           id="process-heading"
         />
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 relative">
+          {/* Jumping character animation (only visible on large screens where steps are in a row) */}
+          <div className="animate-jump-process hidden lg:flex items-center justify-center text-4xl" aria-hidden="true">
+             <img src="/running_man_transparent.png" alt="running man" className="w-16 h-16 object-contain drop-shadow-[0_0_15px_rgba(198,255,61,0.8)] pointer-events-none" />
+          </div>
+
           {STEPS.map(({ n, title, desc }, i) => (
             <div key={n} className="relative group">
               {i < STEPS.length - 1 && (
                 <div
-                  className="absolute left-full top-10 z-0 hidden h-[1px] w-full -translate-y-px lg:block bg-gradient-to-r from-[#800000]/30 to-transparent"
+                  className="absolute left-[80%] top-16 z-0 hidden h-[2px] w-full -translate-y-px lg:block bg-gradient-to-r from-primary/50 to-transparent shadow-[0_0_10px_rgba(156,255,59,0.5)]"
                   aria-hidden="true"
                 />
               )}
-              <div className="relative z-10 glass rounded-2xl p-6 hover:bg-white/95 hover:shadow-[0_8px_30px_rgba(128,0,0,0.08)] hover:-translate-y-1 transition-all duration-300">
-                <span className="font-display text-3xl font-black bg-gradient-to-r from-[#800000] to-[#C41E3A] bg-clip-text text-transparent font-orbitron">
+              <div className="relative z-10 border border-[#232323] bg-[#0A0A0A] rounded-[32px] p-8 hover:border-primary hover:shadow-[0_0_30px_rgba(156,255,59,0.15)] hover:-translate-y-2 transition-all duration-500">
+                <span className="block font-display text-6xl lg:text-7xl font-black bg-gradient-to-b from-primary to-primary/20 bg-clip-text text-transparent font-orbitron mb-6 drop-shadow-[0_0_15px_rgba(156,255,59,0.3)]">
                   {n}
                 </span>
-                <h3 className="mt-4 font-display text-base font-bold text-slate-800 font-orbitron">{title}</h3>
-                <p className="mt-2 text-sm text-slate-500 leading-relaxed font-outfit">{desc}</p>
+                <h3 className="font-display text-xl font-bold text-white font-orbitron">{title}</h3>
+                <p className="mt-3 text-sm text-[#C7CBCE] leading-relaxed font-outfit">{desc}</p>
               </div>
             </div>
           ))}
@@ -354,43 +378,43 @@ function ProcessSection() {
 // ─── FEATURED ROADMAPS ────────────────────────────────────────────────────────
 function FeaturedRoadmapsSection() {
   return (
-    <section className="py-20 md:py-28 bg-[#F8F6F4]" aria-labelledby="roadmaps-heading">
+    <section className="py-24 md:py-32 bg-[#F9FAF5]" aria-labelledby="roadmaps-heading">
       <div className="container-page">
         <SectionHeader
           eyebrow="Featured Roadmaps"
           title="Start learning the right way"
           subtitle="Tuned progression charts designed to take you from a curious beginner to a productive engineer."
           id="roadmaps-heading"
+          theme="light"
         />
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {ROADMAPS.slice(0, 3).map((r) => (
             <div
               key={r.slug}
-              className="glass overflow-hidden rounded-2xl flex flex-col justify-between hover:bg-white/95 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(128,0,0,0.08)] transition-all duration-300 ease-out"
-              style={{ borderTop: `3px solid ${DOMAIN_TEXT_COLORS[r.domain]}` }}
+              className="bg-white border border-slate-100 overflow-hidden rounded-2xl flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out group"
             >
-              <div className="p-6 space-y-4">
+              <div className="p-8 space-y-4">
                 <DomainBadge domain={r.domain} />
-                <h3 className="font-display text-lg font-bold text-slate-800 font-orbitron">{r.title}</h3>
-                <p className="text-sm leading-relaxed text-slate-500 font-outfit line-clamp-2">{r.description}</p>
-                <div className="flex items-center gap-3 text-xs text-slate-400 font-orbitron">
-                  <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5">{r.difficulty}</span>
+                <h3 className="text-2xl font-bold text-slate-800 group-hover:text-black transition-colors leading-tight tracking-tight">{r.title}</h3>
+                <p className="text-sm font-medium leading-relaxed text-slate-500 line-clamp-3">{r.description}</p>
+                <div className="flex items-center gap-4 text-[11px] text-slate-500 pt-2 font-semibold uppercase tracking-wider">
+                  <span className="rounded-md bg-slate-100 px-3 py-1.5">{r.difficulty}</span>
                   <span>{r.duration}</span>
                 </div>
               </div>
-              <div className="border-t border-slate-100 px-6 py-4 bg-slate-50/50">
-                <Link to="/roadmaps" className="text-sm font-semibold text-[#800000] hover:text-[#6B0000] transition-colors font-orbitron tracking-wider">
+              <div className="border-t border-slate-100 px-8 py-5 bg-slate-50 group-hover:bg-indigo-50/50 transition-colors">
+                <Link to="/roadmaps" className="text-sm font-bold text-indigo-600 transition-colors tracking-widest uppercase">
                   View Roadmap →
                 </Link>
               </div>
             </div>
           ))}
         </div>
-        <div className="mt-10 text-center">
-          <Link
-            to="/roadmaps"
-            className="inline-flex items-center gap-2 rounded-xl border border-[#800000]/20 bg-white px-6 py-3 text-sm font-semibold text-[#800000] transition-all hover:bg-[#800000] hover:text-white hover:shadow-[0_4px_20px_rgba(128,0,0,0.2)] font-orbitron"
-          >
+        <div className="mt-14 text-center">
+            <Link
+              to="/roadmaps"
+              className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-8 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition-all uppercase tracking-widest"
+            >
             View All Roadmaps <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -402,8 +426,9 @@ function FeaturedRoadmapsSection() {
 // ─── FEATURED TUTORIALS ───────────────────────────────────────────────────────
 function FeaturedTutorialsSection() {
   return (
-    <section className="py-20 md:py-28 bg-white" aria-labelledby="tutorials-heading">
-      <div className="container-page">
+    <section className="py-24 md:py-32 bg-gradient-to-br from-[#050505] via-[#111] to-[#0A0A0A] relative" aria-labelledby="tutorials-heading">
+      {/* Decorative noise/texture overlay could go here */}
+      <div className="container-page relative z-10">
         <SectionHeader
           eyebrow="Tutorial Sandbox"
           title="Learn by doing"
@@ -416,7 +441,7 @@ function FeaturedTutorialsSection() {
               key={t.slug}
               to="/tutorials/$slug"
               params={{ slug: t.slug }}
-              className="group glass flex flex-col overflow-hidden rounded-2xl hover:bg-white/95 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(128,0,0,0.08)] transition-all duration-300 ease-out"
+              className="group bg-white/5 backdrop-blur-xl border border-white/10 flex flex-col overflow-hidden rounded-[20px] hover:border-white/25 hover:bg-white/10 hover:-translate-y-2 hover:shadow-[0_15px_40px_rgba(0,0,0,0.5)] transition-all duration-500 ease-out"
             >
               <div
                 className="aspect-[16/9] w-full relative overflow-hidden"
@@ -427,24 +452,24 @@ function FeaturedTutorialsSection() {
               >
                 <div className="absolute inset-0 grid place-items-center">
                   <div
-                    className="h-12 w-12 rounded-xl grid place-items-center"
+                    className="h-14 w-14 rounded-[16px] grid place-items-center shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
                     style={{ background: DOMAIN_KEY_COLORS[t.domain], color: DOMAIN_TEXT_COLORS[t.domain] }}
                   >
-                    <BookOpen className="h-6 w-6" />
+                    <BookOpen className="h-7 w-7" />
                   </div>
                 </div>
               </div>
-              <div className="flex flex-1 flex-col p-5 space-y-3">
+              <div className="flex flex-1 flex-col p-8 space-y-5">
                 <div>
                   <DomainBadge domain={t.domain} />
                 </div>
-                <h3 className="font-display text-sm font-bold leading-snug line-clamp-2 text-slate-800 font-orbitron group-hover:text-[#800000] transition-colors">
+                <h3 className="font-display text-2xl font-black leading-snug line-clamp-2 text-white font-orbitron group-hover:text-primary transition-colors tracking-tight">
                   {t.title}
                 </h3>
-                <p className="text-xs text-slate-500 leading-relaxed font-outfit line-clamp-2 flex-1">{t.description}</p>
-                <div className="flex items-center justify-between text-[11px] text-slate-400 font-orbitron pt-1">
+                <p className="text-sm text-[#C7CBCE] leading-relaxed font-outfit line-clamp-2 flex-1">{t.description}</p>
+                <div className="flex items-center justify-between text-sm font-bold text-[#C7CBCE] font-orbitron pt-2">
                   <span>{t.readMinutes} min read</span>
-                  <span className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5">{t.difficulty}</span>
+                  <span className="rounded border-2 border-[#232323] bg-[#1a1a1a] px-2 py-1">{t.difficulty}</span>
                 </div>
               </div>
             </Link>
@@ -453,7 +478,7 @@ function FeaturedTutorialsSection() {
         <div className="mt-10 text-center">
           <Link
             to="/tutorials"
-            className="inline-flex items-center gap-2 rounded-xl border border-[#800000]/20 bg-white px-6 py-3 text-sm font-semibold text-[#800000] transition-all hover:bg-[#800000] hover:text-white hover:shadow-[0_4px_20px_rgba(128,0,0,0.2)] font-orbitron"
+            className="inline-flex items-center gap-2 rounded-xl border border-primary/20 bg-card px-6 py-3 text-sm font-semibold text-primary transition-all hover:bg-primary text-primary-foreground hover:text-primary-foreground hover:shadow-[0_4px_20px_rgba(156,255,59,0.2)] font-orbitron"
           >
             Browse All Tutorials <ArrowRight className="h-4 w-4" />
           </Link>
@@ -472,42 +497,40 @@ const HIGHLIGHTS = [
 
 function InternshipHighlightsSection() {
   return (
-    <section className="py-20 md:py-28 bg-[#F8F6F4]" aria-labelledby="internship-highlight-heading">
-      <div className="container-page">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#800000] via-[#9B0000] to-[#C41E3A] p-8 md:p-14 shadow-[0_16px_48px_rgba(128,0,0,0.25)]">
-          {/* decorative orb */}
-          <div className="absolute top-0 right-0 h-96 w-96 rounded-full bg-white/5 blur-[100px] pointer-events-none" />
-          <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-black/10 blur-[80px] pointer-events-none" />
-          <div className="relative z-10 grid items-center gap-12 lg:grid-cols-2">
+    <section className="py-24 md:py-32 bg-[#F9FAF5] overflow-hidden relative" aria-labelledby="internship-highlight-heading">
+      <div className="container-page relative z-10">
+        <div className="relative overflow-hidden rounded-[40px] bg-[#F4F7EB] border border-[#222] p-10 md:p-16 lg:p-20 shadow-[0_20px_80px_rgba(0,0,0,0.1)] group transition-all duration-700 hover:shadow-[0_30px_100px_rgba(143,204,30,0.2)] hover:border-black">
+          <div className="relative z-10 grid items-center gap-16 lg:grid-cols-2">
             <div className="text-left space-y-5">
-              <span className="inline-block rounded-full border border-white/20 bg-white/10 px-3.5 py-1 text-xs font-semibold text-white font-orbitron tracking-wider">
-                🚀 INDUSTRIAL LAUNCHPAD
+              <span className="inline-block rounded-full border border-[#222] bg-[#F9FAF5] px-3.5 py-1 text-xs font-semibold text-black font-orbitron tracking-wider">
+                INDUSTRIAL LAUNCHPAD
               </span>
               <h2
-                className="font-display text-3xl font-black text-white md:text-4xl font-orbitron leading-tight"
+                className="font-display text-5xl md:text-6xl lg:text-7xl font-black text-black font-orbitron leading-[1.1] tracking-tight drop-shadow-sm"
                 id="internship-highlight-heading"
               >
-                Real engineering.<br />Real credentials.
+                Real engineering.<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-lime-500">Real credentials.</span>
               </h2>
-              <p className="text-white/75 leading-relaxed font-outfit">
+              <p className="text-black leading-relaxed font-outfit">
                 Submit an application for your selected domain. Build features, resolve live issues, and launch production-grade modules.
               </p>
               <Link
                 to="/internships"
-                className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-bold text-[#800000] shadow-[0_4px_15px_rgba(0,0,0,0.15)] transition-all hover:bg-white/90 hover:scale-[1.02] font-orbitron"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-bold text-black shadow-[0_4px_15px_rgba(156,255,59,0.3)] transition-all hover:bg-lime-400 hover:scale-[1.02] font-orbitron"
               >
                 Apply for Internship <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-            <div className="grid gap-4">
+            <div className="grid gap-6">
               {HIGHLIGHTS.map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="flex items-start gap-4 rounded-xl border border-white/15 bg-white/10 p-5 backdrop-blur-md hover:bg-white/15 transition-all">
-                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/20 border border-white/20 text-white">
-                    <Icon className="h-5 w-5" aria-hidden="true" />
+                <div key={title} className="flex items-start gap-5 rounded-2xl border border-[#222] bg-[#F9FAF5] p-6 hover:border-black hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary border border-[#222] text-black shadow-[0_4px_15px_rgba(156,255,59,0.3)]">
+                    <Icon className="h-6 w-6" aria-hidden="true" />
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-bold text-white font-orbitron">{title}</p>
-                    <p className="mt-1 text-xs text-white/70 font-outfit leading-relaxed">{desc}</p>
+                    <p className="text-base font-bold text-black font-orbitron">{title}</p>
+                    <p className="mt-1.5 text-sm text-black font-outfit leading-relaxed">{desc}</p>
                   </div>
                 </div>
               ))}
@@ -533,23 +556,23 @@ const BENEFITS = [
 
 function BenefitsSection() {
   return (
-    <section className="py-20 md:py-28 bg-white" aria-labelledby="benefits-heading">
+    <section className="py-24 md:py-32 bg-[#F9FAF5]" aria-labelledby="benefits-heading">
       <div className="container-page">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="text-left space-y-4">
-            <span className="text-sm font-semibold uppercase tracking-wider text-[#800000] font-orbitron">Academy Merits</span>
-            <h2 className="font-display text-3xl font-black md:text-4xl text-slate-900 font-orbitron" id="benefits-heading">
+            <span className="text-sm font-semibold uppercase tracking-wider text-indigo-600">Academy Merits</span>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 leading-[1.1] tracking-tight" id="benefits-heading">
               Everything you need,<br />zero costs.
             </h2>
-            <p className="text-slate-500 leading-relaxed font-outfit">
+            <p className="text-slate-500 leading-relaxed text-lg max-w-md">
               No subscription gates. No locked content. Infynux Academy runs on a commitment to deliver premium tech training to all.
             </p>
           </div>
-          <ul className="grid gap-3.5 sm:grid-cols-2" role="list">
+          <ul className="grid gap-4 sm:grid-cols-2" role="list">
             {BENEFITS.map((benefit) => (
-              <li key={benefit} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-left hover:border-[#800000]/20 hover:bg-white transition-all">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#800000]" aria-hidden="true" />
-                <span className="text-sm text-slate-600 font-outfit">{benefit}</span>
+              <li key={benefit} className="flex items-center gap-5 rounded-2xl border border-slate-100 bg-white p-6 text-left shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <CheckCircle2 className="h-6 w-6 shrink-0 text-emerald-500" aria-hidden="true" />
+                <span className="text-base font-semibold text-slate-700 leading-snug">{benefit}</span>
               </li>
             ))}
           </ul>
@@ -562,7 +585,7 @@ function BenefitsSection() {
 // ─── TESTIMONIALS ─────────────────────────────────────────────────────────────
 function TestimonialsSection() {
   return (
-    <section className="py-20 md:py-28 bg-[#F8F6F4]" aria-labelledby="testimonials-heading">
+    <section className="py-24 md:py-32 bg-gradient-to-t from-black to-[#0A0A0A]" aria-labelledby="testimonials-heading">
       <div className="container-page">
         <SectionHeader
           eyebrow="Student Reviews"
@@ -572,26 +595,26 @@ function TestimonialsSection() {
         />
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {TESTIMONIALS.map((t) => (
-            <div key={t.name} className="flex flex-col justify-between glass rounded-2xl p-6 hover:bg-white/95 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(128,0,0,0.07)] transition-all duration-300">
-              <div className="space-y-4 text-left">
-                <div className="flex gap-0.5" aria-label={`${t.stars} out of 5 stars`}>
+            <div key={t.name} className="flex flex-col justify-between bg-white/5 backdrop-blur-xl border-2 border-white/20 rounded-[32px] p-10 hover:bg-white/10 hover:-translate-y-3 hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-all duration-500">
+              <div className="space-y-6 text-left">
+                <div className="flex gap-1" aria-label={`${t.stars} out of 5 stars`}>
                   {Array.from({ length: t.stars }).map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
+                    <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" aria-hidden="true" />
                   ))}
                 </div>
-                <p className="text-sm italic leading-relaxed text-slate-600 font-outfit">"{t.quote}"</p>
+                <p className="text-xl italic font-bold leading-relaxed text-white font-outfit tracking-tight">"{t.quote}"</p>
               </div>
-              <div className="mt-6 flex items-center gap-3.5 pt-4 border-t border-slate-100">
+              <div className="mt-8 flex items-center gap-4 pt-6 border-t-2 border-white/10">
                 <div
-                  className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-xs font-bold text-white font-orbitron"
+                  className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-base font-black text-white font-orbitron"
                   style={{ background: "linear-gradient(135deg, #800000 0%, #C41E3A 100%)" }}
                   aria-hidden="true"
                 >
                   {t.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)}
                 </div>
                 <div className="text-left">
-                  <p className="text-sm font-bold text-slate-800 font-orbitron">{t.name}</p>
-                  <p className="text-[11px] text-slate-400 font-outfit">{t.college}</p>
+                  <p className="text-xl font-black text-white font-orbitron tracking-tight">{t.name}</p>
+                  <p className="text-sm font-bold text-[#C7CBCE] font-outfit uppercase tracking-widest mt-1">{t.college}</p>
                 </div>
               </div>
             </div>
@@ -606,28 +629,40 @@ function TestimonialsSection() {
 function FAQSection() {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   return (
-    <section className="py-20 md:py-28 bg-white" aria-labelledby="faq-heading">
-      <div className="container-page max-w-3xl">
-        <SectionHeader
-          eyebrow="Support"
-          title="Frequently asked questions"
-          subtitle="Everything you need to know to get started."
-          id="faq-heading"
-        />
-        <dl className="mt-12 space-y-3">
+    <section className="py-24 md:py-32 bg-white" aria-labelledby="faq-heading">
+      <div className="container-page">
+        <div className="grid gap-12 lg:grid-cols-2 items-start">
+          <div className="sticky top-24 space-y-8">
+            <SectionHeader
+              eyebrow="Support"
+              title="Frequently asked questions"
+              subtitle="Everything you need to know to get started."
+              id="faq-heading"
+              theme="light"
+              align="left"
+            />
+            <div className="hidden lg:block relative w-full aspect-square rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 p-8">
+              <img 
+                src="/man_asking_question.png" 
+                alt="Man asking a question"
+                className="w-full h-full object-contain mix-blend-multiply opacity-80"
+              />
+            </div>
+          </div>
+          <dl className="space-y-4">
           {FAQS.map((faq, i) => (
             <div
               key={i}
-              className={`overflow-hidden rounded-xl border transition-all duration-200 ${
+              className={`overflow-hidden rounded-2xl border transition-all duration-300 ${
                 openIdx === i
-                  ? "border-[#800000]/20 bg-[#800000]/3 shadow-sm"
-                  : "border-slate-200 bg-white hover:border-[#800000]/15"
+                  ? "border-indigo-100 bg-indigo-50/30 shadow-md scale-[1.01]"
+                  : "border-slate-100 bg-white hover:border-slate-200 hover:shadow-sm"
               }`}
             >
               <dt>
                 <button
                   type="button"
-                  className="flex w-full items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-slate-800 font-orbitron"
+                  className={`flex w-full items-center justify-between gap-6 px-8 py-6 text-left text-lg md:text-xl font-bold transition-colors tracking-tight ${openIdx === i ? "text-indigo-600" : "text-slate-800"}`}
                   onClick={() => setOpenIdx(openIdx === i ? null : i)}
                   aria-expanded={openIdx === i}
                   aria-controls={`faq-answer-${i}`}
@@ -635,7 +670,7 @@ function FAQSection() {
                 >
                   <span>{faq.question}</span>
                   <ChevronDown
-                    className={`h-4 w-4 shrink-0 text-[#800000] transition-transform duration-300 ${openIdx === i ? "rotate-180" : "rotate-0"}`}
+                    className={`h-5 w-5 shrink-0 text-slate-400 transition-transform duration-300 ${openIdx === i ? "rotate-180 text-indigo-500" : "rotate-0"}`}
                     aria-hidden="true"
                   />
                 </button>
@@ -645,13 +680,14 @@ function FAQSection() {
                 role="region"
                 aria-labelledby={`faq-question-${i}`}
                 className="overflow-hidden transition-all duration-300"
-                style={{ maxHeight: openIdx === i ? "400px" : "0" }}
+                style={{ maxHeight: openIdx === i ? "600px" : "0" }}
               >
-                <p className="px-6 pb-5 text-sm leading-relaxed text-slate-500 font-outfit text-left">{faq.answer}</p>
+                <p className={`px-8 pb-8 text-base leading-relaxed text-left ${openIdx === i ? "text-slate-600" : "text-slate-500"}`}>{faq.answer}</p>
               </dd>
             </div>
           ))}
-        </dl>
+          </dl>
+        </div>
       </div>
     </section>
   );
@@ -689,51 +725,61 @@ function NewsletterSection() {
   };
 
   return (
-    <section className="py-20 md:py-28 bg-[#F8F6F4]" aria-labelledby="newsletter-heading">
-      <div className="container-page max-w-2xl">
-        <div className="text-center rounded-3xl border border-[#800000]/12 bg-white p-8 md:p-14 shadow-[0_8px_40px_rgba(128,0,0,0.06)]">
-          <span className="text-sm font-semibold uppercase tracking-wider text-[#800000] font-orbitron">Stay Updated</span>
-          <h2 className="mt-3 font-display text-3xl font-black text-slate-900 font-orbitron" id="newsletter-heading">
-            Never miss an update
-          </h2>
-          <p className="mt-3 text-slate-500 font-outfit">
-            Stay informed on newly published roadmaps, tutorials, and remote internships.
-          </p>
-          {state === "success" ? (
-            <div className="mt-8 rounded-xl border border-emerald-200 bg-emerald-50 px-6 py-4 text-sm text-emerald-700 font-orbitron">
-              {msg}
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="mt-8 flex flex-col sm:flex-row gap-3">
-              <label htmlFor="newsletter-email" className="sr-only">Email address</label>
-              <input
-                id="newsletter-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email address"
-                required
-                className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 font-outfit focus:border-[#800000] focus:outline-none focus:ring-2 focus:ring-[#800000]/15 transition-all"
-              />
-              <button
-                type="submit"
-                disabled={state === "loading"}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#800000] px-6 py-3.5 text-sm font-bold text-white shadow-[0_4px_15px_rgba(128,0,0,0.20)] hover:bg-[#6B0000] hover:shadow-[0_4px_20px_rgba(128,0,0,0.30)] transition-all disabled:opacity-60 font-orbitron whitespace-nowrap"
-              >
-                {state === "loading" ? (
-                  <span className="flex items-center gap-1.5">
-                    <span className="block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    Subscribing...
-                  </span>
-                ) : (
-                  <><Mail className="h-4 w-4" />Subscribe</>
-                )}
-              </button>
-            </form>
-          )}
+    <section className="py-24 md:py-32 bg-[#F9FAF5]" aria-labelledby="newsletter-heading">
+      <div className="container-page max-w-4xl relative">
+        {/* The peering man image positioned behind the card */}
+        <div className="flex justify-center -mb-[180px] md:-mb-[220px] relative z-0">
+          <img src="/peering_man_transparent.png" alt="Man holding card" className="w-[450px] md:w-[650px] object-contain drop-shadow-xl pointer-events-none opacity-90" />
+        </div>
+        
+        <div className="text-center rounded-[40px] border-4 border-[#222] bg-[#0A0A0A] p-12 md:p-20 shadow-[0_30px_80px_rgba(0,0,0,0.15)] relative overflow-hidden z-10 mt-10">
+          {/* Maximalist glow behind the form */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
+          
+          <div className="relative z-10">
+            <span className="text-sm font-semibold uppercase tracking-wider text-primary font-orbitron">Stay Updated</span>
+            <h2 className="mt-4 font-display text-5xl md:text-6xl lg:text-7xl font-black text-white font-orbitron tracking-tight" id="newsletter-heading">
+              Never miss an update
+            </h2>
+            <p className="mt-6 text-[#C7CBCE] font-outfit text-xl font-bold">
+              Stay informed on newly published roadmaps, tutorials, and remote internships.
+            </p>
+            {state === "success" ? (
+              <div className="mt-10 rounded-2xl border-2 border-emerald-400 bg-emerald-500/10 px-8 py-6 text-lg font-black text-emerald-400 font-orbitron backdrop-blur-md">
+                {msg}
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="mt-10 flex flex-col sm:flex-row gap-4">
+                <label htmlFor="newsletter-email" className="sr-only">Email address</label>
+                <input
+                  id="newsletter-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  required
+                  className="flex-1 rounded-2xl border-2 border-[#333] bg-[#111] px-8 py-6 text-lg font-bold text-white placeholder:text-[#C7CBCE]/50 font-outfit focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/20 transition-all"
+                />
+                <button
+                  type="submit"
+                  disabled={state === "loading"}
+                  className="inline-flex items-center justify-center gap-3 rounded-2xl bg-primary text-black px-10 py-6 text-lg font-black shadow-[0_4px_30px_rgba(156,255,59,0.3)] hover:bg-lime-400 hover:shadow-[0_8px_40px_rgba(156,255,59,0.4)] transition-all disabled:opacity-60 font-orbitron whitespace-nowrap"
+                >
+                  {state === "loading" ? (
+                    <span className="flex items-center gap-2">
+                      <span className="block h-5 w-5 animate-spin rounded-full border-4 border-black border-t-transparent" />
+                      Subscribing...
+                    </span>
+                  ) : (
+                    <><Mail className="h-6 w-6" />Subscribe</>
+                  )}
+                </button>
+              </form>
+            )}
           {state === "error" && (
             <p className="mt-3 text-xs text-red-500 font-orbitron" role="alert">{msg}</p>
           )}
+          </div>
         </div>
       </div>
     </section>
@@ -746,19 +792,21 @@ export function SectionHeader({
   title,
   subtitle,
   id,
+  theme = "dark"
 }: {
   eyebrow: string;
   title: string;
   subtitle?: string;
   id?: string;
+  theme?: "light" | "dark";
 }) {
   return (
-    <div className="max-w-2xl text-left space-y-3 mb-10">
-      <span className="text-sm font-semibold uppercase tracking-wider text-[#800000] font-orbitron">{eyebrow}</span>
-      <h2 className="font-display text-3xl font-black text-slate-900 md:text-4xl font-orbitron leading-tight" id={id}>
+    <div className="max-w-2xl text-left space-y-3 mb-10 relative z-10">
+      <span className="text-sm font-semibold uppercase tracking-wider text-primary font-orbitron">{eyebrow}</span>
+      <h2 className={`font-display text-5xl font-black md:text-6xl lg:text-7xl font-orbitron leading-[1.1] tracking-tight drop-shadow-sm ${theme === 'dark' ? 'text-white' : 'text-black'}`} id={id}>
         {title}
       </h2>
-      {subtitle && <p className="text-slate-500 leading-relaxed font-outfit text-sm">{subtitle}</p>}
+      {subtitle && <p className={`leading-relaxed font-outfit text-sm ${theme === 'dark' ? 'text-[#C7CBCE]' : 'text-black'}`}>{subtitle}</p>}
     </div>
   );
 }

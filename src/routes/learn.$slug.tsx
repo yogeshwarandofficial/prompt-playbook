@@ -70,11 +70,11 @@ function phaseColor(phase: string) {
 // ── Section heading ────────────────────────────────────────────────────────────
 function SectionHeading({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="mb-6 flex items-center gap-3">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#800000]/8 border border-[#800000]/12 text-[#800000]">
+    <div className="mb-8 flex items-center gap-4">
+      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0A0A0A] border-4 border-[#222] text-primary shadow-[4px_4px_0px_rgba(0,0,0,1)]">
         {icon}
       </span>
-      <h2 className="text-xl font-bold text-slate-900">{children}</h2>
+      <h2 className="text-2xl font-black text-slate-900 font-orbitron">{children}</h2>
     </div>
   );
 }
@@ -91,35 +91,35 @@ function TopicCard({
 }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-xl border border-slate-200 bg-white overflow-hidden transition-all hover:border-[#800000]/20 hover:shadow-[0_4px_16px_rgba(128,0,0,0.07)]">
+    <div className="rounded-xl border border-black bg-white overflow-hidden transition-all hover:shadow-md hover:border-black group">
       <button
         type="button"
         onClick={() => setOpen((p) => !p)}
-        className="flex w-full items-center gap-4 px-5 py-4 text-left"
+        className="flex w-full items-center gap-4 px-6 py-5 text-left"
         aria-expanded={open}
       >
         <span
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-black text-black border-2 border-black font-orbitron shadow-sm"
           style={{ background: domainColor }}
         >
           {index + 1}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="font-semibold text-slate-800 leading-snug">{topic.name}</p>
-          <p className="mt-0.5 text-xs text-slate-400">
+          <p className="font-bold text-slate-900 leading-snug font-orbitron text-lg">{topic.name}</p>
+          <p className="mt-1 text-xs text-slate-500 font-outfit font-semibold uppercase tracking-wider">
             {topic.lessons.length} lessons · {topic.duration}
           </p>
         </div>
         <ChevronDown
-          className={cn("h-5 w-5 shrink-0 text-slate-400 transition-transform", open && "rotate-180")}
+          className={cn("h-6 w-6 shrink-0 text-slate-400 transition-transform group-hover:text-primary", open && "rotate-180 text-primary")}
           aria-hidden="true"
         />
       </button>
       {open && (
-        <ul className="border-t border-slate-100 bg-slate-50/50 px-5 py-4 space-y-2">
+        <ul className="border-t border-slate-100 bg-slate-50 px-6 py-5 space-y-3">
           {topic.lessons.map((lesson, i) => (
-            <li key={i} className="flex items-start gap-2.5 text-sm text-slate-600">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#800000]" aria-hidden="true" />
+            <li key={i} className="flex items-start gap-3 text-sm text-slate-700 font-outfit font-medium">
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
               {lesson}
             </li>
           ))}
@@ -156,21 +156,21 @@ function ModuleSection({
         />
       )}
       {/* Phase header */}
-      <div className="flex items-start gap-4 mb-5">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl shadow-sm border border-slate-200 bg-white">
+      <div className="flex items-start gap-5 mb-8">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-3xl shadow-[4px_4px_0px_rgba(0,0,0,1)] border-4 border-black bg-white">
           {module.emoji}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-2 mb-1">
-            <span className={cn("rounded-full px-3 py-0.5 text-xs font-bold border", pc.bg, pc.text, pc.border)}>
+          <div className="flex flex-wrap items-center gap-3 mb-2">
+            <span className={cn("rounded-xl px-3 py-1 text-xs font-black border-2 uppercase tracking-wider font-orbitron", pc.bg, pc.text, pc.border)}>
               {module.phase}
             </span>
-            <span className="text-xs text-slate-400">{totalTopics} modules · {totalLessons} lessons</span>
+            <span className="text-xs text-slate-500 font-outfit font-bold uppercase tracking-wider">{totalTopics} modules · {totalLessons} lessons</span>
           </div>
-          <h3 className="text-base font-bold text-slate-800 leading-snug">
+          <h3 className="text-xl font-black text-slate-900 leading-snug font-orbitron">
             Phase {moduleIndex + 1}: {module.phase}
           </h3>
-          <p className="mt-1 text-sm text-slate-500 leading-relaxed">{module.summary}</p>
+          <p className="mt-2 text-base text-slate-600 leading-relaxed font-outfit font-medium">{module.summary}</p>
         </div>
       </div>
       {/* Topic cards */}
@@ -213,35 +213,35 @@ function LearnPage() {
       />
 
       {/* ── Hero Stats Banner ─────────────────────────────────────────────── */}
-      <div className="w-full border-b border-slate-200 bg-white">
-        <div className="container-page max-w-5xl py-8">
-          <div className="flex flex-wrap items-center gap-2.5 mb-5">
+      <div className="w-full border-b-4 border-[#222] bg-[#0A0A0A] text-white py-10">
+        <div className="container-page max-w-5xl">
+          <div className="flex flex-wrap items-center gap-3 mb-8">
             <span
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-white"
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-black text-black border-2 border-black uppercase tracking-wider font-orbitron"
               style={{ background: domainColor }}
             >
               {domain.icon} {DOMAIN_NAME_MAP[roadmap.domain]}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-semibold text-slate-600">
-              <BarChart3 className="h-3.5 w-3.5" /> {roadmap.difficulty}
+            <span className="inline-flex items-center gap-2 rounded-xl border-2 border-[#333] bg-[#111] px-4 py-2 text-sm font-bold text-[#C7CBCE] font-orbitron">
+              <BarChart3 className="h-4 w-4 text-primary" /> {roadmap.difficulty}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-semibold text-slate-600">
-              <Clock className="h-3.5 w-3.5" /> {roadmap.duration}
+            <span className="inline-flex items-center gap-2 rounded-xl border-2 border-[#333] bg-[#111] px-4 py-2 text-sm font-bold text-[#C7CBCE] font-orbitron">
+              <Clock className="h-4 w-4 text-primary" /> {roadmap.duration}
             </span>
           </div>
           {/* Stat pills */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: "Phases",  value: roadmap.modules.length, icon: <Layers className="h-4 w-4" /> },
-              { label: "Modules", value: totalTopics,            icon: <BookOpen className="h-4 w-4" /> },
-              { label: "Lessons", value: totalLessons,           icon: <CheckCircle2 className="h-4 w-4" /> },
-              { label: "Projects", value: roadmap.projects.length, icon: <Trophy className="h-4 w-4" /> },
+              { label: "Phases",  value: roadmap.modules.length, icon: <Layers className="h-5 w-5" /> },
+              { label: "Modules", value: totalTopics,            icon: <BookOpen className="h-5 w-5" /> },
+              { label: "Lessons", value: totalLessons,           icon: <CheckCircle2 className="h-5 w-5" /> },
+              { label: "Projects", value: roadmap.projects.length, icon: <Trophy className="h-5 w-5" /> },
             ].map((s) => (
-              <div key={s.label} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-center gap-1.5 text-slate-400 text-xs mb-1">
+              <div key={s.label} className="rounded-2xl border-2 border-[#333] bg-[#111] p-5 hover:border-primary/50 transition-colors">
+                <div className="flex items-center gap-2 text-primary text-sm font-bold font-orbitron uppercase tracking-widest mb-2">
                   {s.icon} {s.label}
                 </div>
-                <p className="text-2xl font-bold text-slate-900">{s.value}</p>
+                <p className="text-3xl font-black text-white font-orbitron">{s.value}</p>
               </div>
             ))}
           </div>
@@ -257,18 +257,18 @@ function LearnPage() {
 
             {/* Overview */}
             <section>
-              <SectionHeading icon={<Sparkles className="h-5 w-5" />}>Course Overview</SectionHeading>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-[#800000]/20 transition-colors">
-                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Who This Is For</h3>
-                  <p className="text-sm leading-relaxed text-slate-600">{roadmap.audience}</p>
+              <SectionHeading icon={<Sparkles className="h-6 w-6" />}>Course Overview</SectionHeading>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <div className="rounded-xl border-2 border-black bg-white p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                  <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">Who This Is For</h3>
+                  <p className="text-sm leading-relaxed text-slate-700">{roadmap.audience}</p>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-[#800000]/20 transition-colors">
-                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Prerequisites</h3>
-                  <ul className="space-y-2">
+                <div className="rounded-xl border-2 border-black bg-white p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                  <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">Prerequisites</h3>
+                  <ul className="space-y-3">
                     {roadmap.prerequisites.map((p, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-slate-600">
-                        <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#800000]" />
+                      <li key={i} className="flex items-center gap-3 text-sm text-slate-700 font-outfit font-medium">
+                        <ChevronRight className="h-5 w-5 shrink-0 text-primary font-bold" />
                         {p}
                       </li>
                     ))}
@@ -296,26 +296,26 @@ function LearnPage() {
             {/* Projects */}
             <section id="projects">
               <SectionHeading icon={<Trophy className="h-5 w-5" />}>Capstone Projects</SectionHeading>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-6 sm:grid-cols-2">
                 {roadmap.projects.map((project, i) => (
                   <div
                     key={project.title}
-                    className="group relative rounded-2xl border border-slate-200 bg-white p-5 overflow-hidden hover:border-[#800000]/20 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(128,0,0,0.08)] transition-all duration-300"
+                    className="group relative rounded-2xl border-2 border-black bg-white p-6 overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
                   >
                     <div
-                      className="absolute -top-6 -right-6 h-20 w-20 rounded-full opacity-10"
+                      className="absolute -top-6 -right-6 h-24 w-24 rounded-full opacity-[0.08]"
                       style={{ background: domainColor }}
                       aria-hidden="true"
                     />
-                    <p className="text-xs font-semibold text-slate-400 mb-1">Project {i + 1}</p>
-                    <h3 className="font-bold text-base mb-2 text-slate-800">{project.title}</h3>
-                    <p className="text-sm text-slate-500 mb-4 leading-relaxed">{project.description}</p>
+                    <p className="text-xs font-bold text-[#800000] mb-2 uppercase tracking-widest">Project {i + 1}</p>
+                    <h3 className="font-bold text-xl mb-3 text-slate-800">{project.title}</h3>
+                    <p className="text-sm text-slate-600 mb-6 leading-relaxed">{project.description}</p>
                     {project.tech && (
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex flex-wrap gap-2">
                         {project.tech.map((t) => (
                           <span
                             key={t}
-                            className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-500"
+                            className="rounded-lg bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600"
                           >
                             {t}
                           </span>
@@ -330,19 +330,18 @@ function LearnPage() {
             {/* Career Outcomes */}
             <section id="careers">
               <SectionHeading icon={<BriefcaseIcon className="h-5 w-5" />}>Career Outcomes</SectionHeading>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {roadmap.careers.map((career) => (
                   <div
                     key={career.role}
-                    className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-[#800000]/20 hover:shadow-[0_4px_16px_rgba(128,0,0,0.06)] transition-all"
-                    style={{ borderTop: `3px solid ${domainColor}` }}
+                    className="rounded-xl border-2 border-black bg-white p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all"
                   >
-                    <p className="font-bold text-sm text-slate-800">{career.role}</p>
-                    <p className="mt-1 text-lg font-bold" style={{ color: domainColor }}>
+                    <p className="font-bold text-sm text-slate-800 tracking-wide">{career.role}</p>
+                    <p className="mt-2 text-2xl font-bold text-emerald-600">
                       {career.salary}
                     </p>
                     {career.companies && (
-                      <p className="mt-2 text-xs text-slate-400">
+                      <p className="mt-3 text-xs font-medium text-slate-500">
                         e.g. {career.companies.join(", ")}
                       </p>
                     )}
@@ -353,18 +352,18 @@ function LearnPage() {
 
             {/* Resources */}
             <section id="resources">
-              <SectionHeading icon={<ExternalLink className="h-5 w-5" />}>Free Resources</SectionHeading>
-              <ul className="space-y-3">
+              <SectionHeading icon={<ExternalLink className="h-6 w-6" />}>Free Resources</SectionHeading>
+              <ul className="space-y-4">
                 {roadmap.resources.map((r) => (
                   <li key={r.url}>
                     <a
                       href={r.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 transition-all hover:border-[#800000]/30 hover:bg-[#800000]/3 hover:shadow-sm"
+                      className="group flex items-center justify-between rounded-xl border-2 border-black bg-white p-5 transition-all hover:border-black hover:shadow-md"
                     >
-                      <span className="text-sm font-semibold text-slate-700 group-hover:text-[#800000] transition-colors">{r.label}</span>
-                      <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-[#800000] transition-colors" />
+                      <span className="text-base font-bold text-slate-800 group-hover:text-slate-900 transition-colors">{r.label}</span>
+                      <ExternalLink className="h-5 w-5 text-slate-400 group-hover:text-slate-900 transition-colors" />
                     </a>
                   </li>
                 ))}
@@ -376,38 +375,36 @@ function LearnPage() {
           <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
 
             {/* Quick Enrol Card */}
-            <div className="rounded-2xl p-5 text-white space-y-4 shadow-[0_8px_32px_rgba(128,0,0,0.18)]"
-              style={{
-                background: `linear-gradient(135deg, #800000 0%, #C41E3A 100%)`,
-              }}
+            <div className="rounded-[32px] p-8 text-white space-y-6 shadow-[0_10px_40px_rgba(156,255,59,0.15)] border-4 border-primary bg-[#0A0A0A] relative overflow-hidden"
             >
-              <p className="text-xs font-semibold uppercase tracking-wider text-white/70">Free Course</p>
-              <h3 className="text-lg font-bold text-white">{roadmap.title}</h3>
-              <dl className="space-y-2 text-sm">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-[40px]" />
+              <p className="text-xs font-black uppercase tracking-widest text-primary font-orbitron">Free Course</p>
+              <h3 className="text-2xl font-black text-white font-orbitron leading-tight">{roadmap.title}</h3>
+              <dl className="space-y-4 text-sm font-outfit">
                 {[
                   { label: "Phases",     val: roadmap.modules.length },
                   { label: "Lessons",    val: totalLessons },
                   { label: "Duration",   val: roadmap.duration },
                   { label: "Difficulty", val: roadmap.difficulty },
                 ].map(({ label, val }) => (
-                  <div key={label} className="flex justify-between border-b border-white/10 pb-1.5">
-                    <dt className="text-white/70">{label}</dt>
-                    <dd className="font-semibold">{val}</dd>
+                  <div key={label} className="flex justify-between border-b border-[#333] pb-2">
+                    <dt className="text-[#C7CBCE] font-semibold">{label}</dt>
+                    <dd className="font-bold text-white">{val}</dd>
                   </div>
                 ))}
               </dl>
               <Link
                 to="/internships"
-                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-[#800000] shadow hover:bg-white/90 transition-colors"
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 transition-all"
               >
-                Apply for Internship <ArrowRight className="h-4 w-4" />
+                Apply for Internship <ArrowRight className="h-5 w-5" />
               </Link>
             </div>
 
             {/* Table of Contents */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="mb-4 text-sm font-bold text-slate-800">In This Course</h3>
-              <nav className="space-y-1">
+            <div className="rounded-2xl border-2 border-black bg-white p-6 shadow-sm">
+              <h3 className="mb-5 text-sm font-bold text-slate-900 uppercase tracking-widest">In This Course</h3>
+              <nav className="space-y-2">
                 {[
                   { label: "Overview",        href: "#overview"  },
                   { label: "Curriculum",      href: "#curriculum" },
@@ -418,9 +415,9 @@ function LearnPage() {
                   <a
                     key={item.href}
                     href={item.href}
-                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-500 hover:bg-[#800000]/5 hover:text-[#800000] transition-colors"
+                    className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-600 hover:bg-[#F4F7EB] hover:text-black hover:border-l-4 hover:border-primary transition-all font-outfit"
                   >
-                    <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#800000]/50" />
+                    <ChevronRight className="h-4 w-4 shrink-0 text-primary" />
                     {item.label}
                   </a>
                 ))}
@@ -428,19 +425,19 @@ function LearnPage() {
             </div>
 
             {/* Phase overview */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="mb-4 text-sm font-bold text-slate-800">Learning Phases</h3>
-              <ol className="space-y-3">
+            <div className="rounded-2xl border-2 border-black bg-white p-6 shadow-sm">
+              <h3 className="mb-5 text-sm font-bold text-slate-900 uppercase tracking-widest">Learning Phases</h3>
+              <ol className="space-y-4">
                 {roadmap.modules.map((m, i) => {
                   const pc = phaseColor(m.phase);
                   return (
-                    <li key={m.phase} className="flex items-center gap-3">
-                      <span className="text-xl shrink-0">{m.emoji}</span>
+                    <li key={m.phase} className="flex items-center gap-4">
+                      <span className="text-2xl shrink-0 p-2 border-2 border-black rounded-xl bg-[#F9FAF5] shadow-[2px_2px_0px_rgba(0,0,0,1)]">{m.emoji}</span>
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-semibold text-slate-400">Phase {i + 1}</p>
-                        <p className={cn("text-xs font-bold", pc.text)}>{m.phase}</p>
+                        <p className="text-xs font-black text-slate-400 uppercase tracking-wider font-orbitron">Phase {i + 1}</p>
+                        <p className={cn("text-sm font-bold mt-0.5", pc.text)}>{m.phase}</p>
                       </div>
-                      <span className="shrink-0 text-xs text-slate-400">
+                      <span className="shrink-0 text-xs font-bold text-slate-500 font-outfit bg-slate-100 px-2 py-1 rounded-md">
                         {m.topics.length} mods
                       </span>
                     </li>
@@ -461,7 +458,7 @@ function LearnPage() {
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
               to="/internships"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-[#800000] shadow hover:bg-white/90 transition-colors"
+              className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
               Apply Now <ArrowRight className="h-4 w-4" />
             </Link>

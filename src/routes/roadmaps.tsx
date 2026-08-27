@@ -33,32 +33,40 @@ function RoadmapsPage() {
           {ROADMAPS.map((r) => {
             const d = DOMAINS.find((x) => x.key === r.domain)!;
             return (
-              <article key={r.slug} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(128,0,0,0.08)] hover:border-[#800000]/20 transition-all duration-300">
-                <span
-                  className="grid h-12 w-12 place-items-center rounded-xl text-2xl"
-                  style={{ background: `color-mix(in oklch, ${DOMAIN_COLORS[r.domain]} 18%, transparent)` }}
+              <article key={r.slug} className="flex flex-col rounded-2xl border border-slate-100 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 ease-out text-left group overflow-hidden">
+                <div
+                  className="relative aspect-video w-full overflow-hidden bg-slate-100"
                 >
-                  {d.icon}
-                </span>
-                <h2 className="mt-4 font-display text-lg font-semibold text-slate-800 font-orbitron">{r.title}</h2>
-                <p className="mt-2 text-sm text-slate-500 font-outfit line-clamp-3">{r.description}</p>
-                <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-orbitron">
-                  <span className="rounded-full bg-slate-100 border border-slate-200 px-2.5 py-1 font-medium text-slate-500">{r.difficulty}</span>
-                  <span className="rounded-full bg-slate-100 border border-slate-200 px-2.5 py-1 font-medium text-slate-500">{r.duration}</span>
+                  <img 
+                    src={`/ui_${d.key}.png`} 
+                    alt={r.title} 
+                    className="absolute inset-0 w-full h-full object-cover scale-[1.35] transition-transform duration-500 group-hover:scale-[1.45]" 
+                  />
                 </div>
-                <div className="mt-3 flex flex-wrap gap-1.5">
+                <div className="flex flex-col flex-1 p-5 sm:p-6">
+                <h2 className="mt-2 text-xl font-bold text-slate-800 transition-colors">{r.title}</h2>
+                <p className="mt-3 text-sm text-slate-500 leading-relaxed line-clamp-2">{d.desc}</p>
+                
+                <div className="mt-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-orbitron">Technologies</span>
+                    <div className="h-px bg-slate-100 flex-1"></div>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
                   {d.skills.slice(0, 3).map((s) => (
-                    <span key={s} className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-400 font-orbitron">{s}</span>
+                    <span key={s} className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{s}</span>
                   ))}
+                  </div>
                 </div>
                 <div className="mt-6 flex gap-2">
                   <Link
                     to="/learn/$slug"
                     params={{ slug: r.slug }}
-                    className="flex-1 inline-flex items-center justify-center gap-1 rounded-xl bg-[#800000] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_4px_15px_rgba(128,0,0,0.20)] hover:bg-[#6B0000] hover:shadow-[0_4px_20px_rgba(128,0,0,0.30)] transition-all font-orbitron"
+                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 transition-all"
                   >
                     Start Learning <ArrowRight className="h-4 w-4" />
                   </Link>
+                </div>
                 </div>
               </article>
             );
@@ -200,28 +208,31 @@ export function PageHeader({
   subtitle?: string;
 }) {
   return (
-    <section className="relative overflow-hidden border-b border-slate-200 bg-white">
-      <div className="container-page py-12 md:py-16 text-left">
-        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 font-orbitron">
+    <section className="relative overflow-hidden border-b-2 border-[#222] bg-[#0A0A0A]">
+      {/* Subtle background glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
+      
+      <div className="container-page py-12 md:py-16 text-left relative z-10">
+        <nav aria-label="Breadcrumb" className="text-xs text-[#C7CBCE]/70 font-orbitron">
           <ol className="flex flex-wrap items-center gap-1.5">
             {crumbs.map((c, i) => (
               <li key={i} className="flex items-center gap-1.5">
                 {c.to ? (
-                  <Link to={c.to} className="hover:text-[#800000] transition-colors">
+                  <Link to={c.to} className="hover:text-primary transition-colors">
                     {c.label}
                   </Link>
                 ) : (
-                  <span className="text-slate-600">{c.label}</span>
+                  <span className="text-[#C7CBCE]">{c.label}</span>
                 )}
-                {i < crumbs.length - 1 && <ChevronRight className="h-3 w-3 text-slate-300" />}
+                {i < crumbs.length - 1 && <ChevronRight className="h-3 w-3 text-[#333]" />}
               </li>
             ))}
           </ol>
         </nav>
-        <h1 className="mt-4 font-display text-3xl font-black text-slate-900 sm:text-4xl font-orbitron tracking-wide">
+        <h1 className="mt-4 font-display text-4xl font-black text-white sm:text-5xl lg:text-6xl font-orbitron tracking-wide">
           {title}
         </h1>
-        {subtitle && <p className="mt-3 max-w-2xl text-slate-500 text-sm md:text-base font-outfit leading-relaxed">{subtitle}</p>}
+        {subtitle && <p className="mt-4 max-w-2xl text-[#C7CBCE] text-sm md:text-lg font-outfit font-bold">{subtitle}</p>}
       </div>
     </section>
   );

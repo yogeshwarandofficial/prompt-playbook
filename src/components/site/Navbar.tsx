@@ -63,25 +63,28 @@ export function Navbar() {
     <>
       <header
         className={cn(
-          "sticky top-0 z-50 transition-all duration-300 border-b",
+          "fixed top-4 left-4 right-4 z-50 mx-auto max-w-6xl transition-all duration-300 rounded-full",
           scrolled
-            ? "border-slate-200 bg-white/90 backdrop-blur-xl shadow-sm"
-            : "border-transparent bg-white/70 backdrop-blur-md"
+            ? "bg-[#050505]/95 backdrop-blur-xl shadow-lg border border-white/10"
+            : "bg-[#0A0A0A] shadow-sm border border-white/5"
         )}
         role="banner"
       >
         <nav
-          className="container-page flex h-16 items-center justify-between"
+          className="px-6 flex h-16 items-center justify-between"
           aria-label="Main navigation"
         >
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-2.5 font-display text-lg font-bold text-slate-900 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2.5 font-display text-lg font-bold text-white hover:opacity-80 transition-opacity"
             aria-label="Infynux Academy home"
           >
-            <img src="/new-logo.png" alt="Infynux Academy Logo" className="h-14 w-auto object-contain drop-shadow-sm" />
-            <span className="hidden sm:block font-orbitron text-[#800000]">Infynux Academy</span>
+            <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-10 w-auto object-contain drop-shadow-sm brightness-125 contrast-125" />
+            <span className="hidden sm:block text-2xl font-black">
+              <span className="text-white">Infynux </span>
+              <span className="text-lime-500">Academy</span>
+            </span>
           </Link>
 
           {/* Desktop nav */}
@@ -93,17 +96,17 @@ export function Navbar() {
                   <Link
                     to={link.to}
                     className={cn(
-                      "relative rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 font-orbitron",
+                      "relative rounded-full px-5 py-2 text-sm font-bold transition-all duration-200",
                       isActive
-                        ? "text-[#800000]"
-                        : "text-slate-600 hover:text-[#800000] hover:bg-[#800000]/5"
+                        ? "text-white bg-white/10"
+                        : "text-white/60 hover:text-white hover:bg-white/5"
                     )}
                     aria-current={isActive ? "page" : undefined}
                   >
                     {link.label}
                     {isActive && (
                       <span
-                        className="absolute bottom-0 left-4 right-4 h-[2px] rounded-full bg-[#800000]"
+                        className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-indigo-600"
                         aria-hidden="true"
                       />
                     )}
@@ -117,7 +120,7 @@ export function Navbar() {
           <div className="flex items-center gap-3">
             <Link
               to="/internships"
-              className="hidden items-center rounded-xl bg-[#800000] px-5 py-2 text-sm font-semibold text-white shadow-[0_4px_15px_rgba(128,0,0,0.25)] transition-all hover:bg-[#6B0000] hover:shadow-[0_4px_20px_rgba(128,0,0,0.35)] hover:scale-[1.02] active:scale-[0.98] md:flex font-orbitron"
+              className="hidden items-center rounded-full bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 md:flex"
             >
               Apply Now
             </Link>
@@ -130,7 +133,7 @@ export function Navbar() {
               aria-label="Open menu"
               aria-expanded={open}
               aria-controls="mobile-nav"
-              className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-[#800000] hover:border-[#800000]/20 hover:bg-[#800000]/5 transition-all md:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white md:hidden transition-colors"
             >
               <Menu className="h-5 w-5" aria-hidden="true" />
             </button>
@@ -155,21 +158,21 @@ export function Navbar() {
         aria-modal="true"
         aria-label="Navigation menu"
         className={cn(
-          "fixed inset-y-0 right-0 z-[70] flex w-72 flex-col bg-white border-l border-slate-200 shadow-2xl transition-transform duration-300 ease-out",
+          "fixed inset-y-0 right-0 z-[70] flex w-72 flex-col bg-card border-l border-border shadow-2xl transition-transform duration-300 ease-out",
           open ? "translate-x-0" : "translate-x-full"
         )}
       >
         {/* Drawer header */}
-        <div className="flex h-16 items-center justify-between border-b border-slate-100 px-5">
+        <div className="flex h-16 items-center justify-between border-b border-border px-5">
           <Link to="/" className="flex items-center gap-2 font-display text-base font-bold">
-            <img src="/new-logo.png" alt="Infynux Academy Logo" className="h-10 w-auto object-contain drop-shadow-sm" />
-            <span className="font-orbitron text-[#800000] text-sm">Infynux</span>
+            <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-10 w-auto object-contain drop-shadow-sm" />
+            <span className="font-orbitron text-primary text-sm">Infynux</span>
           </Link>
           <button
             type="button"
             onClick={() => { setOpen(false); hamburgerRef.current?.focus(); }}
             aria-label="Close menu"
-            className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 text-slate-500 hover:text-[#800000] hover:bg-[#800000]/5 transition-all"
+            className="grid h-9 w-9 place-items-center rounded-xl border border-border text-muted-foreground hover:text-primary hover:bg-primary text-primary-foreground/5 transition-all"
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -187,8 +190,8 @@ export function Navbar() {
                     className={cn(
                       "flex min-h-[52px] items-center rounded-xl px-4 text-base font-medium transition-all font-orbitron",
                       isActive
-                        ? "bg-[#800000]/8 text-[#800000] border border-[#800000]/15"
-                        : "text-slate-600 hover:bg-slate-50 hover:text-[#800000] border border-transparent"
+                        ? "bg-primary text-primary-foreground/8 text-primary border border-primary/15"
+                        : "text-muted-foreground hover:bg-surface hover:text-primary border border-transparent"
                     )}
                     aria-current={isActive ? "page" : undefined}
                   >
@@ -201,7 +204,7 @@ export function Navbar() {
           <div className="mt-6">
             <Link
               to="/internships"
-              className="flex w-full items-center justify-center rounded-xl bg-[#800000] px-4 py-3 text-sm font-semibold text-white shadow-[0_4px_15px_rgba(128,0,0,0.2)] font-orbitron hover:bg-[#6B0000] transition-all"
+              className="flex w-full items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition-all"
             >
               Apply for Internship
             </Link>
@@ -209,8 +212,8 @@ export function Navbar() {
         </nav>
 
         {/* Social links at bottom */}
-        <div className="border-t border-slate-100 px-5 py-6 bg-slate-50/50">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 font-orbitron">
+        <div className="border-t border-border px-5 py-6 bg-surface/50">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground font-orbitron">
             Follow us
           </p>
           <ul className="flex gap-2.5" role="list">
@@ -221,7 +224,7 @@ export function Navbar() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={label}
-                  className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-white text-slate-400 transition-all hover:border-[#800000]/30 hover:text-[#800000] hover:bg-[#800000]/5"
+                  className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-card text-muted-foreground transition-all hover:border-primary/30 hover:text-primary hover:bg-primary text-primary-foreground/5"
                 >
                   <Icon className="h-4 w-4" aria-hidden="true" />
                 </a>

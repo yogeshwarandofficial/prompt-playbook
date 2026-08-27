@@ -58,7 +58,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-all"
+            className="inline-flex items-center justify-center rounded-xl border border-black bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-all"
           >
             Go home
           </a>
@@ -118,7 +118,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <body>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-[#800000] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-black focus:font-orbitron"
         >
           Skip to main content
         </a>
@@ -134,12 +134,11 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="relative flex min-h-screen flex-col bg-[#F8F6F4] text-slate-900 overflow-hidden font-sans">
-        {/* Subtle soft maroon background orbs */}
+      <div className="relative flex min-h-screen flex-col bg-[#F9FAF5] text-slate-900 overflow-hidden font-sans">
+        {/* Subtle mesh background blobs */}
         <div className="pointer-events-none fixed inset-0 -z-50 overflow-hidden">
-          <div className="absolute -top-[20%] -left-[10%] h-[700px] w-[700px] rounded-full bg-[#800000]/5 blur-[120px]" />
-          <div className="absolute bottom-0 right-[-5%] h-[600px] w-[600px] rounded-full bg-[#C41E3A]/5 blur-[100px]" />
-          <div className="absolute top-[40%] left-[45%] h-[400px] w-[400px] rounded-full bg-[#FF6B6B]/3 blur-[80px]" />
+          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] mix-blend-multiply opacity-50" />
+          <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-cyan-400/5 rounded-full blur-[120px] mix-blend-multiply opacity-50" />
         </div>
 
         <Navbar />

@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Lock, Mail, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowLeft } from "lucide-react";
 import { signIn, getSession, DEMO_CREDENTIALS } from "@/lib/auth";
 
 export const Route = createFileRoute("/login")({
@@ -41,29 +41,29 @@ function LoginPage() {
   return (
     <section className="container-page flex min-h-[calc(100vh-4rem)] items-center justify-center py-12">
       <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl gradient-hero shadow-brand">
-            <ShieldCheck className="h-7 w-7 text-white" />
+        <div className="mb-10 text-center">
+          <div className="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-2xl bg-slate-50 border border-black shadow-sm">
+            <ShieldCheck className="h-8 w-8 text-slate-700" />
           </div>
-          <h1 className="font-display text-3xl font-bold">
-            Admin <span className="gradient-text">Sign In</span>
+          <h1 className="text-3xl font-bold text-slate-900">
+            Admin <span className="text-slate-900 bg-slate-50 px-3 py-1 rounded-lg border-2 border-black ml-1 shadow-sm">Sign In</span>
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-6 text-base text-slate-500 font-medium">
             Restricted area. Authorized personnel only.
           </p>
         </div>
 
         <form
           onSubmit={onSubmit}
-          className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8"
+          className="rounded-2xl border-2 border-black bg-white p-8 sm:p-10 shadow-sm"
         >
-          <div className="space-y-5">
+          <div className="space-y-6">
             <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium">
+              <label htmlFor="email" className="mb-2 block text-sm font-semibold text-slate-700">
                 Email
               </label>
               <div className="relative">
-                <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Mail className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
                 <input
                   id="email"
                   type="email"
@@ -72,17 +72,17 @@ function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@infynux.com"
-                  className="h-11 w-full rounded-md border border-input bg-background pl-10 pr-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="h-12 w-full rounded-xl border border-slate-300 bg-white pl-12 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#800000] focus:ring-1 focus:ring-[#800000] transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-1.5 block text-sm font-medium">
+              <label htmlFor="password" className="mb-2 block text-sm font-semibold text-slate-700">
                 Password
               </label>
               <div className="relative">
-                <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Lock className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
                 <input
                   id="password"
                   type={showPw ? "text" : "password"}
@@ -91,13 +91,13 @@ function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="h-11 w-full rounded-md border border-input bg-background pl-10 pr-10 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="h-12 w-full rounded-xl border border-slate-300 bg-white pl-12 pr-12 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#800000] focus:ring-1 focus:ring-[#800000] transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw((s) => !s)}
                   aria-label={showPw ? "Hide password" : "Show password"}
-                  className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded text-muted-foreground hover:bg-muted"
+                  className="absolute right-3 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors focus:outline-none"
                 >
                   {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -107,7 +107,7 @@ function LoginPage() {
             {error && (
               <div
                 role="alert"
-                className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600"
               >
                 {error}
               </div>
@@ -116,20 +116,20 @@ function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex h-11 w-full items-center justify-center rounded-md gradient-hero px-4 text-sm font-semibold text-white shadow-brand transition-transform hover:-translate-y-0.5 disabled:opacity-60"
+              className="inline-flex h-12 w-full items-center justify-center rounded-full bg-indigo-600 px-6 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-60"
             >
               {loading ? "Signing in…" : "Sign In"}
             </button>
 
-            <div className="rounded-md border border-dashed border-border bg-muted/40 px-3 py-2.5 text-xs text-muted-foreground">
-              <p className="font-semibold text-foreground/80">Demo credentials</p>
-              <p className="mt-0.5">Email: {DEMO_CREDENTIALS.email}</p>
-              <p>Password: {DEMO_CREDENTIALS.password}</p>
+            <div className="rounded-xl border border-black bg-slate-50 px-5 py-4 text-sm text-slate-600">
+              <p className="font-semibold text-slate-800 mb-2 text-xs uppercase tracking-widest">Demo credentials</p>
+              <p className="mt-0.5"><span className="text-slate-500">Email:</span> <span className="font-semibold text-slate-900">{DEMO_CREDENTIALS.email}</span></p>
+              <p className="mt-1"><span className="text-slate-500">Password:</span> <span className="font-semibold text-slate-900">{DEMO_CREDENTIALS.password}</span></p>
             </div>
 
-            <p className="text-center text-xs text-muted-foreground">
-              <Link to="/" className="hover:text-foreground">
-                ← Back to site
+            <p className="text-center text-sm font-medium text-slate-500 mt-6 pt-2 border-t border-slate-100">
+              <Link to="/" className="hover:text-slate-900 transition-colors flex items-center justify-center gap-2 mt-4">
+                <ArrowLeft className="h-4 w-4" /> Back to site
               </Link>
             </p>
           </div>

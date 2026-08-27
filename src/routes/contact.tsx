@@ -80,14 +80,14 @@ function ContactPage() {
           {/* Form */}
           <form
             onSubmit={onSubmit}
-            className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 space-y-6 shadow-sm"
+            className="rounded-2xl border border-slate-100 bg-white p-8 sm:p-10 space-y-6 shadow-sm relative overflow-hidden"
             noValidate
           >
-            <div>
-              <h2 className="font-display text-xl font-bold text-slate-900 font-orbitron tracking-wide">
+            <div className="relative z-10">
+              <h2 className="text-2xl font-bold text-slate-900 tracking-wide">
                 Send us a message
               </h2>
-              <p className="text-sm text-slate-500 font-outfit mt-1">We typically reply within 24 hours.</p>
+              <p className="text-base text-slate-500 mt-2 font-medium">We typically reply within 24 hours.</p>
             </div>
 
             {errs.message && !errs.name && !errs.email && !errs.subject && (
@@ -117,11 +117,11 @@ function ContactPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#800000] px-6 py-3.5 text-sm font-bold text-white shadow-[0_4px_15px_rgba(128,0,0,0.20)] hover:bg-[#6B0000] hover:shadow-[0_4px_20px_rgba(128,0,0,0.30)] transition-all disabled:opacity-75 font-orbitron"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-8 py-3.5 text-base font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-75"
             >
               {submitting ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-5 w-5 animate-spin" />
                   <span>Sending Message...</span>
                 </>
               ) : (
@@ -139,11 +139,11 @@ function ContactPage() {
 
           {/* Sidebar */}
           <aside className="space-y-6">
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 space-y-6 shadow-sm">
-              <h3 className="font-display text-lg font-bold text-slate-900 font-orbitron tracking-wide">
+            <div className="rounded-2xl border border-slate-100 bg-white p-8 sm:p-10 space-y-8 shadow-sm">
+              <h3 className="text-lg font-bold text-slate-800 tracking-wide uppercase">
                 Contact information
               </h3>
-              <ul className="space-y-4 text-sm font-outfit" role="list">
+              <ul className="space-y-6 text-base font-outfit" role="list">
                 <Info Icon={Mail} label="support@infynuxsolutions.in" />
                 <Info Icon={Phone} label="7010850923" />
                 <Info Icon={MapPin} label="Thiruvarur, Tamilnadu, India" />
@@ -152,7 +152,7 @@ function ContactPage() {
             </div>
 
             {/* Map */}
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 relative shadow-inner">
+            <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-slate-100 bg-slate-50 relative shadow-sm">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15668.618991750598!2d79.62372439366579!3d10.772594639912061!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a55476a6cf37d71%3A0x6b77242d54e4df5e!2sThiruvarur%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1719652504229!5m2!1sen!2sin"
                 width="100%"
@@ -162,7 +162,7 @@ function ContactPage() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 title="Thiruvarur Location Map"
-                className="absolute inset-0"
+                className="absolute inset-0 grayscale contrast-125 hover:grayscale-0 transition-all duration-500"
               />
             </div>
           </aside>
@@ -182,23 +182,23 @@ function ContactPage() {
 
 function Info({ Icon, label }: { Icon: typeof Mail; label: string }) {
   return (
-    <li className="flex items-center gap-3.5">
-      <span className="grid h-10 w-10 place-items-center rounded-xl border border-[#800000]/12 bg-[#800000]/6 text-[#800000] shadow-sm shrink-0">
-        <Icon className="h-4 w-4" />
+    <li className="flex items-center gap-4">
+      <span className="grid h-12 w-12 place-items-center rounded-xl bg-slate-50 text-slate-600 border border-slate-100 shrink-0">
+        <Icon className="h-5 w-5" />
       </span>
-      <span className="text-slate-600 font-outfit">{label}</span>
+      <span className="text-slate-700 font-medium">{label}</span>
     </li>
   );
 }
 
 function CField({ label, id, err, children }: { label: string; id: string; err?: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-semibold text-slate-700 font-orbitron">{label}</label>
+    <div className="space-y-2 relative z-10">
+      <label htmlFor={id} className="block text-sm font-semibold text-slate-700">{label}</label>
       {children}
       {err && (
-        <p className="mt-1 flex items-center gap-1 text-xs text-red-500 font-orbitron" role="alert">
-          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+        <p className="mt-1.5 flex items-center gap-1.5 text-sm font-bold text-red-400 font-orbitron" role="alert">
+          <AlertCircle className="h-4 w-4 shrink-0" />
           {err}
         </p>
       )}
@@ -208,9 +208,9 @@ function CField({ label, id, err, children }: { label: string; id: string; err?:
 
 function inp(err?: string) {
   return cn(
-    "w-full rounded-xl border bg-slate-50 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 font-outfit transition-all focus:outline-none focus:ring-2",
+    "w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 transition-all focus:outline-none focus:ring-2",
     err
       ? "border-red-300 focus:border-red-400 focus:ring-red-100"
-      : "border-slate-200 focus:border-[#800000] focus:ring-[#800000]/10"
+      : "border-slate-300 focus:border-[#800000] focus:ring-red-100"
   );
 }

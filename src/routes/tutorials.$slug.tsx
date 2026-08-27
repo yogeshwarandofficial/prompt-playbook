@@ -51,13 +51,13 @@ export const Route = createFileRoute("/tutorials/$slug")({
 
 // ── Difficulty badge — light palette ──────────────────────────────────────────
 const DIFFICULTY_STYLES: Record<string, string> = {
-  Beginner:     "bg-emerald-50 text-emerald-700 border border-emerald-200",
-  Intermediate: "bg-amber-50   text-amber-700   border border-amber-200",
-  Advanced:     "bg-rose-50    text-rose-700    border border-rose-200",
+  Beginner:     "bg-[#F9FAF5] text-black border-2 border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]",
+  Intermediate: "bg-amber-100 text-black border-2 border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]",
+  Advanced:     "bg-rose-100    text-black border-2 border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]",
 };
 function DifficultyBadge({ level }: { level: string }) {
   return (
-    <span className={`inline-flex items-center rounded-full px-3 py-0.5 text-xs font-semibold ${DIFFICULTY_STYLES[level] ?? ""}`}>
+    <span className={`inline-flex items-center rounded-lg px-3 py-1 text-[11px] font-black uppercase tracking-wider font-orbitron ${DIFFICULTY_STYLES[level] ?? ""}`}>
       {level}
     </span>
   );
@@ -66,11 +66,11 @@ function DifficultyBadge({ level }: { level: string }) {
 // ── Section heading ───────────────────────────────────────────────────────────
 function SectionHeading({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="mb-5 flex items-center gap-3">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#800000]/8 border border-[#800000]/12 text-[#800000]">
+    <div className="mb-6 flex items-center gap-4">
+      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#0A0A0A] border-2 border-[#222] text-primary shadow-[4px_4px_0px_rgba(0,0,0,1)]">
         {icon}
       </span>
-      <h2 className="text-xl font-bold text-slate-900">{children}</h2>
+      <h2 className="text-2xl font-black text-slate-900 font-orbitron tracking-wide">{children}</h2>
     </div>
   );
 }
@@ -126,24 +126,24 @@ function TutorialPage() {
       />
 
       {/* ── Info Bar ─────────────────────────────────────────────────────── */}
-      <div className="w-full border-b border-slate-200 bg-white">
+      <div className="w-full border-b-4 border-[#222] bg-white">
         <div className="container-page max-w-4xl py-6">
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-4">
             <DomainBadge domain={tutorial.domain} />
             <DifficultyBadge level={tutorial.difficulty} />
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
-              <Clock className="h-3.5 w-3.5" /> {tutorial.readMinutes} min read
+            <span className="inline-flex items-center gap-2 rounded-lg border-2 border-[#222] bg-[#0A0A0A] px-4 py-1.5 text-[11px] font-bold text-white uppercase tracking-wider font-orbitron">
+              <Clock className="h-4 w-4 text-primary" /> {tutorial.readMinutes} min read
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
-              <BookOpen className="h-3.5 w-3.5" /> {tutorial.steps.length} lessons
+            <span className="inline-flex items-center gap-2 rounded-lg border-2 border-[#222] bg-[#0A0A0A] px-4 py-1.5 text-[11px] font-bold text-white uppercase tracking-wider font-orbitron">
+              <BookOpen className="h-4 w-4 text-primary" /> {tutorial.steps.length} lessons
             </span>
           </div>
           {/* Tags */}
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-6 flex flex-wrap gap-2">
             {tutorial.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-500"
+                className="rounded-lg border-2 border-[#222] bg-white px-3 py-1.5 text-[11px] font-bold text-slate-700 font-orbitron uppercase tracking-wider shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:bg-[#F9FAF5] transition-colors"
               >
                 {tag}
               </span>
@@ -161,17 +161,17 @@ function TutorialPage() {
 
             {/* What You'll Learn */}
             <section>
-              <SectionHeading icon={<GraduationCap className="h-5 w-5" />}>
+              <SectionHeading icon={<GraduationCap className="h-6 w-6" />}>
                 What You'll Learn
               </SectionHeading>
-              <ul className="grid gap-3 sm:grid-cols-2">
+              <ul className="grid gap-4 sm:grid-cols-2">
                 {tutorial.whatYouWillLearn.map((item, i) => (
                   <li
                     key={i}
-                    className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 hover:border-[#800000]/20 transition-colors"
+                    className="flex items-start gap-4 rounded-2xl border-4 border-[#222] bg-white p-5 hover:border-primary hover:shadow-[4px_4px_0px_rgba(0,0,0,1)] transition-all"
                   >
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#800000]" aria-hidden="true" />
-                    <span className="text-sm leading-snug text-slate-600">{item}</span>
+                    <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-black font-black" aria-hidden="true" />
+                    <span className="text-base font-bold leading-snug text-slate-800 font-outfit">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -179,13 +179,13 @@ function TutorialPage() {
 
             {/* Prerequisites */}
             <section>
-              <SectionHeading icon={<AlertCircle className="h-5 w-5" />}>
+              <SectionHeading icon={<AlertCircle className="h-6 w-6" />}>
                 Prerequisites
               </SectionHeading>
-              <ul className="space-y-2.5">
+              <ul className="space-y-3">
                 {tutorial.prerequisites.map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm text-slate-600">
-                    <ChevronRight className="h-4 w-4 shrink-0 text-[#800000]" aria-hidden="true" />
+                  <li key={i} className="flex items-center gap-3 text-base font-bold text-slate-800 font-outfit">
+                    <ChevronRight className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
                     {item}
                   </li>
                 ))}
@@ -194,28 +194,28 @@ function TutorialPage() {
 
             {/* Step-by-step lessons */}
             <section>
-              <SectionHeading icon={<Layers className="h-5 w-5" />}>
+              <SectionHeading icon={<Layers className="h-6 w-6" />}>
                 Step-by-Step Guide
               </SectionHeading>
-              <ol className="space-y-5">
+              <ol className="space-y-6">
                 {tutorial.steps.map((step, i) => (
                   <li
                     key={i}
-                    className="relative rounded-2xl border border-slate-200 bg-white p-6 hover:border-[#800000]/20 hover:shadow-[0_4px_16px_rgba(128,0,0,0.07)] transition-all"
+                    className="relative rounded-3xl border-4 border-[#222] bg-white p-8 hover:border-primary hover:shadow-[8px_8px_0px_rgba(0,0,0,1)] transition-all"
                   >
                     {/* Accent bar */}
                     <div
-                      className="absolute left-0 top-4 bottom-4 w-1 rounded-full"
-                      style={{ background: domainColor }}
+                      className="absolute left-0 top-6 bottom-6 w-2 rounded-r-xl"
+                      style={{ background: DOMAIN_COLORS[tutorial.domain] }}
                       aria-hidden="true"
                     />
-                    <p className="pl-5 text-xs font-bold uppercase tracking-wide text-slate-400 mb-1">
+                    <p className="pl-6 text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2 font-orbitron">
                       Step {i + 1}
                     </p>
-                    <h3 className="pl-5 text-base font-bold leading-snug text-slate-800">
+                    <h3 className="pl-6 text-xl font-black leading-snug text-slate-900 font-orbitron">
                       {step.title}
                     </h3>
-                    <p className="mt-3 pl-5 text-sm leading-relaxed text-slate-500">
+                    <p className="mt-4 pl-6 text-base leading-relaxed text-slate-600 font-outfit font-medium">
                       {step.content}
                     </p>
                   </li>
@@ -225,22 +225,22 @@ function TutorialPage() {
 
             {/* Resources */}
             <section>
-              <SectionHeading icon={<FileText className="h-5 w-5" />}>
+              <SectionHeading icon={<FileText className="h-6 w-6" />}>
                 Further Reading & Resources
               </SectionHeading>
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 {tutorial.resources.map((r, i) => (
                   <li key={i}>
                     <a
                       href={r.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 transition-all hover:border-[#800000]/30 hover:bg-[#800000]/3 hover:shadow-sm"
+                      className="group flex items-center justify-between rounded-xl border-4 border-[#222] bg-white p-5 transition-all hover:border-primary hover:shadow-[4px_4px_0px_rgba(156,255,59,0.2)]"
                     >
-                      <span className="text-sm font-semibold text-slate-700 group-hover:text-[#800000] transition-colors">
+                      <span className="text-base font-bold text-slate-800 group-hover:text-black font-orbitron transition-colors">
                         {r.label}
                       </span>
-                      <ExternalLink className="h-4 w-4 shrink-0 text-slate-400 group-hover:text-[#800000] transition-colors" />
+                      <ExternalLink className="h-5 w-5 shrink-0 text-slate-400 group-hover:text-black transition-colors" />
                     </a>
                   </li>
                 ))}
@@ -252,18 +252,18 @@ function TutorialPage() {
           <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
 
             {/* Quick Info Card */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
-              <h3 className="text-base font-bold text-slate-800">Course Info</h3>
-              <dl className="space-y-3 text-sm">
+            <div className="rounded-3xl border-4 border-[#222] bg-white p-6 shadow-[8px_8px_0px_rgba(0,0,0,1)] space-y-6">
+              <h3 className="text-lg font-black text-slate-900 font-orbitron tracking-wide uppercase">Course Info</h3>
+              <dl className="space-y-4 text-sm font-outfit">
                 {[
-                  { label: "Domain",    val: <span className="font-semibold text-slate-700">{domainName}</span> },
+                  { label: "Domain",    val: <span className="font-bold text-slate-800">{domainName}</span> },
                   { label: "Level",     val: <DifficultyBadge level={tutorial.difficulty} /> },
-                  { label: "Read Time", val: <span className="font-semibold text-slate-700">{tutorial.readMinutes} minutes</span> },
-                  { label: "Lessons",   val: <span className="font-semibold text-slate-700">{tutorial.steps.length} steps</span> },
-                  { label: "Resources", val: <span className="font-semibold text-slate-700">{tutorial.resources.length} links</span> },
+                  { label: "Read Time", val: <span className="font-bold text-slate-800">{tutorial.readMinutes} minutes</span> },
+                  { label: "Lessons",   val: <span className="font-bold text-slate-800">{tutorial.steps.length} steps</span> },
+                  { label: "Resources", val: <span className="font-bold text-slate-800">{tutorial.resources.length} links</span> },
                 ].map(({ label, val }) => (
-                  <div key={label} className="flex items-center justify-between border-b border-slate-100 pb-2">
-                    <dt className="text-slate-400">{label}</dt>
+                  <div key={label} className="flex items-center justify-between border-b border-[#222] pb-2">
+                    <dt className="text-slate-500 font-semibold">{label}</dt>
                     <dd>{val}</dd>
                   </div>
                 ))}
@@ -274,40 +274,40 @@ function TutorialPage() {
                 type="button"
                 onClick={toggle}
                 aria-pressed={saved}
-                className={`inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-bold transition-all ${
+                className={`inline-flex w-full items-center justify-center gap-2 rounded-2xl border-4 px-4 py-4 text-sm font-black transition-all font-orbitron uppercase tracking-wider ${
                   saved
-                    ? "border-[#800000]/20 bg-[#800000]/8 text-[#800000]"
-                    : "border-slate-200 bg-slate-50 text-slate-600 hover:border-[#800000]/30 hover:bg-[#800000]/5 hover:text-[#800000]"
+                    ? "border-black bg-primary text-black shadow-[4px_4px_0px_rgba(0,0,0,1)]"
+                    : "border-[#222] bg-slate-50 text-slate-800 hover:border-black hover:bg-[#0A0A0A] hover:text-primary hover:shadow-[4px_4px_0px_rgba(0,0,0,1)]"
                 }`}
               >
                 {saved ? (
-                  <><BookmarkCheck className="h-4 w-4" /> Course Saved!</>
+                  <><BookmarkCheck className="h-5 w-5" /> Course Saved!</>
                 ) : (
-                  <><Bookmark className="h-4 w-4" /> Save Course</>
+                  <><Bookmark className="h-5 w-5" /> Save Course</>
                 )}
               </button>
 
               <Link
                 to="/internships"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#800000] px-4 py-3 text-sm font-bold text-white shadow-[0_4px_12px_rgba(128,0,0,0.20)] hover:bg-[#6B0000] hover:shadow-[0_4px_16px_rgba(128,0,0,0.30)] transition-all"
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0A0A0A] px-4 py-4 text-sm font-black text-white shadow-[0_4px_20px_rgba(0,0,0,0.15)] hover:bg-black hover:text-primary transition-all font-orbitron border-4 border-transparent hover:border-primary uppercase tracking-wider"
               >
-                Apply for Internship <ArrowRight className="h-4 w-4" />
+                Apply for Internship <ArrowRight className="h-5 w-5" />
               </Link>
             </div>
 
             {/* Table of Contents */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="mb-3 text-base font-bold text-slate-800">Contents</h3>
-              <ol className="space-y-2">
+            <div className="rounded-3xl border-4 border-[#222] bg-white p-6 shadow-[8px_8px_0px_rgba(0,0,0,1)]">
+              <h3 className="mb-5 text-sm font-black text-slate-900 uppercase tracking-widest font-orbitron">Contents</h3>
+              <ol className="space-y-3">
                 {tutorial.steps.map((step, i) => (
-                  <li key={i} className="flex items-start gap-2 text-xs text-slate-500">
+                  <li key={i} className="flex items-start gap-3 text-sm text-slate-600 font-medium font-outfit">
                     <span
-                      className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
-                      style={{ background: domainColor }}
+                      className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-[11px] font-black text-white shadow-[2px_2px_0px_rgba(0,0,0,1)] border border-black"
+                      style={{ background: DOMAIN_COLORS[tutorial.domain] }}
                     >
                       {i + 1}
                     </span>
-                    <span className="leading-snug line-clamp-2">
+                    <span className="leading-snug line-clamp-2 pt-0.5">
                       {step.title.replace(/^\d+\.\s*/, "")}
                     </span>
                   </li>
@@ -318,55 +318,57 @@ function TutorialPage() {
         </div>
 
         {/* ── CTA Banner ───────────────────────────────────────────────────── */}
-        <div className="mt-14 rounded-2xl bg-gradient-to-br from-[#800000] via-[#9B0000] to-[#C41E3A] px-6 py-10 text-center text-white shadow-[0_16px_48px_rgba(128,0,0,0.22)]">
-          <h2 className="text-2xl font-bold text-white">Ready to put this into practice?</h2>
-          <p className="mt-2 text-white/80 text-sm leading-relaxed">
-            Apply for a real {domainName} internship and ship production projects with mentorship.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Link
-              to="/internships"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-[#800000] shadow hover:bg-white/90 transition-colors"
-            >
-              Apply Now <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/tutorials"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-bold text-white backdrop-blur hover:bg-white/20 transition-colors"
-            >
-              More Tutorials
-            </Link>
+        <div className="mt-16 rounded-[32px] border-4 border-primary bg-[#0A0A0A] px-8 py-12 text-center text-white shadow-[0_16px_50px_rgba(156,255,59,0.15)] relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[60px]" />
+          <div className="relative z-10">
+            <h2 className="text-3xl font-black text-white font-orbitron">Ready to put this into practice?</h2>
+            <p className="mt-4 text-[#C7CBCE] text-lg leading-relaxed font-outfit">
+              Apply for a real {domainName} internship and ship production projects with mentorship.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <Link
+                to="/internships"
+                className="inline-flex items-center gap-2 rounded-2xl bg-primary px-8 py-4 text-base font-black text-black shadow-[0_4px_20px_rgba(156,255,59,0.3)] hover:bg-lime-400 transition-colors font-orbitron border-2 border-black"
+              >
+                Apply Now <ArrowRight className="h-5 w-5" />
+              </Link>
+              <Link
+                to="/tutorials"
+                className="inline-flex items-center gap-2 rounded-2xl border-2 border-[#333] bg-[#111] px-8 py-4 text-base font-black text-white hover:border-primary hover:text-primary transition-colors font-orbitron"
+              >
+                More Tutorials
+              </Link>
+            </div>
           </div>
         </div>
 
         {/* ── Related Tutorials ────────────────────────────────────────────── */}
         {related.length > 0 && (
-          <section className="mt-14">
-            <h2 className="mb-5 text-xl font-bold text-slate-900">Related Tutorials</h2>
-            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3">
+          <section className="mt-16">
+            <h2 className="mb-6 text-2xl font-black text-slate-900 font-orbitron">Related Tutorials</h2>
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
               {related.map((r) => (
                 <Link
                   key={r.slug}
                   to="/tutorials/$slug"
                   params={{ slug: r.slug }}
-                  className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-5 hover:border-[#800000]/20 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(128,0,0,0.08)] transition-all duration-300"
+                  className="group flex flex-col rounded-3xl border-4 border-[#222] bg-[#0A0A0A] p-6 hover:border-primary hover:-translate-y-2 hover:shadow-[12px_12px_0px_rgba(156,255,59,1)] transition-all duration-300 overflow-hidden relative"
                 >
                   <div
-                    className="mb-4 h-2 w-full rounded-full"
-                    style={{
-                      background: `linear-gradient(90deg, ${DOMAIN_COLORS[r.domain]}, ${DOMAIN_COLORS[r.domain]}44)`,
-                    }}
-                    aria-hidden="true"
+                    className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-20 blur-[30px]"
+                    style={{ background: DOMAIN_COLORS[r.domain] }}
                   />
-                  <DomainBadge domain={r.domain} />
-                  <h3 className="mt-2 text-sm font-semibold leading-snug line-clamp-2 text-slate-800 group-hover:text-[#800000] transition-colors">
-                    {r.title}
-                  </h3>
-                  <p className="mt-1.5 flex-1 text-xs text-slate-500 line-clamp-3 leading-relaxed">
-                    {r.description}
-                  </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#800000]">
-                    Read more <ArrowRight className="h-3.5 w-3.5" />
+                  <div className="relative z-10">
+                    <DomainBadge domain={r.domain} />
+                    <h3 className="mt-4 text-lg font-black leading-snug line-clamp-2 text-white group-hover:text-primary transition-colors font-orbitron tracking-wide">
+                      {r.title}
+                    </h3>
+                    <p className="mt-2 flex-1 text-sm text-[#C7CBCE] line-clamp-3 leading-relaxed font-outfit">
+                      {r.description}
+                    </p>
+                    <div className="mt-4 flex items-center gap-2 text-sm font-black text-primary font-orbitron">
+                      Read more <ArrowRight className="h-4 w-4" />
+                    </div>
                   </div>
                 </Link>
               ))}

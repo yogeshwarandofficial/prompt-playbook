@@ -99,18 +99,18 @@ function AdminPage() {
   return (
     <section className="container-page py-8">
       {/* Header */}
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b-4 border-[#222] pb-6 mb-8">
         <div>
-          <h1 className="font-display text-2xl font-bold sm:text-3xl">
-            Admin <span className="gradient-text">Dashboard</span>
+          <h1 className="text-3xl font-black sm:text-4xl font-orbitron text-slate-900 tracking-wide uppercase">
+            Admin <span className="text-primary bg-[#0A0A0A] px-3 py-1 rounded-lg border-2 border-black ml-1 shadow-[4px_4px_0px_rgba(0,0,0,1)]">Dashboard</span>
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Signed in as <span className="font-medium text-foreground">{session.email}</span>
+          <p className="mt-4 text-sm font-outfit font-bold text-slate-500">
+            Signed in as <span className="text-slate-900 border-b-2 border-primary">{session.email}</span>
           </p>
         </div>
         <button
           onClick={handleSignOut}
-          className="inline-flex h-10 items-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-muted"
+          className="inline-flex h-12 items-center gap-2 rounded-xl border-4 border-[#222] bg-white px-5 text-sm font-black uppercase tracking-widest font-orbitron shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:border-black hover:bg-[#0A0A0A] hover:text-white transition-all active:translate-y-1 active:shadow-none"
         >
           <LogOut className="h-4 w-4" />
           Sign out
@@ -133,13 +133,13 @@ function AdminPage() {
                   key={k}
                   onClick={() => setTab(k)}
                   className={
-                    "inline-flex items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors " +
+                    "inline-flex w-full items-center gap-3 whitespace-nowrap rounded-2xl border-4 px-4 py-3.5 text-sm font-black transition-all uppercase tracking-wider font-orbitron " +
                     (active
-                      ? "bg-primary/10 text-primary"
-                      : "text-foreground/75 hover:bg-muted hover:text-foreground")
+                      ? "bg-[#0A0A0A] text-primary border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] translate-x-2"
+                      : "bg-white border-[#222] text-slate-700 hover:border-black hover:shadow-[4px_4px_0px_rgba(0,0,0,1)]")
                   }
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-5 w-5" />
                   {label}
                 </button>
               );
@@ -166,12 +166,12 @@ function AdminPage() {
                       const pct = stats.apps ? Math.round((count / stats.apps) * 100) : 0;
                       return (
                         <li key={d.key}>
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="font-medium">{d.short}</span>
-                            <span className="text-muted-foreground">{count} ({pct}%)</span>
+                          <div className="flex items-center justify-between text-sm font-outfit font-bold">
+                            <span className="text-slate-800">{d.short}</span>
+                            <span className="text-slate-500">{count} ({pct}%)</span>
                           </div>
-                          <div className="mt-1 h-2 overflow-hidden rounded-full bg-muted">
-                            <div className="h-full gradient-hero" style={{ width: `${pct}%` }} />
+                          <div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-100 border-2 border-[#222]">
+                            <div className="h-full bg-primary border-r-2 border-[#222]" style={{ width: `${pct}%` }} />
                           </div>
                         </li>
                       );
@@ -196,12 +196,12 @@ function AdminPage() {
               title="Internship Applications"
               right={
                 <div className="relative">
-                  <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                   <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search…"
-                    className="h-9 w-56 rounded-md border border-input bg-background pl-8 pr-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="h-12 w-64 rounded-2xl border-4 border-[#222] bg-white pl-12 pr-4 text-sm font-bold font-outfit text-slate-800 focus:outline-none focus:border-primary focus:shadow-[4px_4px_0px_rgba(156,255,59,1)] transition-all"
                   />
                 </div>
               }
@@ -209,37 +209,37 @@ function AdminPage() {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[640px] text-sm">
                   <thead>
-                    <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
-                      <th className="py-2 pr-3 font-medium">ID</th>
-                      <th className="py-2 pr-3 font-medium">Applicant</th>
-                      <th className="py-2 pr-3 font-medium">Domain</th>
-                      <th className="py-2 pr-3 font-medium">Date</th>
-                      <th className="py-2 pr-3 font-medium">Status</th>
-                      <th className="py-2 pr-3 font-medium">Actions</th>
+                    <tr className="border-b-4 border-[#222] text-left text-[11px] uppercase tracking-widest text-slate-500 font-orbitron font-black">
+                      <th className="py-4 pr-4">ID</th>
+                      <th className="py-4 pr-4">Applicant</th>
+                      <th className="py-4 pr-4">Domain</th>
+                      <th className="py-4 pr-4">Date</th>
+                      <th className="py-4 pr-4">Status</th>
+                      <th className="py-4 pr-4">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="font-outfit font-medium">
                     {filteredApps.map((a) => (
-                      <tr key={a.id} className="border-b border-border/60 last:border-0">
-                        <td className="py-3 pr-3 font-mono text-xs text-muted-foreground">{a.id}</td>
-                        <td className="py-3 pr-3">
-                          <div className="font-medium">{a.name}</div>
-                          <div className="text-xs text-muted-foreground">{a.email}</div>
+                      <tr key={a.id} className="border-b-2 border-[#222] border-dashed last:border-0 hover:bg-[#F9FAF5] transition-colors">
+                        <td className="py-4 pr-4 font-mono text-xs font-bold text-slate-500">{a.id}</td>
+                        <td className="py-4 pr-4">
+                          <div className="font-bold text-slate-900">{a.name}</div>
+                          <div className="text-xs text-slate-500">{a.email}</div>
                         </td>
-                        <td className="py-3 pr-3">{a.domain}</td>
-                        <td className="py-3 pr-3 text-muted-foreground">{a.date}</td>
-                        <td className="py-3 pr-3"><StatusBadge status={a.status} /></td>
-                        <td className="py-3 pr-3">
-                          <div className="flex flex-wrap gap-1">
+                        <td className="py-4 pr-4">{a.domain}</td>
+                        <td className="py-4 pr-4 text-slate-500">{a.date}</td>
+                        <td className="py-4 pr-4"><StatusBadge status={a.status} /></td>
+                        <td className="py-4 pr-4">
+                          <div className="flex flex-wrap gap-2">
                             {(["Pending", "Reviewed", "Accepted"] as const).map((s) => (
                               <button
                                 key={s}
                                 onClick={() => updateStatus(a.id, s)}
                                 className={
-                                  "rounded px-2 py-1 text-xs font-medium transition-colors " +
+                                  "rounded-lg px-3 py-1.5 text-[11px] font-black uppercase tracking-widest font-orbitron transition-all border-2 " +
                                   (a.status === s
-                                    ? "bg-primary text-primary-foreground"
-                                    : "border border-input hover:bg-muted")
+                                    ? "bg-[#0A0A0A] text-primary border-black shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+                                    : "bg-white border-[#222] text-slate-600 hover:border-black hover:text-slate-900 hover:shadow-[2px_2px_0px_rgba(0,0,0,1)]")
                                 }
                               >
                                 {s}
@@ -251,7 +251,7 @@ function AdminPage() {
                     ))}
                     {filteredApps.length === 0 && (
                       <tr>
-                        <td colSpan={6} className="py-10 text-center text-sm text-muted-foreground">
+                        <td colSpan={6} className="py-10 text-center text-sm font-bold text-slate-500 font-outfit">
                           No applications match your search.
                         </td>
                       </tr>
@@ -264,55 +264,57 @@ function AdminPage() {
 
           {tab === "tutorials" && (
             <Card title="Tutorials by Domain">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-6 sm:grid-cols-2">
                 {DOMAINS.map((d) => (
                   <div
                     key={d.key}
-                    className="rounded-xl border border-border p-4 transition-colors hover:bg-muted/40"
+                    className="rounded-3xl border-4 border-[#222] bg-[#0A0A0A] p-6 transition-all hover:border-primary hover:shadow-[8px_8px_0px_rgba(156,255,59,1)] hover:-translate-y-1"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl">{d.icon}</span>
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-[#333] bg-[#111] shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+                          <span className="text-2xl">{d.icon}</span>
+                        </div>
                         <div>
-                          <div className="font-semibold">{d.name}</div>
-                          <div className="text-xs text-muted-foreground">{d.duration}</div>
+                          <div className="font-black text-white font-orbitron">{d.name}</div>
+                          <div className="text-xs font-bold text-slate-500 font-outfit mt-0.5">{d.duration}</div>
                         </div>
                       </div>
-                      <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                      <span className="rounded-lg border-2 border-primary bg-primary/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-primary font-orbitron">
                         {d.tutorials} tutorials
                       </span>
                     </div>
-                    <p className="mt-3 text-sm text-muted-foreground">{d.description}</p>
-                    <div className="mt-3 flex flex-wrap gap-1.5">
+                    <p className="mt-5 text-sm font-medium text-[#C7CBCE] font-outfit">{d.description}</p>
+                    <div className="mt-5 flex flex-wrap gap-2">
                       {d.skills.slice(0, 4).map((s) => (
-                        <span key={s} className="rounded-md bg-muted px-2 py-0.5 text-xs">{s}</span>
+                        <span key={s} className="rounded-lg border border-[#333] bg-[#111] px-2.5 py-1 text-[11px] font-bold text-slate-400 font-orbitron uppercase tracking-wider">{s}</span>
                       ))}
                     </div>
                   </div>
                 ))}
               </div>
-              <p className="mt-5 text-xs text-muted-foreground">
+              <p className="mt-8 text-sm font-bold text-slate-500 font-outfit">
                 Manage tutorials from the public{" "}
-                <Link to="/tutorials" className="text-primary hover:underline">tutorials page</Link>.
+                <Link to="/tutorials" className="text-primary hover:underline hover:text-lime-400">tutorials page</Link>.
               </p>
             </Card>
           )}
 
           {tab === "messages" && (
             <Card title="Contact Messages">
-              <ul className="divide-y divide-border">
+              <ul className="divide-y-4 divide-[#222] divide-dashed">
                 {MOCK_MESSAGES.map((m) => (
-                  <li key={m.id} className="flex items-start gap-3 py-3">
-                    <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
-                      <Mail className="h-4 w-4" />
+                  <li key={m.id} className="flex items-start gap-4 py-6">
+                    <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-[#0A0A0A] border-2 border-[#222] text-primary shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+                      <Mail className="h-6 w-6" />
                     </div>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 font-outfit">
                       <div className="flex flex-wrap items-baseline justify-between gap-2">
-                        <p className="font-medium">{m.subject}</p>
-                        <span className="text-xs text-muted-foreground">{m.date}</span>
+                        <p className="text-base font-black text-slate-900">{m.subject}</p>
+                        <span className="text-xs font-bold text-slate-500">{m.date}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        {m.name} · {m.email}
+                      <p className="mt-1 text-sm font-medium text-slate-600">
+                        <span className="font-bold text-slate-800">{m.name}</span> · {m.email}
                       </p>
                     </div>
                   </li>
@@ -346,13 +348,13 @@ function StatCard({
         ? "text-amber-500"
         : "text-primary";
   return (
-    <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+    <div className="rounded-3xl border-4 border-[#222] bg-[#0A0A0A] p-6 shadow-[8px_8px_0px_rgba(0,0,0,1)] text-white">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-        <Icon className={`h-4 w-4 ${toneCls}`} />
+        <p className="text-[11px] font-black uppercase tracking-widest text-[#C7CBCE] font-orbitron">{label}</p>
+        <Icon className={`h-6 w-6 ${toneCls}`} />
       </div>
-      <p className="mt-2 font-display text-3xl font-bold">{value}</p>
-      {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
+      <p className="mt-4 text-4xl font-black font-orbitron tracking-wide">{value}</p>
+      {hint && <p className="mt-2 text-xs font-bold text-slate-500 font-outfit">{hint}</p>}
     </div>
   );
 }
@@ -367,9 +369,9 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-display text-lg font-semibold">{title}</h2>
+    <div className="rounded-3xl border-4 border-[#222] bg-white p-6 sm:p-8 shadow-[8px_8px_0px_rgba(0,0,0,1)]">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <h2 className="text-xl font-black font-orbitron uppercase tracking-wide text-slate-900">{title}</h2>
         {right}
       </div>
       {children}
@@ -379,12 +381,12 @@ function Card({
 
 function StatusBadge({ status }: { status: AppRow["status"] }) {
   const map: Record<AppRow["status"], string> = {
-    Pending: "bg-amber-500/10 text-amber-500 border-amber-500/30",
-    Reviewed: "bg-sky-500/10 text-sky-500 border-sky-500/30",
-    Accepted: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30",
+    Pending: "bg-amber-100 text-amber-700 border-amber-300",
+    Reviewed: "bg-sky-100 text-sky-700 border-sky-300",
+    Accepted: "bg-primary text-black border-black",
   };
   return (
-    <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium ${map[status]}`}>
+    <span className={`inline-flex items-center rounded-lg border-2 px-3 py-1 text-[11px] font-black uppercase tracking-wider font-orbitron shadow-[2px_2px_0px_rgba(0,0,0,1)] ${map[status]}`}>
       {status}
     </span>
   );
@@ -400,13 +402,13 @@ function ActivityItem({
   time: string;
 }) {
   return (
-    <li className="flex items-start gap-3">
-      <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
-        <Icon className="h-4 w-4" />
+    <li className="flex items-start gap-4">
+      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#0A0A0A] border-2 border-[#222] text-primary shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+        <Icon className="h-5 w-5" />
       </div>
-      <div className="flex-1">
-        <p>{text}</p>
-        <p className="text-xs text-muted-foreground">{time}</p>
+      <div className="flex-1 font-outfit">
+        <p className="text-sm font-bold text-slate-800">{text}</p>
+        <p className="text-xs font-semibold text-slate-500 mt-0.5">{time}</p>
       </div>
     </li>
   );
