@@ -296,7 +296,7 @@ function DomainsSection() {
           <img 
             src="/path.jpg" 
             alt="Learning Path" 
-            className="hidden lg:block absolute right-0 lg:right-[5%] top-12 w-72 lg:w-96 object-contain mix-blend-multiply opacity-90 pointer-events-none"
+            className="hidden lg:block absolute right-0 lg:right-[5%] -top-12 w-72 lg:w-80 xl:w-96 object-contain mix-blend-multiply opacity-90 pointer-events-none"
             aria-hidden="true"
           />
         </div>
