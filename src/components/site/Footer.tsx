@@ -9,6 +9,7 @@ import {
   Linkedin,
   MessageCircle,
   ArrowUpRight,
+  Youtube,
 } from "lucide-react";
 
 const NAV_SECTIONS = [
@@ -42,6 +43,7 @@ const SOCIALS = [
   { href: "https://whatsapp.com/channel/0029VbCVGAtBVJkxGWCc4002", label: "WhatsApp", Icon: MessageCircle },
   { href: "https://www.facebook.com/share/1BpJDJeTC2/", label: "Facebook", Icon: Facebook },
   { href: "https://linkedin.com/company/infynux-solutions/", label: "LinkedIn", Icon: Linkedin },
+  { href: "https://www.youtube.com/@Infynuxsolutions", label: "YouTube", Icon: Youtube },
 ];
 
 export function Footer() {

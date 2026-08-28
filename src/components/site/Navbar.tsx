@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { GraduationCap, Menu, X, Instagram, Linkedin, MessageCircle, Facebook } from "lucide-react";
+import { GraduationCap, Menu, X, Instagram, Linkedin, MessageCircle, Facebook, Youtube } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +15,7 @@ const SOCIALS = [
   { href: "https://whatsapp.com/channel/0029VbCVGAtBVJkxGWCc4002", label: "WhatsApp", Icon: MessageCircle },
   { href: "https://www.facebook.com/share/1BpJDJeTC2/", label: "Facebook", Icon: Facebook },
   { href: "https://linkedin.com/company/infynux-solutions/", label: "LinkedIn", Icon: Linkedin },
+  { href: "https://www.youtube.com/@Infynuxsolutions", label: "YouTube", Icon: Youtube },
 ];
 
 export function Navbar() {
