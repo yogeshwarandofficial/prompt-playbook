@@ -292,14 +292,28 @@ function DomainsSection() {
           theme="light"
         />
         <div className="mt-16 relative">
-          {/* The "Rope" connecting the cards (only visible on large screens) */}
-          <div className="absolute top-[80px] left-0 right-0 hidden lg:flex items-center pointer-events-none z-0">
-             {/* Left tie knot */}
-             <div className="w-6 h-6 rounded-full border-[3px] border-black bg-primary shrink-0 -ml-3 shadow-sm" />
-             {/* The rope body */}
-             <div className="flex-1 h-2 bg-black opacity-100" />
-             {/* Right tie knot */}
-             <div className="w-6 h-6 rounded-full border-[3px] border-black bg-primary shrink-0 -mr-3 shadow-sm" />
+          {/* The "Real Rope" connecting the cards (only visible on large screens) */}
+          <div className="absolute top-[75px] left-[-20px] right-[-20px] hidden lg:flex items-center pointer-events-none z-0">
+             {/* Left stick and loop */}
+             <div className="relative shrink-0 flex items-center justify-center -mr-2 z-10">
+                <div className="w-5 h-16 bg-gradient-to-b from-[#8b5a2b] via-[#5c3a21] to-[#3e2723] rounded-sm border-2 border-[#2b1810] shadow-[3px_3px_5px_rgba(0,0,0,0.4)] z-20" />
+                <div className="absolute left-2 w-10 h-10 border-[6px] rounded-full z-10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]" style={{ borderColor: '#d4a373 #8b5a2b #5c3a21 #faedcd' }} />
+             </div>
+
+             {/* Rope body */}
+             <div className="flex-1 h-6 shadow-[0_6px_10px_rgba(0,0,0,0.15)] z-0"
+                  style={{
+                    backgroundImage: 'repeating-linear-gradient(-45deg, #d4a373 0px, #d4a373 6px, #8b5a2b 6px, #8b5a2b 10px, #faedcd 10px, #faedcd 14px, #5c3a21 14px, #5c3a21 18px)',
+                    borderTop: '2px solid #2b1810',
+                    borderBottom: '2px solid #2b1810',
+                  }}
+             />
+
+             {/* Right stick and loop */}
+             <div className="relative shrink-0 flex items-center justify-center -ml-2 z-10">
+                <div className="absolute right-2 w-10 h-10 border-[6px] rounded-full z-10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]" style={{ borderColor: '#5c3a21 #faedcd #d4a373 #8b5a2b' }} />
+                <div className="w-5 h-16 bg-gradient-to-b from-[#8b5a2b] via-[#5c3a21] to-[#3e2723] rounded-sm border-2 border-[#2b1810] shadow-[3px_3px_5px_rgba(0,0,0,0.4)] z-20" />
+             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5 relative z-10">
