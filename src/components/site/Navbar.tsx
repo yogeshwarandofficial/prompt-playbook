@@ -64,15 +64,21 @@ export function Navbar() {
     <>
       <header
         className={cn(
-          "fixed top-4 left-4 right-4 z-50 mx-auto max-w-6xl transition-all duration-300 rounded-full",
-          scrolled
-            ? "bg-[#050505]/95 backdrop-blur-xl shadow-lg border border-white/10"
-            : "bg-[#0A0A0A] shadow-sm border border-white/5"
+          "fixed top-4 left-4 right-4 z-50 mx-auto max-w-6xl transition-all duration-500 rounded-full",
+          "bg-[#0A0A0A]/70 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] group overflow-hidden"
         )}
+        style={{
+          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.05)"
+        }}
         role="banner"
       >
+        {/* Animated Left-to-Right Shine Border */}
+        <div className="absolute inset-0 z-0 pointer-events-none rounded-full overflow-hidden">
+          <div className="absolute inset-0 bg-[length:200%_auto] animate-text-shine bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50" />
+        </div>
+        
         <nav
-          className="px-6 flex h-16 items-center justify-between"
+          className="relative z-10 px-6 flex h-16 items-center justify-between"
           aria-label="Main navigation"
         >
           {/* Logo */}
