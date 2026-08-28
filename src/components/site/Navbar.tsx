@@ -81,8 +81,8 @@ export function Navbar() {
             className="flex items-center gap-2.5 font-display text-lg font-bold text-white hover:opacity-80 transition-opacity"
             aria-label="Infynux Academy home"
           >
-            <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-10 w-auto object-contain drop-shadow-sm brightness-125 contrast-125" />
-            <span className="hidden sm:block text-2xl font-black">
+            <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-9 sm:h-10 w-auto object-contain drop-shadow-sm brightness-125 contrast-125" />
+            <span className="text-[1.35rem] sm:text-2xl font-black tracking-tight whitespace-nowrap">
               <span className="text-white">Infynux </span>
               <span className="bg-[length:200%_auto] animate-text-shine bg-gradient-to-r from-emerald-400 via-primary to-emerald-400 bg-clip-text text-transparent">Academy</span>
             </span>
