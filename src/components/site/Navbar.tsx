@@ -83,7 +83,7 @@ export function Navbar() {
             <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-10 w-auto object-contain drop-shadow-sm brightness-125 contrast-125" />
             <span className="hidden sm:block text-2xl font-black">
               <span className="text-white">Infynux </span>
-              <span className="text-lime-500">Academy</span>
+              <span className="bg-[length:200%_auto] animate-text-shine bg-gradient-to-r from-emerald-400 via-primary to-emerald-400 bg-clip-text text-transparent">Academy</span>
             </span>
           </Link>
 
@@ -166,13 +166,13 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between border-b border-border px-5">
           <Link to="/" className="flex items-center gap-2 font-display text-base font-bold">
             <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-10 w-auto object-contain drop-shadow-sm" />
-            <span className="font-orbitron text-primary text-sm">Infynux</span>
+            <span className="font-orbitron text-sm bg-[length:200%_auto] animate-text-shine bg-gradient-to-r from-emerald-400 via-primary to-emerald-400 bg-clip-text text-transparent font-bold tracking-wide">Infynux</span>
           </Link>
           <button
             type="button"
             onClick={() => { setOpen(false); hamburgerRef.current?.focus(); }}
             aria-label="Close menu"
-            className="grid h-9 w-9 place-items-center rounded-xl border border-border text-muted-foreground hover:text-primary hover:bg-primary text-primary-foreground/5 transition-all"
+            className="grid h-9 w-9 place-items-center rounded-xl border border-border text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-all"
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -190,7 +190,7 @@ export function Navbar() {
                     className={cn(
                       "flex min-h-[52px] items-center rounded-xl px-4 text-base font-medium transition-all font-orbitron",
                       isActive
-                        ? "bg-primary text-primary-foreground/8 text-primary border border-primary/15"
+                        ? "bg-primary text-primary-foreground font-bold shadow-[0_4px_15px_rgba(156,255,59,0.3)]"
                         : "text-muted-foreground hover:bg-surface hover:text-primary border border-transparent"
                     )}
                     aria-current={isActive ? "page" : undefined}
@@ -224,7 +224,7 @@ export function Navbar() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={label}
-                  className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-card text-muted-foreground transition-all hover:border-primary/30 hover:text-primary hover:bg-primary text-primary-foreground/5"
+                  className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-card text-muted-foreground transition-all hover:border-primary/30 hover:bg-primary hover:text-primary-foreground"
                 >
                   <Icon className="h-4 w-4" aria-hidden="true" />
                 </a>
