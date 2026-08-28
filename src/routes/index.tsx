@@ -284,13 +284,22 @@ function DomainsSection() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-emerald-300/20 rounded-full blur-[120px] mix-blend-multiply opacity-50" />
       
       <div className="container-page relative z-10">
-        <SectionHeader
-          eyebrow="Popular Domains"
-          title="Choose your learning path"
-          subtitle="Explore five in-demand disciplines with structured roadmaps tuned for immediate application."
-          id="domains-heading"
-          theme="light"
-        />
+        <div className="flex justify-between items-start">
+          <SectionHeader
+            eyebrow="Popular Domains"
+            title="Choose your learning path"
+            subtitle="Explore five in-demand disciplines with structured roadmaps tuned for immediate application."
+            id="domains-heading"
+            theme="light"
+          />
+          {/* Top right image without animation */}
+          <img 
+            src="/path.jpg" 
+            alt="Learning Path" 
+            className="hidden lg:block absolute right-0 lg:right-[5%] top-12 w-72 lg:w-96 object-contain mix-blend-multiply opacity-90 pointer-events-none"
+            aria-hidden="true"
+          />
+        </div>
         <div className="mt-16 relative">
           {/* The "Real Rope" connecting the cards (only visible on large screens) */}
           <div className="absolute top-[75px] left-[-20px] right-[-20px] hidden lg:flex items-center pointer-events-none z-0">
@@ -401,7 +410,7 @@ function FeaturedRoadmapsSection() {
       <img 
         src="/study_illustration.png" 
         alt="" 
-        className="hidden lg:block absolute right-0 lg:right-[5%] top-12 w-72 lg:w-96 object-contain opacity-80 mix-blend-multiply pointer-events-none animate-float"
+        className="hidden lg:block absolute right-0 lg:right-[5%] top-12 w-72 lg:w-96 object-contain opacity-80 mix-blend-multiply pointer-events-none"
         aria-hidden="true"
       />
       <div className="container-page relative z-10">
@@ -602,7 +611,7 @@ function BenefitsSection() {
       <div className="container-page">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="text-left space-y-4 relative">
-            <img src="/zerocost.png" alt="0% Cost" className="w-40 h-auto md:w-56 mb-6 object-contain animate-float mix-blend-multiply contrast-125 brightness-110" />
+            <img src="/zerocost.png" alt="0% Cost" className="w-40 h-auto md:w-56 mb-6 object-contain mix-blend-multiply contrast-125 brightness-110" />
             <span className="block text-sm font-semibold uppercase tracking-wider text-indigo-600">Academy Merits</span>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight font-orbitron" id="benefits-heading">
               Everything you need,<br />zero costs.
