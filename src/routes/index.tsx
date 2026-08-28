@@ -598,25 +598,24 @@ const BENEFITS = [
 
 function BenefitsSection() {
   return (
-    <section className="py-24 md:py-32 bg-[#0A0A0A]" aria-labelledby="benefits-heading">
+    <section className="py-24 md:py-32 bg-white" aria-labelledby="benefits-heading">
       <div className="container-page">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="text-left space-y-4 relative">
-            {/* mix-blend-screen drops black backgrounds, and size is increased */}
-            <img src="/zerocost.png" alt="0% Cost" className="w-40 h-auto md:w-56 mb-6 object-contain animate-float mix-blend-screen" />
-            <span className="block text-sm font-semibold uppercase tracking-widest text-primary font-display">Academy Merits</span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight font-orbitron" id="benefits-heading">
+            <img src="/zerocost.png" alt="0% Cost" className="w-40 h-auto md:w-56 mb-6 object-contain animate-float mix-blend-multiply contrast-125 brightness-110" />
+            <span className="block text-sm font-semibold uppercase tracking-wider text-indigo-600">Academy Merits</span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight font-orbitron" id="benefits-heading">
               Everything you need,<br />zero costs.
             </h2>
-            <p className="text-[#C7CBCE] leading-relaxed text-lg max-w-md font-outfit font-bold">
+            <p className="text-slate-600 leading-relaxed text-lg max-w-md">
               No subscription gates. No locked content. Infynux Academy runs on a commitment to deliver premium tech training to all.
             </p>
           </div>
           <ul className="grid gap-4 sm:grid-cols-2" role="list">
             {BENEFITS.map((benefit) => (
-              <li key={benefit} className="flex items-center gap-5 rounded-[1.5rem] border-2 border-[#222] bg-white/5 p-6 text-left hover:border-primary hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(156,255,59,0.1)] transition-all duration-300">
-                <CheckCircle2 className="h-6 w-6 shrink-0 text-primary drop-shadow-[0_0_8px_rgba(156,255,59,0.5)]" aria-hidden="true" />
-                <span className="text-base font-bold text-white leading-snug font-outfit">{benefit}</span>
+              <li key={benefit} className="flex items-center gap-5 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-left shadow-sm hover:shadow-md hover:border-indigo-200 hover:-translate-y-1 transition-all duration-300">
+                <CheckCircle2 className="h-6 w-6 shrink-0 text-emerald-500" aria-hidden="true" />
+                <span className="text-base font-semibold text-slate-800 leading-snug">{benefit}</span>
               </li>
             ))}
           </ul>
