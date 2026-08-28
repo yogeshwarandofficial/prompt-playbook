@@ -115,7 +115,7 @@ function HeroSection() {
             <Zap className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
             FREE ACADEMIC PLATFORM
           </span>
-          <h1 className="font-display text-6xl font-black leading-[1.05] text-black sm:text-7xl lg:text-8xl tracking-tight">
+          <h1 className="font-display text-5xl font-black leading-[1.05] text-black sm:text-6xl lg:text-7xl xl:text-8xl tracking-tight">
             LEARN.<br />
             <span className="bg-[length:200%_auto] animate-text-shine bg-gradient-to-r from-emerald-500 via-primary to-emerald-500 bg-clip-text text-transparent">BUILD.</span><br />
             GET HIRED.
@@ -228,7 +228,7 @@ function FeaturesSection() {
             <div className="h-[3px] w-[32px] bg-primary"></div>
             Why Infynux
           </div>
-          <h2 id="features-heading" className="font-display font-black text-5xl md:text-6xl lg:text-7xl leading-[1.05] text-white max-w-3xl mb-6 tracking-tight">
+          <h2 id="features-heading" className="font-display font-black text-4xl md:text-5xl lg:text-7xl leading-[1.05] text-white max-w-3xl mb-6 tracking-tight">
             Everything you need, <span className="text-primary">floating in one place.</span>
           </h2>
           <p className="text-[#C7CBCE] text-xl font-bold leading-relaxed max-w-xl font-outfit">
@@ -331,7 +331,7 @@ function DomainsSection() {
               <Link
                 key={domain.key}
                 to="/roadmaps"
-                className="flex flex-col items-center gap-6 rounded-3xl border-2 border-black bg-[#F4F7EB]/70 backdrop-blur-xl p-10 text-center hover:bg-[#F4F7EB]/90 hover:scale-[1.05] hover:shadow-[0_20px_50px_rgba(143,204,30,0.2)] hover:border-black transition-all duration-300 ease-out group relative"
+                className="flex flex-col items-center gap-4 rounded-3xl border-2 border-black bg-[#F4F7EB]/70 backdrop-blur-xl p-6 md:p-10 text-center hover:bg-[#F4F7EB]/90 hover:scale-[1.05] hover:shadow-[0_20px_50px_rgba(143,204,30,0.2)] hover:border-black transition-all duration-300 ease-out group relative"
               >
                 <div
                   className="grid h-20 w-20 place-items-center rounded-2xl shadow-sm transition-transform duration-300 group-hover:-translate-y-2 bg-primary border-2 border-black text-black relative z-10"
@@ -559,14 +559,14 @@ function InternshipHighlightsSection() {
   return (
     <section className="py-24 md:py-32 bg-[#F9FAF5] overflow-hidden relative" aria-labelledby="internship-highlight-heading">
       <div className="container-page relative z-10">
-        <div className="relative overflow-hidden rounded-[40px] bg-[#F4F7EB] border border-[#222] p-10 md:p-16 lg:p-20 shadow-[0_20px_80px_rgba(0,0,0,0.1)] group transition-all duration-700 hover:shadow-[0_30px_100px_rgba(143,204,30,0.2)] hover:border-black">
+        <div className="relative overflow-hidden rounded-[40px] bg-[#F4F7EB] border border-[#222] p-6 md:p-16 lg:p-20 shadow-[0_20px_80px_rgba(0,0,0,0.1)] group transition-all duration-700 hover:shadow-[0_30px_100px_rgba(143,204,30,0.2)] hover:border-black">
           <div className="relative z-10 grid items-center gap-16 lg:grid-cols-2">
             <div className="text-left space-y-5">
               <span className="inline-block rounded-full border border-[#222] bg-[#F9FAF5] px-3.5 py-1 text-xs font-semibold text-black font-orbitron tracking-wider">
                 INDUSTRIAL LAUNCHPAD
               </span>
               <h2
-                className="font-display text-5xl md:text-6xl lg:text-7xl font-black text-black font-orbitron leading-[1.1] tracking-tight drop-shadow-sm"
+                className="font-display text-4xl md:text-5xl lg:text-7xl font-black text-black font-orbitron leading-[1.1] tracking-tight drop-shadow-sm"
                 id="internship-highlight-heading"
               >
                 Real engineering.<br />
@@ -621,8 +621,8 @@ function BenefitsSection() {
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="text-left space-y-4 relative">
             <img src="/zerocost.png" alt="0% Cost" className="w-40 h-auto md:w-56 mb-6 object-contain mix-blend-multiply contrast-125 brightness-110" />
-            <span className="block text-sm font-semibold uppercase tracking-wider text-indigo-600">Academy Merits</span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight font-orbitron" id="benefits-heading">
+            <span className="block text-sm font-semibold uppercase tracking-widest text-primary font-display">Academy Merits</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight font-orbitron" id="benefits-heading">
               Everything you need,<br />zero costs.
             </h2>
             <p className="text-slate-600 leading-relaxed text-lg max-w-md">
