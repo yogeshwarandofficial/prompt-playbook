@@ -396,8 +396,15 @@ function ProcessSection() {
 // ─── FEATURED ROADMAPS ────────────────────────────────────────────────────────
 function FeaturedRoadmapsSection() {
   return (
-    <section className="py-24 md:py-32 bg-[#F9FAF5]" aria-labelledby="roadmaps-heading">
-      <div className="container-page">
+    <section className="py-24 md:py-32 bg-[#F9FAF5] relative overflow-hidden" aria-labelledby="roadmaps-heading">
+      {/* Top right illustration */}
+      <img 
+        src="/study_illustration.png" 
+        alt="" 
+        className="hidden lg:block absolute right-0 lg:right-[5%] top-12 w-72 lg:w-96 object-contain opacity-80 mix-blend-multiply pointer-events-none animate-float"
+        aria-hidden="true"
+      />
+      <div className="container-page relative z-10">
         <SectionHeader
           eyebrow="Featured Roadmaps"
           title="Start learning the right way"
