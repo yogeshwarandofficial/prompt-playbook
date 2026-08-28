@@ -1,7 +1,7 @@
-export type DomainKey = "web" | "cloud" | "app" | "ai" | "marketing";
+export type DomainKey = "web" | "cloud" | "app" | "ai" | "marketing" | "video";
 
 // Human-readable domain name type (used throughout pages)
-export type Domain = "Web Development" | "Cloud AWS" | "App Development" | "AI & Automation" | "Digital Marketing";
+export type Domain = "Web Development" | "Cloud AWS" | "App Development" | "AI & Automation" | "Digital Marketing" | "Video Editing";
 
 // Mapping from DomainKey → Domain name
 export const DOMAIN_NAME_MAP: Record<DomainKey, Domain> = {
@@ -10,6 +10,7 @@ export const DOMAIN_NAME_MAP: Record<DomainKey, Domain> = {
   app: "App Development",
   ai: "AI & Automation",
   marketing: "Digital Marketing",
+  video: "Video Editing",
 };
 
 // Array of Domain names for iteration
@@ -19,6 +20,7 @@ export const DOMAIN_LIST: Domain[] = [
   "App Development",
   "AI & Automation",
   "Digital Marketing",
+  "Video Editing",
 ];
 
 export interface DomainInfo {
@@ -84,6 +86,16 @@ export const DOMAINS: DomainInfo[] = [
     duration: "2–3 Months",
     skills: ["SEO", "GA4", "Meta Ads", "Email", "Content"],
   },
+  {
+    key: "video",
+    name: "Video Editing",
+    short: "Video",
+    description: "Master video production, editing software, and storytelling techniques.",
+    icon: "🎥",
+    tutorials: 10,
+    duration: "2–3 Months",
+    skills: ["Premiere Pro", "After Effects", "DaVinci Resolve", "Color Grading", "Audio Mixing"],
+  },
 ];
 
 export const DOMAIN_COLORS: Record<DomainKey, string> = {
@@ -92,6 +104,7 @@ export const DOMAIN_COLORS: Record<DomainKey, string> = {
   app: "var(--color-domain-app)",
   ai: "var(--color-domain-ai)",
   marketing: "var(--color-domain-marketing)",
+  video: "var(--color-domain-video)",
 };
 
 export interface RoadmapLesson {
@@ -1224,10 +1237,10 @@ export const TUTORIALS: Tutorial[] = [
 
 
 export const TESTIMONIALS = [
-  { name: "Aarav Sharma", college: "IIT Madras", stars: 5, quote: "The Web Dev roadmap took me from confused to confident. I shipped a real project and landed an internship." },
-  { name: "Priya Patel", college: "BITS Pilani", stars: 5, quote: "Loved how structured the AI roadmap is. The project ideas alone are worth gold." },
-  { name: "Rohan Mehta", college: "NIT Trichy", stars: 5, quote: "Free, focused, and actually useful. Way better than scattered YouTube playlists." },
-  { name: "Sneha Reddy", college: "VIT Vellore", stars: 5, quote: "I applied for the Cloud internship and got onboarded in two weeks. Highly recommend." },
+  { name: "Karthik Subramanian", college: "IIT Madras", stars: 5, quote: "The Web Dev roadmap took me from confused to confident. I shipped a real project and landed an internship." },
+  { name: "Kanimozhi Natarajan", college: "BITS Pilani", stars: 5, quote: "Loved how structured the AI roadmap is. The project ideas alone are worth gold." },
+  { name: "Ashwin Chandran", college: "NIT Trichy", stars: 5, quote: "Free, focused, and actually useful. Way better than scattered YouTube playlists." },
+  { name: "Nithya Rajendran", college: "VIT Vellore", stars: 5, quote: "I applied for the Cloud internship and got onboarded in two weeks. Highly recommend." },
 ];
 
 export const FAQS = [

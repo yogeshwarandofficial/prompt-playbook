@@ -158,11 +158,11 @@ function ContactPage() {
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
-                allowFullScreen
+                allowFullScreen={true}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 title="Thiruvarur Location Map"
-                className="absolute inset-0 grayscale contrast-125 hover:grayscale-0 transition-all duration-500"
+                className="absolute inset-0 w-full h-full"
               />
             </div>
           </aside>

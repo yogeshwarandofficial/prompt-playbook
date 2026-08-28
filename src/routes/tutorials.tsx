@@ -62,7 +62,7 @@ function TutorialsPage() {
               placeholder="Search tutorials…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full rounded-2xl border-4 border-[#222] bg-white pl-12 pr-4 py-3.5 text-base text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary focus:shadow-[4px_4px_0px_rgba(156,255,59,1)] transition-all font-outfit"
+              className="w-full rounded-full border border-slate-200 bg-white pl-12 pr-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-sm"
               aria-label="Search tutorials"
             />
           </div>
@@ -74,10 +74,10 @@ function TutorialsPage() {
                 aria-selected={filter === f.key}
                 onClick={() => setFilter(f.key)}
                 className={cn(
-                  "whitespace-nowrap rounded-xl px-5 py-2 text-sm font-black transition-all uppercase tracking-wider font-orbitron border-2",
+                  "whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition-all border",
                   filter === f.key
-                    ? "bg-[#0A0A0A] text-primary border-black shadow-[4px_4px_0px_rgba(0,0,0,1)]"
-                    : "bg-white border-[#222] text-slate-600 hover:border-black hover:text-black hover:shadow-[2px_2px_0px_rgba(0,0,0,1)]",
+                    ? "bg-indigo-50 text-indigo-700 border-indigo-200 shadow-sm"
+                    : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 hover:bg-slate-50",
                 )}
               >
                 {f.label}
@@ -87,17 +87,19 @@ function TutorialsPage() {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="rounded-3xl border-4 border-dashed border-[#222] bg-white px-6 py-20 text-center">
-            <BookOpen className="mx-auto h-12 w-12 text-slate-300" />
-            <h2 className="mt-5 text-xl font-black text-slate-800 font-orbitron">No tutorials yet</h2>
-            <p className="mt-2 text-base text-slate-500 font-outfit">Try a different filter, or check back soon.</p>
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-16 text-center">
+            <BookOpen className="mx-auto h-12 w-12 text-slate-400" />
+            <h2 className="mt-4 text-lg font-bold text-slate-800">No tutorials found</h2>
+            <p className="mt-1 text-sm text-slate-500">Try adjusting your filters, or check back soon.</p>
           </div>
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((t) => (
-              <article
+              <Link
                 key={t.slug}
-                className="group flex flex-col rounded-2xl border border-slate-100 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
+                to="/tutorials/$slug"
+                params={{ slug: t.slug }}
+                className="group flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-300 relative overflow-hidden"
               >
                 {/* Full-width domain gradient banner */}
                 <div
@@ -129,16 +131,14 @@ function TutorialsPage() {
                   <span className="inline-flex items-center gap-1.5 px-1 py-1 rounded-md">
                     <Clock className="h-3.5 w-3.5" /> {t.readMinutes} min read
                   </span>
-                  <Link
-                    to="/tutorials/$slug"
-                    params={{ slug: t.slug }}
+                  <div
                     className="inline-flex items-center gap-1 font-semibold text-slate-700 hover:text-slate-900"
                   >
                     Read <ArrowRight className="h-4 w-4" />
-                  </Link>
+                  </div>
                 </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         )}

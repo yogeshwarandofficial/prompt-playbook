@@ -23,6 +23,7 @@ const DOMAIN_TO_DEFAULT: Record<DomainKey, string> = {
   app: "Flutter",
   ai: "AI & Automation",
   marketing: "Digital Marketing",
+  video: "Video Editing",
 };
 
 // Vibrant domain palette
@@ -32,6 +33,7 @@ const DOMAIN_COLORS: Record<DomainKey, string> = {
   app:       "#10B981",
   ai:        "#8B5CF6",
   marketing: "#F43F5E",
+  video:     "#E11D48",
 };
 
 function InternshipsPage() {

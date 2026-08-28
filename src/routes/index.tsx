@@ -18,6 +18,7 @@ import {
   Briefcase,
   Globe,
   Mail,
+  Video,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -57,6 +58,7 @@ const DOMAIN_KEY_COLORS: Record<DomainKey, string> = {
   app:       "rgba(217, 255, 176, 0.12)",
   ai:        "rgba(156, 255, 59, 0.12)",
   marketing: "rgba(182, 255, 74, 0.12)",
+  video:     "rgba(255, 59, 156, 0.12)",
 };
 
 const DOMAIN_TEXT_COLORS: Record<DomainKey, string> = {
@@ -65,6 +67,7 @@ const DOMAIN_TEXT_COLORS: Record<DomainKey, string> = {
   app:       "#D9FFB0",
   ai:        "#9CFF3B",
   marketing: "#B6FF4A",
+  video:     "#FF3B9C",
 };
 
 export function DomainBadge({ domain }: { domain: DomainKey }) {
@@ -264,6 +267,7 @@ const DOMAIN_ICONS: Record<DomainKey, React.ReactNode> = {
   app:       <Smartphone className="h-6 w-6" />,
   ai:        <Cpu className="h-6 w-6" />,
   marketing: <Megaphone className="h-6 w-6" />,
+  video:     <Video className="h-6 w-6" />,
 };
 
 function DomainsSection() {
@@ -299,7 +303,7 @@ function DomainsSection() {
           </div>
 
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5 relative z-10">
-            {DOMAINS.map((domain) => (
+            {DOMAINS.filter(d => d.key !== 'video').map((domain) => (
               <Link
                 key={domain.key}
                 to="/roadmaps"
@@ -387,24 +391,40 @@ function FeaturedRoadmapsSection() {
           id="roadmaps-heading"
           theme="light"
         />
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {ROADMAPS.slice(0, 3).map((r) => (
             <div
               key={r.slug}
-              className="bg-white border border-slate-100 overflow-hidden rounded-2xl flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out group"
+              className="bg-white border border-slate-200/60 rounded-[1.5rem] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:border-slate-300 hover:-translate-y-1 transition-all duration-300 ease-out group"
             >
-              <div className="p-8 space-y-4">
-                <DomainBadge domain={r.domain} />
-                <h3 className="text-2xl font-bold text-slate-800 group-hover:text-black transition-colors leading-tight tracking-tight">{r.title}</h3>
-                <p className="text-sm font-medium leading-relaxed text-slate-500 line-clamp-3">{r.description}</p>
-                <div className="flex items-center gap-4 text-[11px] text-slate-500 pt-2 font-semibold uppercase tracking-wider">
-                  <span className="rounded-md bg-slate-100 px-3 py-1.5">{r.difficulty}</span>
-                  <span>{r.duration}</span>
+              <div className="p-8 pb-0 space-y-5 flex-1">
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex items-center rounded-full bg-blue-50/50 px-3 py-1 text-[10px] font-bold text-blue-600 border border-blue-100/50 tracking-widest uppercase">
+                    {DOMAIN_NAME_MAP[r.domain]}
+                  </span>
+                </div>
+                
+                <h3 className="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-tight tracking-tight">
+                  {r.title}
+                </h3>
+                
+                <p className="text-sm font-medium leading-relaxed text-slate-500">
+                  {r.description}
+                </p>
+                
+                <div className="flex flex-wrap items-center gap-2 pt-2">
+                  <span className="rounded-full bg-slate-50 border border-slate-100 px-3 py-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    {r.difficulty}
+                  </span>
+                  <span className="rounded-full bg-slate-50 border border-slate-100 px-3 py-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    {r.duration}
+                  </span>
                 </div>
               </div>
-              <div className="border-t border-slate-100 px-8 py-5 bg-slate-50 group-hover:bg-indigo-50/50 transition-colors">
-                <Link to="/roadmaps" className="text-sm font-bold text-indigo-600 transition-colors tracking-widest uppercase">
-                  View Roadmap →
+              
+              <div className="p-8 pt-8 mt-auto">
+                <Link to="/roadmaps" className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 transition-colors tracking-widest uppercase group-hover:text-blue-700">
+                  View Roadmap <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>
@@ -413,7 +433,7 @@ function FeaturedRoadmapsSection() {
         <div className="mt-14 text-center">
             <Link
               to="/roadmaps"
-              className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-8 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition-all uppercase tracking-widest"
+              className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-8 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition-all tracking-wide"
             >
             View All Roadmaps <ArrowRight className="h-4 w-4" />
           </Link>
@@ -426,8 +446,7 @@ function FeaturedRoadmapsSection() {
 // ─── FEATURED TUTORIALS ───────────────────────────────────────────────────────
 function FeaturedTutorialsSection() {
   return (
-    <section className="py-24 md:py-32 bg-gradient-to-br from-[#050505] via-[#111] to-[#0A0A0A] relative" aria-labelledby="tutorials-heading">
-      {/* Decorative noise/texture overlay could go here */}
+    <section className="py-24 md:py-32 bg-black relative" aria-labelledby="tutorials-heading">
       <div className="container-page relative z-10">
         <SectionHeader
           eyebrow="Tutorial Sandbox"
@@ -435,50 +454,52 @@ function FeaturedTutorialsSection() {
           subtitle="Explore comprehensive sandbox articles to hone your active implementation skills."
           id="tutorials-heading"
         />
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {TUTORIALS.slice(0, 4).map((t) => (
             <Link
               key={t.slug}
               to="/tutorials/$slug"
               params={{ slug: t.slug }}
-              className="group bg-white/5 backdrop-blur-xl border border-white/10 flex flex-col overflow-hidden rounded-[20px] hover:border-white/25 hover:bg-white/10 hover:-translate-y-2 hover:shadow-[0_15px_40px_rgba(0,0,0,0.5)] transition-all duration-500 ease-out"
+              className="group bg-[#0a0a0a] border border-white/10 flex flex-col overflow-hidden rounded-[1.5rem] hover:border-white/20 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:-translate-y-1 transition-all duration-300 ease-out"
             >
               <div
                 className="aspect-[16/9] w-full relative overflow-hidden"
                 style={{
-                  background: `linear-gradient(135deg, ${DOMAIN_TEXT_COLORS[t.domain]}22 0%, ${DOMAIN_TEXT_COLORS[t.domain]}06 100%)`,
+                  background: `linear-gradient(135deg, ${DOMAIN_TEXT_COLORS[t.domain]}11 0%, ${DOMAIN_TEXT_COLORS[t.domain]}00 100%)`,
                 }}
                 aria-hidden="true"
               >
                 <div className="absolute inset-0 grid place-items-center">
                   <div
-                    className="h-14 w-14 rounded-[16px] grid place-items-center shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
+                    className="h-14 w-14 rounded-[12px] grid place-items-center shadow-lg transition-transform duration-500 group-hover:scale-110"
                     style={{ background: DOMAIN_KEY_COLORS[t.domain], color: DOMAIN_TEXT_COLORS[t.domain] }}
                   >
-                    <BookOpen className="h-7 w-7" />
+                    <BookOpen className="h-6 w-6" />
                   </div>
                 </div>
               </div>
-              <div className="flex flex-1 flex-col p-8 space-y-5">
+              <div className="flex flex-1 flex-col p-6 space-y-4">
                 <div>
-                  <DomainBadge domain={t.domain} />
+                  <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold text-white border border-white/10 tracking-widest uppercase">
+                    {DOMAIN_NAME_MAP[t.domain]}
+                  </span>
                 </div>
-                <h3 className="font-display text-2xl font-black leading-snug line-clamp-2 text-white font-orbitron group-hover:text-primary transition-colors tracking-tight">
+                <h3 className="text-xl font-bold leading-tight line-clamp-2 text-white group-hover:text-blue-400 transition-colors tracking-tight">
                   {t.title}
                 </h3>
-                <p className="text-sm text-[#C7CBCE] leading-relaxed font-outfit line-clamp-2 flex-1">{t.description}</p>
-                <div className="flex items-center justify-between text-sm font-bold text-[#C7CBCE] font-orbitron pt-2">
-                  <span>{t.readMinutes} min read</span>
-                  <span className="rounded border-2 border-[#232323] bg-[#1a1a1a] px-2 py-1">{t.difficulty}</span>
+                <p className="text-sm text-slate-400 leading-relaxed line-clamp-2 flex-1">{t.description}</p>
+                <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">{t.readMinutes} min read</span>
+                  <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t.difficulty}</span>
                 </div>
               </div>
             </Link>
           ))}
         </div>
-        <div className="mt-10 text-center">
+        <div className="mt-14 text-center">
           <Link
             to="/tutorials"
-            className="inline-flex items-center gap-2 rounded-xl border border-primary/20 bg-card px-6 py-3 text-sm font-semibold text-primary transition-all hover:bg-primary text-primary-foreground hover:text-primary-foreground hover:shadow-[0_4px_20px_rgba(156,255,59,0.2)] font-orbitron"
+            className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-8 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition-all tracking-wide"
           >
             Browse All Tutorials <ArrowRight className="h-4 w-4" />
           </Link>
@@ -556,23 +577,23 @@ const BENEFITS = [
 
 function BenefitsSection() {
   return (
-    <section className="py-24 md:py-32 bg-[#F9FAF5]" aria-labelledby="benefits-heading">
+    <section className="py-24 md:py-32 bg-white" aria-labelledby="benefits-heading">
       <div className="container-page">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="text-left space-y-4">
             <span className="text-sm font-semibold uppercase tracking-wider text-indigo-600">Academy Merits</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 leading-[1.1] tracking-tight" id="benefits-heading">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-[1.1] tracking-tight" id="benefits-heading">
               Everything you need,<br />zero costs.
             </h2>
-            <p className="text-slate-500 leading-relaxed text-lg max-w-md">
+            <p className="text-slate-600 leading-relaxed text-lg max-w-md">
               No subscription gates. No locked content. Infynux Academy runs on a commitment to deliver premium tech training to all.
             </p>
           </div>
           <ul className="grid gap-4 sm:grid-cols-2" role="list">
             {BENEFITS.map((benefit) => (
-              <li key={benefit} className="flex items-center gap-5 rounded-2xl border border-slate-100 bg-white p-6 text-left shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+              <li key={benefit} className="flex items-center gap-5 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-left shadow-sm hover:shadow-md hover:border-indigo-200 hover:-translate-y-1 transition-all duration-300">
                 <CheckCircle2 className="h-6 w-6 shrink-0 text-emerald-500" aria-hidden="true" />
-                <span className="text-base font-semibold text-slate-700 leading-snug">{benefit}</span>
+                <span className="text-base font-semibold text-slate-800 leading-snug">{benefit}</span>
               </li>
             ))}
           </ul>
@@ -585,7 +606,7 @@ function BenefitsSection() {
 // ─── TESTIMONIALS ─────────────────────────────────────────────────────────────
 function TestimonialsSection() {
   return (
-    <section className="py-24 md:py-32 bg-gradient-to-t from-black to-[#0A0A0A]" aria-labelledby="testimonials-heading">
+    <section className="py-24 md:py-32 bg-black" aria-labelledby="testimonials-heading">
       <div className="container-page">
         <SectionHeader
           eyebrow="Student Reviews"
@@ -595,26 +616,25 @@ function TestimonialsSection() {
         />
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {TESTIMONIALS.map((t) => (
-            <div key={t.name} className="flex flex-col justify-between bg-white/5 backdrop-blur-xl border-2 border-white/20 rounded-[32px] p-10 hover:bg-white/10 hover:-translate-y-3 hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-all duration-500">
-              <div className="space-y-6 text-left">
+            <div key={t.name} className="flex flex-col justify-between bg-[#0A0A0A] border border-white/10 rounded-3xl p-8 hover:bg-white/5 hover:-translate-y-1 hover:border-white/20 transition-all duration-300">
+              <div className="space-y-5 text-left">
                 <div className="flex gap-1" aria-label={`${t.stars} out of 5 stars`}>
                   {Array.from({ length: t.stars }).map((_, i) => (
                     <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" aria-hidden="true" />
                   ))}
                 </div>
-                <p className="text-xl italic font-bold leading-relaxed text-white font-outfit tracking-tight">"{t.quote}"</p>
+                <p className="text-lg font-medium leading-relaxed text-slate-300 tracking-tight">"{t.quote}"</p>
               </div>
-              <div className="mt-8 flex items-center gap-4 pt-6 border-t-2 border-white/10">
+              <div className="mt-8 flex items-center gap-4 pt-6 border-t border-white/10">
                 <div
-                  className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-base font-black text-white font-orbitron"
-                  style={{ background: "linear-gradient(135deg, #800000 0%, #C41E3A 100%)" }}
+                  className="grid h-12 w-12 shrink-0 place-items-center rounded-full text-sm font-bold text-white bg-red-600 shadow-sm"
                   aria-hidden="true"
                 >
                   {t.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)}
                 </div>
                 <div className="text-left">
-                  <p className="text-xl font-black text-white font-orbitron tracking-tight">{t.name}</p>
-                  <p className="text-sm font-bold text-[#C7CBCE] font-outfit uppercase tracking-widest mt-1">{t.college}</p>
+                  <p className="text-base font-bold text-white tracking-tight">{t.name}</p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-0.5">{t.college}</p>
                 </div>
               </div>
             </div>

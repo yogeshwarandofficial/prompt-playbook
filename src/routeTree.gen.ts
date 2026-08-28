@@ -17,7 +17,7 @@ import { Route as InternshipsRouteImport } from './routes/internships'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TutorialsSlugRouteImport } from './routes/tutorials.$slug'
+import { Route as TutorialsSlugRouteImport } from './routes/tutorials_.$slug'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
 import { Route as ApiContactRouteImport } from './routes/api/contact'
 import { Route as ApiNewsletterSubscribeRouteImport } from './routes/api/newsletter/subscribe'
@@ -64,9 +64,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const TutorialsSlugRoute = TutorialsSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => TutorialsRoute,
+  id: '/tutorials_/$slug',
+  path: '/tutorials/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LearnSlugRoute = LearnSlugRouteImport.update({
   id: '/learn/$slug',
@@ -97,7 +97,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/tutorials': typeof TutorialsRouteWithChildren
+  '/tutorials': typeof TutorialsRoute
   '/api/contact': typeof ApiContactRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
@@ -112,7 +112,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/tutorials': typeof TutorialsRouteWithChildren
+  '/tutorials': typeof TutorialsRoute
   '/api/contact': typeof ApiContactRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
@@ -128,10 +128,10 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/tutorials': typeof TutorialsRouteWithChildren
+  '/tutorials': typeof TutorialsRoute
   '/api/contact': typeof ApiContactRoute
   '/learn/$slug': typeof LearnSlugRoute
-  '/tutorials/$slug': typeof TutorialsSlugRoute
+  '/tutorials_/$slug': typeof TutorialsSlugRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
@@ -178,7 +178,7 @@ export interface FileRouteTypes {
     | '/tutorials'
     | '/api/contact'
     | '/learn/$slug'
-    | '/tutorials/$slug'
+    | '/tutorials_/$slug'
     | '/api/internships/apply'
     | '/api/newsletter/subscribe'
   fileRoutesById: FileRoutesById
@@ -191,9 +191,10 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   RoadmapsRoute: typeof RoadmapsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  TutorialsRoute: typeof TutorialsRouteWithChildren
+  TutorialsRoute: typeof TutorialsRoute
   ApiContactRoute: typeof ApiContactRoute
   LearnSlugRoute: typeof LearnSlugRoute
+  TutorialsSlugRoute: typeof TutorialsSlugRoute
   ApiInternshipsApplyRoute: typeof ApiInternshipsApplyRoute
   ApiNewsletterSubscribeRoute: typeof ApiNewsletterSubscribeRoute
 }
@@ -256,12 +257,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tutorials/$slug': {
-      id: '/tutorials/$slug'
-      path: '/$slug'
+    '/tutorials_/$slug': {
+      id: '/tutorials_/$slug'
+      path: '/tutorials/$slug'
       fullPath: '/tutorials/$slug'
       preLoaderRoute: typeof TutorialsSlugRouteImport
-      parentRoute: typeof TutorialsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/learn/$slug': {
       id: '/learn/$slug'
@@ -294,18 +295,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface TutorialsRouteChildren {
-  TutorialsSlugRoute: typeof TutorialsSlugRoute
-}
-
-const TutorialsRouteChildren: TutorialsRouteChildren = {
-  TutorialsSlugRoute: TutorialsSlugRoute,
-}
-
-const TutorialsRouteWithChildren = TutorialsRoute._addFileChildren(
-  TutorialsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -314,9 +303,10 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   RoadmapsRoute: RoadmapsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  TutorialsRoute: TutorialsRouteWithChildren,
+  TutorialsRoute: TutorialsRoute,
   ApiContactRoute: ApiContactRoute,
   LearnSlugRoute: LearnSlugRoute,
+  TutorialsSlugRoute: TutorialsSlugRoute,
   ApiInternshipsApplyRoute: ApiInternshipsApplyRoute,
   ApiNewsletterSubscribeRoute: ApiNewsletterSubscribeRoute,
 }

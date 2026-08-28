@@ -212,7 +212,7 @@ export function PageHeader({
       {/* Subtle background glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
       
-      <div className="container-page py-12 md:py-16 text-left relative z-10">
+      <div className="container-page pb-12 pt-32 md:pb-16 md:pt-40 text-left relative z-10">
         <nav aria-label="Breadcrumb" className="text-xs text-[#C7CBCE]/70 font-orbitron">
           <ol className="flex flex-wrap items-center gap-1.5">
             {crumbs.map((c, i) => (
