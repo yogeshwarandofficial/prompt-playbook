@@ -283,6 +283,14 @@ function DomainsSection() {
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-cyan-400/20 rounded-full blur-[120px] mix-blend-multiply opacity-70" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-emerald-300/20 rounded-full blur-[120px] mix-blend-multiply opacity-50" />
       
+      {/* Top right image moved here to allow mix-blend-multiply to work against the section background */}
+      <img 
+        src="/path.jpg" 
+        alt="Learning Path" 
+        className="hidden lg:block absolute right-0 lg:right-[5%] top-24 w-72 lg:w-80 xl:w-96 object-contain mix-blend-multiply opacity-90 pointer-events-none"
+        aria-hidden="true"
+      />
+
       <div className="container-page relative z-10">
         <div className="flex justify-between items-start">
           <SectionHeader
@@ -291,13 +299,6 @@ function DomainsSection() {
             subtitle="Explore five in-demand disciplines with structured roadmaps tuned for immediate application."
             id="domains-heading"
             theme="light"
-          />
-          {/* Top right image without animation */}
-          <img 
-            src="/path.jpg" 
-            alt="Learning Path" 
-            className="hidden lg:block absolute right-0 lg:right-[5%] -top-12 w-72 lg:w-80 xl:w-96 object-contain mix-blend-multiply opacity-90 pointer-events-none"
-            aria-hidden="true"
           />
         </div>
         <div className="mt-16 relative">
