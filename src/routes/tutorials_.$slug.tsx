@@ -115,38 +115,38 @@ function TutorialPage() {
 
   return (
     <>
-      {/* ── Seamless White Header ─────────────────────────────────────────── */}
-      <section className="bg-white pt-32 pb-12 border-b border-slate-100 shadow-sm relative z-10">
+      {/* ── Seamless Dark Header ─────────────────────────────────────────── */}
+      <section className="bg-black pt-32 pb-12 border-b border-white/10 relative z-10">
         <div className="container-page max-w-4xl text-left">
           {/* Breadcrumbs */}
-          <nav aria-label="Breadcrumb" className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-8">
+          <nav aria-label="Breadcrumb" className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-8">
             <ol className="flex flex-wrap items-center gap-1.5">
               <li>
-                <Link to="/" className="hover:text-indigo-600 transition-colors">Home</Link>
+                <Link to="/" className="hover:text-white transition-colors">Home</Link>
               </li>
-              <ChevronRight className="h-3 w-3 text-slate-300" />
+              <ChevronRight className="h-3 w-3 text-slate-600" />
               <li>
-                <Link to="/tutorials" className="hover:text-indigo-600 transition-colors">Tutorials</Link>
+                <Link to="/tutorials" className="hover:text-white transition-colors">Tutorials</Link>
               </li>
-              <ChevronRight className="h-3 w-3 text-slate-300" />
-              <li className="text-slate-600">{tutorial.title}</li>
+              <ChevronRight className="h-3 w-3 text-slate-600" />
+              <li className="text-slate-300">{tutorial.title}</li>
             </ol>
           </nav>
           
-          <h1 className="text-4xl font-bold text-slate-900 sm:text-5xl lg:text-6xl tracking-tight leading-tight">
+          <h1 className="text-4xl font-bold text-white sm:text-5xl lg:text-6xl tracking-tight leading-tight">
             {tutorial.title}
           </h1>
-          <p className="mt-5 max-w-2xl text-slate-600 text-lg leading-relaxed">
+          <p className="mt-5 max-w-2xl text-slate-400 text-lg leading-relaxed">
             {tutorial.description}
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <DomainBadge domain={tutorial.domain} />
             <DifficultyBadge level={tutorial.difficulty} />
-            <span className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-1.5 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+            <span className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-1.5 text-[11px] font-bold text-slate-300 uppercase tracking-wider">
               <Clock className="h-4 w-4 text-slate-400" /> {tutorial.readMinutes} min read
             </span>
-            <span className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-1.5 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+            <span className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-1.5 text-[11px] font-bold text-slate-300 uppercase tracking-wider">
               <BookOpen className="h-4 w-4 text-slate-400" /> {tutorial.steps.length} lessons
             </span>
           </div>
@@ -155,7 +155,7 @@ function TutorialPage() {
             {tutorial.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-bold text-slate-600 uppercase tracking-wider"
+                className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider"
               >
                 {tag}
               </span>
@@ -165,7 +165,7 @@ function TutorialPage() {
       </section>
 
       {/* ── Body ─────────────────────────────────────────────────────────── */}
-      <div className="w-full bg-[#FDFBF7] min-h-screen text-slate-600 pb-24">
+      <div className="w-full bg-[#0A0A0A] min-h-screen text-slate-300 pb-24">
       <div className="container-page max-w-4xl py-12">
         <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
 
@@ -181,10 +181,10 @@ function TutorialPage() {
                 {tutorial.whatYouWillLearn.map((item, i) => (
                   <li
                     key={i}
-                    className="flex items-start gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                    className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 hover:border-white/20 hover:-translate-y-1 transition-all duration-300"
                   >
                     <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" aria-hidden="true" />
-                    <span className="text-sm font-semibold leading-relaxed text-slate-800">{item}</span>
+                    <span className="text-sm font-semibold leading-relaxed text-slate-200">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -214,7 +214,7 @@ function TutorialPage() {
                 {tutorial.steps.map((step, i) => (
                   <li
                     key={i}
-                    className="relative rounded-3xl border border-slate-200 bg-white p-8 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all"
+                    className="relative rounded-3xl border border-white/10 bg-[#0F0F0F] p-8 hover:border-white/20 transition-all"
                   >
                     {/* Accent bar */}
                     <div
@@ -222,13 +222,13 @@ function TutorialPage() {
                       style={{ background: DOMAIN_COLORS[tutorial.domain] }}
                       aria-hidden="true"
                     />
-                    <p className="pl-6 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                    <p className="pl-6 text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">
                       Step {i + 1}
                     </p>
-                    <h3 className="pl-6 text-xl font-bold leading-snug text-slate-900">
+                    <h3 className="pl-6 text-xl font-bold leading-snug text-white">
                       {step.title}
                     </h3>
-                    <p className="mt-4 pl-6 text-sm leading-relaxed text-slate-600">
+                    <p className="mt-4 pl-6 text-sm leading-relaxed text-slate-400">
                       {step.content}
                     </p>
                   </li>
@@ -248,12 +248,12 @@ function TutorialPage() {
                       href={r.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-indigo-200 hover:bg-slate-50"
+                      className="group flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-5 transition-all hover:border-white/20 hover:bg-white/10"
                     >
-                      <span className="text-sm font-semibold text-slate-700 group-hover:text-indigo-600 transition-colors">
+                      <span className="text-sm font-semibold text-slate-300 group-hover:text-white transition-colors">
                         {r.label}
                       </span>
-                      <ExternalLink className="h-4 w-4 shrink-0 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+                      <ExternalLink className="h-4 w-4 shrink-0 text-slate-500 group-hover:text-white transition-colors" />
                     </a>
                   </li>
                 ))}
@@ -265,18 +265,18 @@ function TutorialPage() {
           <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
 
             {/* Quick Info Card */}
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm space-y-6">
-              <h3 className="text-xs font-bold text-slate-400 tracking-widest uppercase">Course Info</h3>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-6">
+              <h3 className="text-xs font-bold text-slate-500 tracking-widest uppercase">Course Info</h3>
               <dl className="space-y-4 text-sm">
                 {[
-                  { label: "Domain",    val: <span className="font-semibold text-slate-900">{domainName}</span> },
+                  { label: "Domain",    val: <span className="font-semibold text-white">{domainName}</span> },
                   { label: "Level",     val: <DifficultyBadge level={tutorial.difficulty} /> },
-                  { label: "Read Time", val: <span className="font-semibold text-slate-900">{tutorial.readMinutes} minutes</span> },
-                  { label: "Lessons",   val: <span className="font-semibold text-slate-900">{tutorial.steps.length} steps</span> },
-                  { label: "Resources", val: <span className="font-semibold text-slate-900">{tutorial.resources.length} links</span> },
+                  { label: "Read Time", val: <span className="font-semibold text-white">{tutorial.readMinutes} minutes</span> },
+                  { label: "Lessons",   val: <span className="font-semibold text-white">{tutorial.steps.length} steps</span> },
+                  { label: "Resources", val: <span className="font-semibold text-white">{tutorial.resources.length} links</span> },
                 ].map(({ label, val }) => (
-                  <div key={label} className="flex items-center justify-between border-b border-slate-100 pb-2">
-                    <dt className="text-slate-500 font-medium">{label}</dt>
+                  <div key={label} className="flex items-center justify-between border-b border-white/10 pb-2">
+                    <dt className="text-slate-400 font-medium">{label}</dt>
                     <dd>{val}</dd>
                   </div>
                 ))}
@@ -289,8 +289,8 @@ function TutorialPage() {
                 aria-pressed={saved}
                 className={`inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-xs font-bold transition-all uppercase tracking-wider ${
                   saved
-                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                    : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
+                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                    : "border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:bg-white/10"
                 }`}
               >
                 {saved ? (
@@ -302,18 +302,18 @@ function TutorialPage() {
 
               <Link
                 to="/internships"
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-xs font-bold text-white hover:bg-indigo-700 transition-all uppercase tracking-wider shadow-sm"
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-xs font-bold text-white hover:bg-blue-700 transition-all uppercase tracking-wider shadow-sm"
               >
                 Apply for Internship <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
 
             {/* Table of Contents */}
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
-              <h3 className="mb-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Contents</h3>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              <h3 className="mb-5 text-xs font-bold text-slate-500 uppercase tracking-widest">Contents</h3>
               <ol className="space-y-4">
                 {tutorial.steps.map((step, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-slate-700 font-medium hover:text-indigo-600 transition-colors cursor-default">
+                  <li key={i} className="flex items-start gap-3 text-sm text-slate-300 font-medium hover:text-white transition-colors cursor-default">
                     <span
                       className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px] font-bold text-white shadow-sm"
                       style={{ background: DOMAIN_COLORS[tutorial.domain] }}
@@ -331,23 +331,23 @@ function TutorialPage() {
         </div>
 
         {/* ── CTA Banner ───────────────────────────────────────────────────── */}
-        <div className="mt-16 rounded-[2rem] border border-indigo-100 bg-gradient-to-br from-indigo-50 to-white px-8 py-12 text-center shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-100 rounded-full blur-[60px]" />
+        <div className="mt-16 rounded-[2rem] border border-white/10 bg-[#0F0F0F] px-8 py-12 text-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[60px]" />
           <div className="relative z-10">
-            <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Ready to put this into practice?</h2>
-            <p className="mt-4 text-slate-600 text-base max-w-xl mx-auto leading-relaxed">
+            <h2 className="text-3xl font-bold text-white tracking-tight">Ready to put this into practice?</h2>
+            <p className="mt-4 text-slate-400 text-base max-w-xl mx-auto leading-relaxed">
               Apply for a real {domainName} internship and ship production projects with mentorship.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Link
                 to="/internships"
-                className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-8 py-3.5 text-sm font-semibold text-white hover:bg-indigo-700 transition-all shadow-sm"
+                className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-8 py-3.5 text-sm font-semibold text-white hover:bg-blue-700 transition-all shadow-sm"
               >
                 Apply Now <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 to="/tutorials"
-                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-8 py-3.5 text-sm font-semibold text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-8 py-3.5 text-sm font-semibold text-slate-300 hover:border-white/20 hover:bg-white/10 transition-colors"
               >
                 More Tutorials
               </Link>
@@ -358,14 +358,14 @@ function TutorialPage() {
         {/* ── Related Tutorials ────────────────────────────────────────────── */}
         {related.length > 0 && (
           <section className="mt-16">
-            <h2 className="mb-6 text-xl font-bold text-slate-900 tracking-wide">Related Tutorials</h2>
+            <h2 className="mb-6 text-xl font-bold text-white tracking-wide">Related Tutorials</h2>
             <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
               {related.map((r) => (
                 <Link
                   key={r.slug}
                   to="/tutorials/$slug"
                   params={{ slug: r.slug }}
-                  className="group flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:border-indigo-200 hover:-translate-y-1 transition-all duration-300 overflow-hidden relative"
+                  className="group flex flex-col rounded-3xl border border-white/10 bg-white/5 p-6 hover:border-white/20 hover:-translate-y-1 transition-all duration-300 overflow-hidden relative"
                 >
                   <div
                     className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-10 blur-[30px]"
@@ -373,13 +373,13 @@ function TutorialPage() {
                   />
                   <div className="relative z-10">
                     <DomainBadge domain={r.domain} />
-                    <h3 className="mt-4 text-base font-bold leading-snug line-clamp-2 text-slate-900 group-hover:text-indigo-600 transition-colors tracking-tight">
+                    <h3 className="mt-4 text-base font-bold leading-snug line-clamp-2 text-white group-hover:text-blue-400 transition-colors tracking-tight">
                       {r.title}
                     </h3>
-                    <p className="mt-2 flex-1 text-sm text-slate-500 line-clamp-3 leading-relaxed">
+                    <p className="mt-2 flex-1 text-sm text-slate-400 line-clamp-3 leading-relaxed">
                       {r.description}
                     </p>
-                    <div className="mt-4 flex items-center gap-2 text-xs font-bold text-indigo-600 uppercase tracking-widest">
+                    <div className="mt-4 flex items-center gap-2 text-xs font-bold text-blue-500 uppercase tracking-widest">
                       Read more <ArrowRight className="h-3 w-3" />
                     </div>
                   </div>
