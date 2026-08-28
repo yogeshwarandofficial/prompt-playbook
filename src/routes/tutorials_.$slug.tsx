@@ -51,9 +51,9 @@ export const Route = createFileRoute("/tutorials_/$slug")({
 
 // ── Difficulty badge — sleek palette ──────────────────────────────────────────
 const DIFFICULTY_STYLES: Record<string, string> = {
-  Beginner:     "bg-emerald-50 text-emerald-700 border border-emerald-200",
-  Intermediate: "bg-amber-50 text-amber-700 border border-amber-200",
-  Advanced:     "bg-rose-50 text-rose-700 border border-rose-200",
+  Beginner:     "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+  Intermediate: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
+  Advanced:     "bg-rose-500/10 text-rose-400 border border-rose-500/20",
 };
 function DifficultyBadge({ level }: { level: string }) {
   return (
@@ -67,10 +67,10 @@ function DifficultyBadge({ level }: { level: string }) {
 function SectionHeading({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="mb-6 flex items-center gap-4">
-      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 border border-slate-200 text-slate-600">
+      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-slate-300">
         {icon}
       </span>
-      <h2 className="text-2xl font-bold text-slate-900 tracking-wide">{children}</h2>
+      <h2 className="text-2xl font-bold text-white tracking-wide">{children}</h2>
     </div>
   );
 }
