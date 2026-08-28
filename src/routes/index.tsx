@@ -601,8 +601,9 @@ function BenefitsSection() {
     <section className="py-24 md:py-32 bg-white" aria-labelledby="benefits-heading">
       <div className="container-page">
         <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div className="text-left space-y-4">
-            <span className="text-sm font-semibold uppercase tracking-wider text-indigo-600">Academy Merits</span>
+          <div className="text-left space-y-4 relative">
+            <img src="/zerocost.png" alt="0% Cost" className="w-24 h-auto md:w-32 mb-4 object-contain animate-float" />
+            <span className="block text-sm font-semibold uppercase tracking-wider text-indigo-600">Academy Merits</span>
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-[1.1] tracking-tight" id="benefits-heading">
               Everything you need,<br />zero costs.
             </h2>
