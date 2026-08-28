@@ -49,8 +49,9 @@ function TutorialsPage() {
     <>
       <PageHeader
         crumbs={[{ label: "Home", to: "/" }, { label: "Tutorials" }]}
-        title="Tutorials"
-        subtitle="Learn by doing with practical, step-by-step guides."
+        title="Tutorials & Guides"
+        subtitle="Step-by-step technical guides, from setting up your environment to deploying your first app."
+        theme="light"
       />
       <section className="container-page py-10 pb-24">
         {/* Search + filter bar */}

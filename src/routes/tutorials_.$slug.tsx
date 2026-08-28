@@ -123,6 +123,7 @@ function TutorialPage() {
         ]}
         title={tutorial.title}
         subtitle={tutorial.description}
+        theme="light"
       />
 
       {/* ── Info Bar ─────────────────────────────────────────────────────── */}

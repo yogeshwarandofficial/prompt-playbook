@@ -201,12 +201,41 @@ function Block({ title, children }: { title: string; children: React.ReactNode }
 }
 
 export function PageHeader({
-  crumbs, title, subtitle,
+  crumbs, title, subtitle, theme = "dark"
 }: {
   crumbs: { label: string; to?: string }[];
   title: string;
   subtitle?: string;
+  theme?: "dark" | "light";
 }) {
+  if (theme === "light") {
+    return (
+      <section className="bg-white pt-32 pb-12 md:pt-40 md:pb-16 border-b border-slate-200">
+        <div className="container-page text-left relative z-10">
+          <nav aria-label="Breadcrumb" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            <ol className="flex flex-wrap items-center gap-1.5">
+              {crumbs.map((c, i) => (
+                <li key={i} className="flex items-center gap-1.5">
+                  {c.to ? (
+                    <Link to={c.to} className="hover:text-indigo-600 transition-colors">
+                      {c.label}
+                    </Link>
+                  ) : (
+                    <span className="text-slate-600">{c.label}</span>
+                  )}
+                  {i < crumbs.length - 1 && <ChevronRight className="h-3 w-3 text-slate-300" />}
+                </li>
+              ))}
+            </ol>
+          </nav>
+          <h1 className="mt-6 text-4xl font-bold text-slate-900 sm:text-5xl lg:text-6xl tracking-tight leading-tight">
+            {title}
+          </h1>
+          {subtitle && <p className="mt-4 max-w-2xl text-slate-600 text-lg leading-relaxed">{subtitle}</p>}
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="relative overflow-hidden border-b-2 border-[#222] bg-[#0A0A0A]">
       {/* Subtle background glow */}
