@@ -117,7 +117,7 @@ function HeroSection() {
           </span>
           <h1 className="font-display text-6xl font-black leading-[1.05] text-black sm:text-7xl lg:text-8xl tracking-tight">
             LEARN.<br />
-            <span className="bg-gradient-to-r from-primary via-emerald-400 to-green-500 bg-clip-text text-transparent">BUILD.</span><br />
+            <span className="bg-[length:200%_auto] animate-text-shine bg-gradient-to-r from-emerald-500 via-primary to-emerald-500 bg-clip-text text-transparent">BUILD.</span><br />
             GET HIRED.
           </h1>
           <p className="text-lg leading-relaxed text-black font-outfit">

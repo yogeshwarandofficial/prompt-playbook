@@ -281,12 +281,17 @@
 @keyframes float     { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-14px); } }
 @keyframes scale-in  { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
 @keyframes slide-in-right { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes text-shine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
 
 @utility animate-fade-up       { animation: fade-up 600ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 @utility animate-fade-in       { animation: fade-in 500ms ease both; }
 @utility animate-float         { animation: float 5s ease-in-out infinite; }
 @utility animate-scale-in      { animation: scale-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 @utility animate-slide-in-right { animation: slide-in-right 350ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@utility animate-text-shine    { animation: text-shine 3s linear infinite; }
 
 /* ─────────────────────────────────────────────
    DOMAIN COLOR UTILITIES
