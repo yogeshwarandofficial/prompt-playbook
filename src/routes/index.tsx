@@ -482,7 +482,7 @@ function FeaturedTutorialsSection() {
       <img 
         src="/code_ui.png" 
         alt="" 
-        className="absolute top-0 right-0 w-72 md:w-[450px] lg:w-[600px] object-contain hidden md:block opacity-70 mix-blend-screen pointer-events-none [mask-image:radial-gradient(ellipse_at_top_right,black_60%,transparent_80%)] z-0"
+        className="absolute top-0 right-0 w-72 md:w-[450px] lg:w-[600px] object-contain hidden md:block opacity-40 mix-blend-screen grayscale contrast-125 pointer-events-none [mask-image:radial-gradient(ellipse_at_top_right,black_40%,transparent_80%)] z-0"
         aria-hidden="true" 
       />
 
