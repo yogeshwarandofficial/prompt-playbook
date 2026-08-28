@@ -64,8 +64,11 @@ export function Footer() {
               className="inline-flex items-center gap-2.5 font-display font-bold hover:opacity-80 transition-opacity"
               aria-label="Infynux Academy home"
             >
-              <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-14 w-auto object-contain drop-shadow-sm brightness-0 invert" />
-              <span className="font-orbitron text-lg text-white">Infynux Academy</span>
+              <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-14 w-auto object-contain drop-shadow-sm brightness-125 contrast-125" />
+              <span className="font-orbitron text-2xl font-black tracking-tight whitespace-nowrap">
+                <span className="text-white">Infynux </span>
+                <span className="bg-[length:200%_auto] animate-text-shine bg-gradient-to-r from-emerald-400 via-primary to-emerald-400 bg-clip-text text-transparent">Academy</span>
+              </span>
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate-400 font-outfit">
               Free learning roadmaps, tutorials, and remote internships for students and freshers in India. Start your tech career today.
