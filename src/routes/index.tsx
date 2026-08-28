@@ -477,7 +477,15 @@ function FeaturedRoadmapsSection() {
 // ─── FEATURED TUTORIALS ───────────────────────────────────────────────────────
 function FeaturedTutorialsSection() {
   return (
-    <section className="py-24 md:py-32 bg-black relative" aria-labelledby="tutorials-heading">
+    <section className="py-24 md:py-32 bg-black relative overflow-hidden" aria-labelledby="tutorials-heading">
+      {/* Decorative image blending from top right edge of screen */}
+      <img 
+        src="/code_ui.png" 
+        alt="" 
+        className="absolute top-0 right-0 w-72 md:w-[450px] lg:w-[600px] object-contain hidden md:block opacity-70 mix-blend-screen pointer-events-none [mask-image:radial-gradient(ellipse_at_top_right,black_60%,transparent_80%)] z-0"
+        aria-hidden="true" 
+      />
+
       <div className="container-page relative z-10">
         <SectionHeader
           eyebrow="Tutorial Sandbox"
