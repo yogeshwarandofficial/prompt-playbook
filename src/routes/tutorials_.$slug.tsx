@@ -115,21 +115,32 @@ function TutorialPage() {
 
   return (
     <>
-      <PageHeader
-        crumbs={[
-          { label: "Home", to: "/" },
-          { label: "Tutorials", to: "/tutorials" },
-          { label: tutorial.title },
-        ]}
-        title={tutorial.title}
-        subtitle={tutorial.description}
-        theme="light"
-      />
+      {/* ── Seamless White Header ─────────────────────────────────────────── */}
+      <section className="bg-white pt-32 pb-12 border-b border-slate-100 shadow-sm relative z-10">
+        <div className="container-page max-w-4xl text-left">
+          {/* Breadcrumbs */}
+          <nav aria-label="Breadcrumb" className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-8">
+            <ol className="flex flex-wrap items-center gap-1.5">
+              <li>
+                <Link to="/" className="hover:text-indigo-600 transition-colors">Home</Link>
+              </li>
+              <ChevronRight className="h-3 w-3 text-slate-300" />
+              <li>
+                <Link to="/tutorials" className="hover:text-indigo-600 transition-colors">Tutorials</Link>
+              </li>
+              <ChevronRight className="h-3 w-3 text-slate-300" />
+              <li className="text-slate-600">{tutorial.title}</li>
+            </ol>
+          </nav>
+          
+          <h1 className="text-4xl font-bold text-slate-900 sm:text-5xl lg:text-6xl tracking-tight leading-tight">
+            {tutorial.title}
+          </h1>
+          <p className="mt-5 max-w-2xl text-slate-600 text-lg leading-relaxed">
+            {tutorial.description}
+          </p>
 
-      {/* ── Info Bar ─────────────────────────────────────────────────────── */}
-      <div className="w-full border-b border-slate-200 bg-white shadow-sm relative z-10">
-        <div className="container-page max-w-4xl py-6">
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="mt-8 flex flex-wrap items-center gap-4">
             <DomainBadge domain={tutorial.domain} />
             <DifficultyBadge level={tutorial.difficulty} />
             <span className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-1.5 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
@@ -139,19 +150,19 @@ function TutorialPage() {
               <BookOpen className="h-4 w-4 text-slate-400" /> {tutorial.steps.length} lessons
             </span>
           </div>
-          {/* Tags */}
+
           <div className="mt-6 flex flex-wrap gap-2">
             {tutorial.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-bold text-slate-600 uppercase tracking-wider hover:bg-slate-100 transition-colors"
+                className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-bold text-slate-600 uppercase tracking-wider"
               >
                 {tag}
               </span>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* ── Body ─────────────────────────────────────────────────────────── */}
       <div className="w-full bg-[#FDFBF7] min-h-screen text-slate-600 pb-24">
@@ -170,10 +181,10 @@ function TutorialPage() {
                 {tutorial.whatYouWillLearn.map((item, i) => (
                   <li
                     key={i}
-                    className="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:border-slate-300 transition-all"
+                    className="flex items-start gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
                   >
                     <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" aria-hidden="true" />
-                    <span className="text-sm font-medium leading-relaxed text-slate-700">{item}</span>
+                    <span className="text-sm font-semibold leading-relaxed text-slate-800">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -254,7 +265,7 @@ function TutorialPage() {
           <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
 
             {/* Quick Info Card */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm space-y-6">
               <h3 className="text-xs font-bold text-slate-400 tracking-widest uppercase">Course Info</h3>
               <dl className="space-y-4 text-sm">
                 {[
@@ -298,11 +309,11 @@ function TutorialPage() {
             </div>
 
             {/* Table of Contents */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
               <h3 className="mb-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Contents</h3>
               <ol className="space-y-4">
                 {tutorial.steps.map((step, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-slate-600 font-medium hover:text-indigo-600 transition-colors cursor-default">
+                  <li key={i} className="flex items-start gap-3 text-sm text-slate-700 font-medium hover:text-indigo-600 transition-colors cursor-default">
                     <span
                       className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px] font-bold text-white shadow-sm"
                       style={{ background: DOMAIN_COLORS[tutorial.domain] }}

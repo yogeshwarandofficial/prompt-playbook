@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Bookmark, Clock, Search, BookOpen, ArrowRight } from "lucide-react";
+import { Bookmark, Clock, Search, BookOpen, ArrowRight, ChevronRight } from "lucide-react";
 import { TUTORIALS, DOMAINS, DOMAIN_COLORS, type DomainKey } from "@/data/content";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "./roadmaps";
@@ -47,12 +47,29 @@ function TutorialsPage() {
 
   return (
     <>
-      <PageHeader
-        crumbs={[{ label: "Home", to: "/" }, { label: "Tutorials" }]}
-        title="Tutorials & Guides"
-        subtitle="Step-by-step technical guides, from setting up your environment to deploying your first app."
-        theme="light"
-      />
+      {/* ── Seamless White Header ─────────────────────────────────────────── */}
+      <section className="bg-white pt-32 pb-12 border-b border-slate-100 shadow-sm relative z-10">
+        <div className="container-page text-left">
+          {/* Breadcrumbs */}
+          <nav aria-label="Breadcrumb" className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-8">
+            <ol className="flex flex-wrap items-center gap-1.5">
+              <li>
+                <Link to="/" className="hover:text-indigo-600 transition-colors">Home</Link>
+              </li>
+              <ChevronRight className="h-3 w-3 text-slate-300" />
+              <li className="text-slate-600">Tutorials</li>
+            </ol>
+          </nav>
+          
+          <h1 className="text-4xl font-bold text-slate-900 sm:text-5xl lg:text-6xl tracking-tight leading-tight">
+            Tutorials & Guides
+          </h1>
+          <p className="mt-5 max-w-2xl text-slate-600 text-lg leading-relaxed">
+            Step-by-step technical guides, from setting up your environment to deploying your first app.
+          </p>
+        </div>
+      </section>
+
       <section className="container-page py-10 pb-24">
         {/* Search + filter bar */}
         <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
