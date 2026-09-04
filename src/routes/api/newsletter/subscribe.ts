@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { getServerSupabase } from "@/lib/supabase";
+import { db } from "@/lib/firebase";
+import { collection, query, where, getDocs, setDoc, doc } from "firebase/firestore";
 import { newsletterSchema } from "@/lib/validators";
 
 export const Route = createFileRoute("/api/newsletter/subscribe")({
@@ -8,7 +9,6 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
     handlers: {
       POST: async ({ request }) => {
         try {
-          const supabase = getServerSupabase();
           const body = await request.json();
           const parsed = newsletterSchema.safeParse(body);
           if (!parsed.success) {
@@ -21,13 +21,11 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
           const { email } = parsed.data;
 
           // Check if already subscribed to prevent duplicate welcome emails
-          const { data: existing } = await supabase
-            .from("newsletter_subscribers")
-            .select("id")
-            .eq("email", email.toLowerCase())
-            .maybeSingle();
+          const subscribersRef = collection(db, "newsletter_subscribers");
+          const q = query(subscribersRef, where("email", "==", email.toLowerCase()));
+          const querySnapshot = await getDocs(q);
 
-          if (existing) {
+          if (!querySnapshot.empty) {
             return Response.json(
               { success: true, message: "You're already subscribed! 🎉" },
               { status: 200 }
@@ -35,11 +33,8 @@ export const Route = createFileRoute("/api/newsletter/subscribe")({
           }
 
           // Upsert — do nothing if already subscribed
-          const { error } = await supabase
-            .from("newsletter_subscribers")
-            .upsert({ email: email.toLowerCase() }, { onConflict: "email", ignoreDuplicates: true });
-
-          if (error) throw error;
+          const newDocRef = doc(subscribersRef);
+          await setDoc(newDocRef, { email: email.toLowerCase(), subscribed_at: new Date().toISOString() });
 
           // Send welcome email via Resend
           try {

@@ -1,0 +1,21 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "internships",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "email", "order": "ASCENDING" },
+        { "fieldPath": "submitted_at", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "contacts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "ip_address", "order": "ASCENDING" },
+        { "fieldPath": "submitted_at", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

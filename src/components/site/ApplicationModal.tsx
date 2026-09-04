@@ -3,7 +3,6 @@ import { useRef, useState, useEffect } from "react";
 import { X, Upload, CheckCircle2, Loader2, AlertCircle, FileText } from "lucide-react";
 import { SUBDOMAIN_GROUPS } from "@/data/content";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/lib/supabase";
 
 type ModalState = "idle" | "loading" | "success" | "error";
 
@@ -153,24 +152,8 @@ export function ApplicationModal({ open, domain, onClose }: Props) {
     try {
       let resumeUrl: string | null = null;
       if (resumeFile) {
-        const fileExt = resumeFile.name.split(".").pop();
-        const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("resumes")
-          .upload(fileName, resumeFile);
-
-        if (uploadError) {
-          console.error("Upload error:", uploadError);
-          setState("error");
-          setServerMsg("Failed to upload resume. Please try again.");
-          return;
-        }
-
-        const { data: urlData } = supabase.storage
-          .from("resumes")
-          .getPublicUrl(fileName);
-
-        resumeUrl = urlData.publicUrl;
+        // Firebase Storage is disabled. Not uploading for now.
+        resumeUrl = null;
       }
 
       const payload: Record<string, string | null | boolean> = {
