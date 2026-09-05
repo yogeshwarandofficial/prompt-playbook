@@ -27,7 +27,9 @@ export const Route = createFileRoute("/api/internships/apply")({
             college,
             subdomain,
             message,
-            resumeUrl,
+            resumeData,
+            resumeName,
+            resumeType,
           } = parsed.data;
 
           const ip =
@@ -66,7 +68,9 @@ export const Route = createFileRoute("/api/internships/apply")({
             domain,
             subdomain: subdomainValue,
             message: message || null,
-            resume_url: resumeUrl || null,
+            resume_url: null,
+            resume_sent_via_email: true,
+            resume_filename: resumeName,
             ip_address: ip,
             submitted_at: new Date().toISOString()
           });
@@ -103,11 +107,18 @@ export const Route = createFileRoute("/api/internships/apply")({
                 `,
               });
 
-              // 2. Admin notification
+              // 2. Admin notification with resume attachment
               await resend.emails.send({
                 from: `Infynux System <${getResendFromEmail()}>`,
                 to: getResendToEmail("support@infynuxsolutions.in"),
                 subject: `New Internship Application: ${fullName} (${domain})`,
+                attachments: [
+                  {
+                    filename: resumeName,
+                    content: Buffer.from(resumeData, "base64"),
+                    contentType: resumeType,
+                  },
+                ],
                 html: `
                   <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;border:1px solid #eaeaea;border-radius:12px">
                     <h2 style="color:#800000;font-size:20px;font-weight:bold;margin-bottom:16px">New Internship Application</h2>
@@ -118,6 +129,7 @@ export const Route = createFileRoute("/api/internships/apply")({
                       <tr><td><strong>College:</strong></td><td>${college}</td></tr>
                       <tr><td><strong>Domain:</strong></td><td>${domain} — ${subdomainValue || "None"}</td></tr>
                       <tr><td><strong>IP:</strong></td><td>${ip}</td></tr>
+                      <tr><td><strong>Resume:</strong></td><td>📎 ${resumeName} (attached)</td></tr>
                     </table>
                     ${message ? `
                     <div style="background:#f9fafb;padding:16px;border-radius:8px;margin:20px 0">

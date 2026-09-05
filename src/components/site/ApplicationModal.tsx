@@ -150,11 +150,20 @@ export function ApplicationModal({ open, domain, onClose }: Props) {
     setServerMsg("");
 
     try {
-      let resumeUrl: string | null = null;
-      if (resumeFile) {
-        // Firebase Storage is disabled. Not uploading for now.
-        resumeUrl = null;
-      }
+      // Convert resume file to Base64 so it can be emailed as an attachment
+      const toBase64 = (file: File): Promise<string> =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = reader.result as string;
+            // Strip the data URL prefix (e.g. "data:application/pdf;base64,")
+            resolve(result.split(",")[1]);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file!);
+        });
+
+      const resumeData = await toBase64(resumeFile!);
 
       const payload: Record<string, string | null | boolean> = {
         fullName: formData.fullName.trim(),
@@ -163,7 +172,9 @@ export function ApplicationModal({ open, domain, onClose }: Props) {
         college: formData.college.trim(),
         subdomain: formData.subdomain,
         message: formData.message.trim() || null,
-        resumeUrl,
+        resumeData,
+        resumeName: resumeFile!.name,
+        resumeType: resumeFile!.type,
         agreement: formData.agreement,
       };
 

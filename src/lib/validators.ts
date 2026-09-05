@@ -23,7 +23,9 @@ export const internshipSchema = z.object({
     .max(150, "College name must be at most 150 characters"),
   subdomain: z.string().min(1, "Please select an internship domain"),
   message: z.string().max(500, "Message must be at most 500 characters").nullable().optional(),
-  resumeUrl: z.string().url("Invalid resume URL").nullable().optional(),
+  resumeData: z.string().min(1, "Resume data is required"),
+  resumeName: z.string().min(1, "Resume filename is required"),
+  resumeType: z.string().min(1, "Resume MIME type is required"),
   agreement: z.literal(true, {
     errorMap: () => ({ message: "You must accept the terms to proceed" }),
   }),
