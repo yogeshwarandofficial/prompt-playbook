@@ -330,6 +330,9 @@ function ProjectsView() {
   const [liveUrl, setLiveUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
+  
+  // State for toggling instructions view
+  const [viewingPhaseId, setViewingPhaseId] = useState<string | null>(null);
 
   const fetchProjects = async () => {
     try {
@@ -411,12 +414,12 @@ function ProjectsView() {
               <textarea required value={content} onChange={e=>setContent(e.target.value)} rows={5} className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm" placeholder="Explain what you implemented..." />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Repository URL (Optional)</label>
-              <input type="url" value={repoUrl} onChange={e=>setRepoUrl(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" placeholder="https://github.com/..." />
+              <label className="block text-sm font-semibold text-slate-700 mb-1">Repository URL</label>
+              <input type="url" required value={repoUrl} onChange={e=>setRepoUrl(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" placeholder="https://github.com/..." />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Live Demo URL (Optional)</label>
-              <input type="url" value={liveUrl} onChange={e=>setLiveUrl(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" placeholder="https://..." />
+              <label className="block text-sm font-semibold text-slate-700 mb-1">Live Demo URL</label>
+              <input type="url" required value={liveUrl} onChange={e=>setLiveUrl(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" placeholder="https://..." />
             </div>
             <div className="pt-4">
               <button disabled={isSubmitting} type="submit" className="w-full bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700">
@@ -465,11 +468,24 @@ function ProjectsView() {
                         </div>
                         <p className="text-sm text-slate-600 mb-2">{phase.phase.description}</p>
                         
-                        {isInteractive && (
-                          <div className="pt-3 mt-3 border-t border-slate-100">
+                        <div className="flex flex-wrap gap-2 pt-3 mt-3 border-t border-slate-100">
+                          <button 
+                            onClick={() => setViewingPhaseId(viewingPhaseId === phase.id ? null : phase.id)} 
+                            className="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-200"
+                          >
+                            {viewingPhaseId === phase.id ? "Hide Instructions" : "View Instructions"}
+                          </button>
+                          {isInteractive && (
                             <button onClick={() => setSelectedPhase(phase)} className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">
                               Submit Work
                             </button>
+                          )}
+                        </div>
+
+                        {viewingPhaseId === phase.id && (
+                          <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <h4 className="font-bold text-slate-800 mb-2">Instructions</h4>
+                            <div className="text-sm text-slate-600 whitespace-pre-wrap">{phase.phase.instructions}</div>
                           </div>
                         )}
                         
