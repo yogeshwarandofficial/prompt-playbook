@@ -1,39 +1,55 @@
-// Frontend-only mock auth. NOT real security — purely a UI gate for demos.
-const KEY = "infynux_admin_session";
-
 export const DEMO_CREDENTIALS = {
-  email: "admin@infynux.com",
-  password: "infynux@2026",
+  email: "INFY-26-WEB-001",
+  password: "password123",
 };
 
 export interface AdminSession {
+  id: string;
+  studentId: string;
+  name: string;
   email: string;
-  loggedInAt: number;
+  role: string;
+  isActive: boolean;
 }
 
-export function getSession(): AdminSession | null {
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+export async function getSession(): Promise<AdminSession | null> {
   if (typeof window === "undefined") return null;
   try {
-    const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as AdminSession) : null;
+    const res = await fetch(`${API_URL}/api/auth/me`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as AdminSession;
   } catch {
     return null;
   }
 }
 
-export function signIn(email: string, password: string): AdminSession | null {
-  if (
-    email.trim().toLowerCase() === DEMO_CREDENTIALS.email &&
-    password === DEMO_CREDENTIALS.password
-  ) {
-    const session: AdminSession = { email: DEMO_CREDENTIALS.email, loggedInAt: Date.now() };
-    window.localStorage.setItem(KEY, JSON.stringify(session));
-    return session;
+export async function signIn(studentId: string, password: string): Promise<AdminSession | null> {
+  try {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ studentId, password }),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as AdminSession;
+  } catch {
+    return null;
   }
-  return null;
 }
 
-export function signOut() {
-  if (typeof window === "undefined") return;
-  window.localStorage.removeItem(KEY);
+export async function signOut(): Promise<void> {
+  try {
+    await fetch(`${API_URL}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+  } catch {
+    // Ignore errors on sign out
+  }
 }

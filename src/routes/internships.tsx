@@ -1,7 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Award, MapPin, Briefcase, ArrowRight } from "lucide-react";
-import { DOMAINS, type DomainKey } from "@/data/content";
 import { PageHeader } from "./roadmaps";
 import { ApplicationModal } from "@/components/site/ApplicationModal";
 
@@ -39,9 +38,35 @@ const DOMAIN_COLORS: Record<DomainKey, string> = {
 function InternshipsPage() {
   const [open, setOpen] = useState(false);
   const [defaultDomain, setDefaultDomain] = useState<string | undefined>();
+  const [courses, setCourses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const openFor = (key?: DomainKey) => {
-    setDefaultDomain(key ? DOMAIN_TO_DEFAULT[key] : undefined);
+  useEffect(() => {
+    // Fetch active courses from the Academy database
+    const fetchCourses = async () => {
+      try {
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        const res = await fetch(`${API_URL}/api/courses`);
+        console.log("Fetch courses response status:", res.status);
+        if (res.ok) {
+          const data = await res.json();
+          console.log("Fetched courses data:", data);
+          setCourses(data);
+        } else {
+          console.error("Fetch not ok. Status:", res.status, "Text:", await res.text());
+        }
+      } catch (err) {
+        console.error("Failed to fetch courses (Exception):", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchCourses();
+  }, []);
+
+  const openFor = (courseName?: string) => {
+    setDefaultDomain(courseName);
     setOpen(true);
   };
 
@@ -51,6 +76,14 @@ function InternshipsPage() {
         crumbs={[{ label: "Home", to: "/" }, { label: "Internships" }]}
         title="Internships"
         subtitle="Real experience. Real projects. Real certificate."
+        rightElement={
+          <Link
+            to="/login"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-all"
+          >
+            Login
+          </Link>
+        }
       />
 
       {/* Trust badges */}
@@ -73,29 +106,39 @@ function InternshipsPage() {
 
       {/* Internship cards */}
       <section className="container-page pb-24">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {DOMAINS.map((d) => (
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
+          </div>
+        ) : (
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-2">
+            {courses.map((course) => (
               <article
-                key={d.key}
+                key={course.id}
                 className="flex flex-col justify-between rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-lg transition-all duration-300 ease-out text-left group relative overflow-hidden"
               >
                 <div
-                  className="relative aspect-video w-full overflow-hidden bg-slate-100 border-b border-slate-100"
+                  className="relative w-full overflow-hidden border-b border-slate-100"
+                  style={{ height: '320px' }}
                 >
                   <img 
-                    src={`/ui_${d.key}.png`} 
-                    alt={d.name} 
-                    className="absolute inset-0 w-full h-full object-cover scale-[1.35] transition-transform duration-500 group-hover:scale-[1.45]" 
+                    src={course.image || `/ui_${course.key}.png`}
+                    onError={(e) => {
+                      // Safe fallback if the image path doesn't exist
+                      (e.target as HTMLImageElement).src = '/ui_web.png';
+                    }}
+                    alt={course.name} 
+                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105" 
                   />
                 </div>
                 
                 <div className="flex flex-col flex-1 p-5 sm:p-6 relative z-10 space-y-4">
                   <div>
                     <h3 className="text-xl font-bold text-slate-800 transition-colors group-hover:text-black">
-                      {d.name}
+                      {course.name}
                     </h3>
                     <p className="mt-3 text-sm text-slate-500 leading-relaxed max-w-sm">
-                      {d.description}
+                      {course.description}
                     </p>
                   </div>
                   
@@ -104,7 +147,7 @@ function InternshipsPage() {
                       Skills Required
                     </h4>
                     <div className="flex flex-wrap gap-1.5">
-                    {d.skills.map((s) => (
+                    {course.skills.map((s: string) => (
                       <span
                         key={s}
                         className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600"
@@ -119,13 +162,13 @@ function InternshipsPage() {
                   {/* Footer */}
                   <div className="pt-4 border-t border-slate-100 mt-auto space-y-4 px-5 pb-5 sm:px-6 sm:pb-6">
                     <div className="flex flex-wrap items-center gap-2 text-[10px] font-semibold text-slate-600">
-                  <span className="rounded-full bg-slate-100 px-3 py-1">4–8 WEEKS</span>
+                  <span className="rounded-full bg-slate-100 px-3 py-1 uppercase">{course.duration}</span>
                   <span className="rounded-full bg-slate-100 px-3 py-1">REMOTE</span>
                   <span className="rounded-full bg-emerald-50 text-emerald-600 px-3 py-1">CERTIFICATE ✓</span>
                 </div>
                 <button
                   type="button"
-                  onClick={() => openFor(d.key)}
+                  onClick={() => openFor(course.name)}
                   className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 transition-all"
                 >
                   Apply Now <ArrowRight className="h-4 w-4" />
@@ -134,6 +177,7 @@ function InternshipsPage() {
             </article>
           ))}
         </div>
+        )}
       </section>
 
       <ApplicationModal open={open} onClose={() => setOpen(false)} defaultDomain={defaultDomain} />

@@ -6,8 +6,8 @@ import { signIn, getSession, DEMO_CREDENTIALS } from "@/lib/auth";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Admin Login — Infynux Academy" },
-      { name: "description", content: "Sign in to the Infynux Academy admin dashboard." },
+      { title: "Portal Login — Infynux Academy" },
+      { name: "description", content: "Sign in to the Infynux Academy portal." },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
@@ -23,19 +23,34 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (getSession()) navigate({ to: "/admin" });
+    getSession().then((session) => {
+      if (session) {
+        if (session.role === 'STUDENT') {
+          navigate({ to: "/intern-portal" });
+        } else {
+          navigate({ to: "/admin" });
+        }
+      }
+    });
   }, [navigate]);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    setTimeout(() => {
-      const session = signIn(email, password);
-      setLoading(false);
-      if (session) navigate({ to: "/admin" });
-      else setError("Invalid email or password. Please try again.");
-    }, 500);
+    
+    const session = await signIn(email, password);
+    setLoading(false);
+    
+    if (session) {
+      if (session.role === 'STUDENT') {
+        navigate({ to: "/intern-portal" });
+      } else {
+        navigate({ to: "/admin" });
+      }
+    } else {
+      setError("Invalid credentials. Please try again.");
+    }
   }
 
   return (
@@ -46,10 +61,10 @@ function LoginPage() {
             <ShieldCheck className="h-8 w-8 text-slate-700" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900">
-            Admin <span className="text-slate-900 bg-slate-50 px-3 py-1 rounded-lg border-2 border-black ml-1 shadow-sm">Sign In</span>
+            Academy <span className="text-slate-900 bg-slate-50 px-3 py-1 rounded-lg border-2 border-black ml-1 shadow-sm">Portal</span>
           </h1>
           <p className="mt-6 text-base text-slate-500 font-medium">
-            Restricted area. Authorized personnel only.
+            Sign in to access your dashboard.
           </p>
         </div>
 
@@ -60,18 +75,18 @@ function LoginPage() {
           <div className="space-y-6">
             <div>
               <label htmlFor="email" className="mb-2 block text-sm font-semibold text-slate-700">
-                Email
+                User ID (Student or Admin)
               </label>
               <div className="relative">
                 <Mail className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
                 <input
                   id="email"
-                  type="email"
+                  type="text"
                   required
                   autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@infynux.com"
+                  placeholder="INFY-26-TEST-001 or admin ID"
                   className="h-12 w-full rounded-xl border border-slate-300 bg-white pl-12 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#800000] focus:ring-1 focus:ring-[#800000] transition-all"
                 />
               </div>
@@ -123,7 +138,7 @@ function LoginPage() {
 
             <div className="rounded-xl border border-black bg-slate-50 px-5 py-4 text-sm text-slate-600">
               <p className="font-semibold text-slate-800 mb-2 text-xs uppercase tracking-widest">Demo credentials</p>
-              <p className="mt-0.5"><span className="text-slate-500">Email:</span> <span className="font-semibold text-slate-900">{DEMO_CREDENTIALS.email}</span></p>
+              <p className="mt-0.5"><span className="text-slate-500">Student ID:</span> <span className="font-semibold text-slate-900">{DEMO_CREDENTIALS.email}</span></p>
               <p className="mt-1"><span className="text-slate-500">Password:</span> <span className="font-semibold text-slate-900">{DEMO_CREDENTIALS.password}</span></p>
             </div>
 

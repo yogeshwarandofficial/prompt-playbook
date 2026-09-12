@@ -1,0 +1,582 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+model User {
+  id              String           @id @default(uuid())
+  studentId       String           @unique
+  name            String
+  email           String           @unique
+  passwordHash    String
+  role            Role             @default(STUDENT)
+  isActive        Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  courses         StudentCourse[]
+  // New internship relations
+  studentProjects StudentProject[]
+  reviewsGiven    Review[]
+
+  // New application fields
+  domainId         String?
+  specializationId String?
+  batchId          String?
+  phone            String?
+  college          String?
+  degree           String?
+  graduationYear   Int?
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  name        String
+  description String
+  duration    String
+  skills      String[]
+  image       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  students StudentCourse[]
+  // Optional organizational link from projects
+  projects Project[]
+}
+
+model StudentCourse {
+  id        String   @id @default(uuid())
+  studentId String
+  courseId  String
+  createdAt DateTime @default(now())
+
+  student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+}
+
+enum Role {
+  STUDENT
+  MENTOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  imageUrl    String?
+  link        String?
+  date        DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============================================================
+// INTERNSHIP PROJECT WORKFLOW
+// ============================================================
+
+enum ProjectStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum StudentProjectStatus {
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PhaseStatus {
+  LOCKED
+  AVAILABLE
+  IN_PROGRESS
+  SUBMITTED
+  CHANGES_REQUESTED
+  COMPLETED
+}
+
+enum SubmissionStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  CHANGES_REQUESTED
+  APPROVED
+  REJECTED
+}
+
+enum ReviewDecision {
+  APPROVED
+  CHANGES_REQUESTED
+  REJECTED
+}
+
+/// Reusable internship project template created by an admin.
+model Project {
+  id          String        @id @default(uuid())
+  title       String
+  description String
+  /// Optional link to a Course for organizational/filtering purposes only.
+  courseId    String?
+  /// Optional link to external resources like a Notion workflow or project details.
+  projectLink String?
+  course      Course?       @relation(fields: [courseId], references: [id])
+  status      ProjectStatus @default(DRAFT)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  phases      ProjectPhase[]
+  assignments StudentProject[]
+
+  @@index([courseId])
+  @@index([status])
+}
+
+/// An ordered phase/stage within a Project template.
+model ProjectPhase {
+  id           String   @id @default(uuid())
+  projectId    String
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title        String
+  description  String
+  instructions String
+  phaseOrder   Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  studentPhases StudentProjectPhase[]
+
+  @@unique([projectId, phaseOrder])
+  @@index([projectId])
+}
+
+/// The assignment of a Project to a specific Student.
+model StudentProject {
+  id          String               @id @default(uuid())
+  studentId   String
+  student     User                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  projectId   String
+  project     Project              @relation(fields: [projectId], references: [id])
+  status      StudentProjectStatus @default(ASSIGNED)
+  assignedAt  DateTime             @default(now())
+  dueDate     DateTime?
+  completedAt DateTime?
+
+  phases      StudentProjectPhase[]
+  certificate Certificate?
+
+  @@unique([studentId, projectId])
+  @@index([studentId])
+  @@index([projectId])
+  @@index([status])
+}
+
+/// Persistent per-student, per-phase progress state.
+/// Created at assignment time — source of truth for workflow position.
+model StudentProjectPhase {
+  id               String         @id @default(uuid())
+  studentProjectId String
+  studentProject   StudentProject @relation(fields: [studentProjectId], references: [id], onDelete: Cascade)
+  phaseId          String
+  phase            ProjectPhase   @relation(fields: [phaseId], references: [id])
+  status           PhaseStatus    @default(LOCKED)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  submissions Submission[]
+
+  @@unique([studentProjectId, phaseId])
+  @@index([studentProjectId])
+  @@index([status])
+}
+
+/// A student's submitted work for a phase. Multiple submissions per phase are allowed
+/// to preserve full resubmission history.
+model Submission {
+  id                    String              @id @default(uuid())
+  studentProjectPhaseId String
+  studentProjectPhase   StudentProjectPhase @relation(fields: [studentProjectPhaseId], references: [id], onDelete: Cascade)
+  content               String
+  repoUrl               String?
+  liveUrl               String?
+  status                SubmissionStatus    @default(SUBMITTED)
+  submittedAt           DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  reviews          Review[]
+  automatedReviews AutomatedReview[]
+
+  @@index([studentProjectPhaseId])
+  @@index([status])
+}
+
+/// Admin/Mentor review of a single Submission. Auditable — never overwritten.
+model Review {
+  id           String         @id @default(uuid())
+  submissionId String
+  submission   Submission     @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  reviewerId   String
+  reviewer     User           @relation(fields: [reviewerId], references: [id])
+  decision     ReviewDecision
+  feedback     String
+  score        Int?
+  reviewedAt   DateTime       @default(now())
+
+  @@index([submissionId])
+  @@index([reviewerId])
+}
+
+// ============================================================
+// ACADEMY CURRICULUM WORKFLOW
+// ============================================================
+
+model Domain {
+  id              String           @id @default(uuid())
+  name            String           @unique
+  description     String?
+  isActive        Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  specializations Specialization[]
+  batches         Batch[]
+  curricula       Curriculum[]
+}
+
+model Specialization {
+  id          String       @id @default(uuid())
+  domainId    String
+  domain      Domain       @relation(fields: [domainId], references: [id])
+  name        String
+  description String?
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  batches     Batch[]
+  curricula   Curriculum[]
+
+  @@unique([domainId, name])
+}
+
+enum BatchStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+model Batch {
+  id                  String                        @id @default(uuid())
+  name                String                        @unique // e.g. INFYNUX-FSD-2026-01
+  domainId            String
+  domain              Domain                        @relation(fields: [domainId], references: [id])
+  specializationId    String?
+  specialization      Specialization?               @relation(fields: [specializationId], references: [id])
+  curriculumVersionId String?
+  curriculumVersion   CurriculumVersion?            @relation(fields: [curriculumVersionId], references: [id])
+  status              BatchStatus // UPCOMING/ACTIVE/COMPLETED/ARCHIVED
+  startDate           DateTime
+  durationWeeks       Int
+  description         String?
+  isActive            Boolean                       @default(true)
+  createdAt           DateTime                      @default(now())
+  updatedAt           DateTime                      @updatedAt
+  enrollments         StudentCurriculumEnrollment[]
+}
+
+model Curriculum {
+  id               String              @id @default(uuid())
+  domainId         String
+  domain           Domain              @relation(fields: [domainId], references: [id])
+  specializationId String?
+  specialization   Specialization?     @relation(fields: [specializationId], references: [id])
+  name             String
+  description      String?
+  isActive         Boolean             @default(true)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  versions         CurriculumVersion[]
+}
+
+enum CurriculumStatus {
+  DRAFT
+  PREVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+model CurriculumVersion {
+  id           String                        @id @default(uuid())
+  curriculumId String
+  curriculum   Curriculum                    @relation(fields: [curriculumId], references: [id])
+  version      String // e.g. "V1"
+  status       CurriculumStatus // DRAFT/PREVIEW/PUBLISHED/ARCHIVED
+  publishedAt  DateTime?
+  createdAt    DateTime                      @default(now())
+  updatedAt    DateTime                      @updatedAt
+  phases       CurriculumPhase[]
+  enrollments  StudentCurriculumEnrollment[]
+  batches      Batch[]
+}
+
+enum CurriculumPhaseType {
+  NORMAL
+  MIDTERM
+  FINAL
+}
+
+model CurriculumPhase {
+  id                  String                 @id @default(uuid())
+  curriculumVersionId String
+  curriculumVersion   CurriculumVersion      @relation(fields: [curriculumVersionId], references: [id])
+  phaseNumber         Int
+  title               String
+  description         String
+  objectives          String?
+  durationDays        Int                    @default(7)
+  phaseType           CurriculumPhaseType    @default(NORMAL) // NORMAL/MIDTERM/FINAL
+  googleSheetUrl      String?
+  sheetVisibleFrom    DateTime? // backend-controlled visibility
+  requiresGitHub      Boolean                @default(true)
+  requiresLiveDemo    Boolean                @default(false)
+  projectId           String? // optional link to existing Project template
+  isPublished         Boolean                @default(true)
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+  resources           PhaseResource[]
+  tasks               PhaseTask[]
+  studentProgress     StudentPhaseProgress[]
+
+  @@unique([curriculumVersionId, phaseNumber])
+}
+
+enum ResourceType {
+  VIDEO
+  PDF
+  ARTICLE
+  LINK
+  OTHER
+}
+
+model PhaseResource {
+  id                String          @id @default(uuid())
+  curriculumPhaseId String
+  curriculumPhase   CurriculumPhase @relation(fields: [curriculumPhaseId], references: [id], onDelete: Cascade)
+  title             String
+  type              ResourceType // VIDEO/PDF/ARTICLE/LINK/OTHER
+  url               String
+  description       String?
+  order             Int             @default(0)
+  isActive          Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+}
+
+model PhaseTask {
+  id                String          @id @default(uuid())
+  curriculumPhaseId String
+  curriculumPhase   CurriculumPhase @relation(fields: [curriculumPhaseId], references: [id], onDelete: Cascade)
+  title             String
+  description       String
+  instructions      String?
+  order             Int             @default(0)
+  isRequired        Boolean         @default(true)
+  isActive          Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+  studentTasks      StudentTask[]
+}
+
+enum InternshipStatus {
+  ACTIVE
+  COMPLETED
+  SUSPENDED
+  WITHDRAWN
+}
+
+model StudentCurriculumEnrollment {
+  id                  String                 @id @default(uuid())
+  studentId           String
+  batchId             String?
+  batch               Batch?                 @relation(fields: [batchId], references: [id])
+  curriculumVersionId String
+  curriculumVersion   CurriculumVersion      @relation(fields: [curriculumVersionId], references: [id])
+  startDate           DateTime
+  status              InternshipStatus // ACTIVE/COMPLETED/SUSPENDED/WITHDRAWN
+  completedAt         DateTime?
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+  phaseProgress       StudentPhaseProgress[]
+
+  @@unique([studentId, curriculumVersionId])
+}
+
+model StudentPhaseProgress {
+  id           String                      @id @default(uuid())
+  enrollmentId String
+  enrollment   StudentCurriculumEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  phaseId      String // → CurriculumPhase.id
+  phase        CurriculumPhase             @relation(fields: [phaseId], references: [id])
+  status       PhaseStatus // reuses existing enum
+  startedAt    DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime                    @default(now())
+  updatedAt    DateTime                    @updatedAt
+  studentTasks StudentTask[]
+
+  @@unique([enrollmentId, phaseId])
+}
+
+model StudentTask {
+  id          String               @id @default(uuid())
+  progressId  String // → StudentPhaseProgress
+  progress    StudentPhaseProgress @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  taskId      String // → PhaseTask
+  task        PhaseTask            @relation(fields: [taskId], references: [id])
+  completedAt DateTime?
+  isCompleted Boolean              @default(false)
+
+  @@unique([progressId, taskId])
+}
+
+enum ApplicationStatus {
+  PENDING
+  UNDER_REVIEW
+  SHORTLISTED
+  ACCEPTED
+  REJECTED
+}
+
+model Application {
+  id               String            @id @default(uuid())
+  name             String
+  email            String
+  phone            String?
+  college          String?
+  degree           String?
+  graduationYear   Int?
+  domainId         String?
+  specializationId String?
+  resumeUrl        String?
+  message          String?
+  status           ApplicationStatus // PENDING/UNDER_REVIEW/ACCEPTED/REJECTED
+  reviewedBy       String? // User.id (admin who reviewed)
+  reviewedAt       DateTime?
+  reviewNotes      String?
+  createdUserId    String? // → User.id if accepted → account created
+  appliedAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  interviews       Interview[]
+}
+
+enum InterviewStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum InterviewResult {
+  PENDING
+  SELECTED
+  REJECTED
+  ON_HOLD
+}
+
+model Interview {
+  id                 String           @id @default(uuid())
+  applicationId      String
+  application        Application      @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  scheduledAt        DateTime?
+  meetingLink        String?
+  interviewerId      String? // User.id (mentor/admin)
+  status             InterviewStatus // SCHEDULED/COMPLETED/PASSED/FAILED/CANCELLED
+  technicalScore     Int?
+  projectScore       Int?
+  communicationScore Int?
+  overallScore       Int?
+  feedback           String?
+  result             InterviewResult? // PASSED/FAILED
+  retakeOf           String? // Interview.id if retake
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+}
+
+enum CertificateStatus {
+  ACTIVE
+  REVOKED
+  REISSUED
+}
+
+enum CertificateEligibility {
+  NOT_ELIGIBLE
+  ELIGIBLE
+  ISSUED
+  REVOKED
+}
+
+model Certificate {
+  id                String            @id @default(uuid())
+  studentId         String
+  studentProjectId  String            @unique
+  studentProject    StudentProject    @relation(fields: [studentProjectId], references: [id], onDelete: Cascade)
+  certificateNo     String            @unique // e.g. INFY-2026-00001
+  verificationToken String            @unique // UUID, not the DB id
+  domain            String
+  specialization    String?
+  startDate         DateTime
+  endDate           DateTime
+  issuedAt          DateTime          @default(now())
+  status            CertificateStatus // ACTIVE/REVOKED/REISSUED
+  revokedAt         DateTime?
+  revokeReason      String?
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String // application_accepted, phase_unlocked, etc.
+  title     String
+  body      String
+  isRead    Boolean  @default(false)
+  data      Json?
+  createdAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id         String   @id @default(uuid())
+  actorId    String? // User.id (null = system)
+  action     String // e.g. "submission.created"
+  entityType String // e.g. "Submission"
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+}
+
+enum AutomatedReviewStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model AutomatedReview {
+  id             String                @id @default(uuid())
+  submissionId   String
+  submission     Submission            @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  summary        String?
+  detectedIssues Json?
+  suggestions    Json?
+  score          Int?
+  status         AutomatedReviewStatus @default(PENDING)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+}

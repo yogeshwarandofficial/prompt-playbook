@@ -111,10 +111,7 @@ function HeroSection() {
       <div className="container-page grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
         {/* Text column */}
         <div className="max-w-xl animate-fade-up text-left space-y-7 relative z-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-black font-orbitron tracking-wider">
-            <Zap className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-            FREE ACADEMIC PLATFORM
-          </span>
+
           <h1 className="font-display text-5xl font-black leading-[1.05] text-black sm:text-6xl lg:text-7xl xl:text-8xl tracking-tight">
             LEARN.<br />
             <span className="bg-[length:200%_auto] animate-text-shine bg-gradient-to-r from-emerald-500 via-primary to-emerald-500 bg-clip-text text-transparent">BUILD.</span><br />

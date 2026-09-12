@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  infynux-academy-postgres:
+    image: postgres:15-alpine
+    container_name: infynux-academy-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - infynux-academy-pgdata:/var/lib/postgresql/data
+
+volumes:
+  infynux-academy-pgdata:

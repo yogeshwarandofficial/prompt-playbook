@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { to: "/tutorials", label: "Tutorials" },
   { to: "/internships", label: "Internships" },
   { to: "/contact", label: "Contact" },
+  { to: "/events", label: "Events" },
 ] as const;
 
 const SOCIALS = [

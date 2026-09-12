@@ -14,6 +14,8 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RoadmapsRouteImport } from './routes/roadmaps'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InternshipsRouteImport } from './routes/internships'
+import { Route as InternPortalRouteImport } from './routes/intern-portal'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -21,6 +23,7 @@ import { Route as TutorialsSlugRouteImport } from './routes/tutorials_.$slug'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
 import { Route as ApiContactRouteImport } from './routes/api/contact'
 import { Route as ApiNewsletterSubscribeRouteImport } from './routes/api/newsletter/subscribe'
+import { Route as ApiInterviewsNotifyRouteImport } from './routes/api/interviews/notify'
 import { Route as ApiInternshipsApplyRouteImport } from './routes/api/internships/apply'
 
 const TutorialsRoute = TutorialsRouteImport.update({
@@ -46,6 +49,16 @@ const LoginRoute = LoginRouteImport.update({
 const InternshipsRoute = InternshipsRouteImport.update({
   id: '/internships',
   path: '/internships',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InternPortalRoute = InternPortalRouteImport.update({
+  id: '/intern-portal',
+  path: '/intern-portal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -83,6 +96,11 @@ const ApiNewsletterSubscribeRoute = ApiNewsletterSubscribeRouteImport.update({
   path: '/api/newsletter/subscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiInterviewsNotifyRoute = ApiInterviewsNotifyRouteImport.update({
+  id: '/api/interviews/notify',
+  path: '/api/interviews/notify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiInternshipsApplyRoute = ApiInternshipsApplyRouteImport.update({
   id: '/api/internships/apply',
   path: '/api/internships/apply',
@@ -93,6 +111,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
+  '/events': typeof EventsRoute
+  '/intern-portal': typeof InternPortalRoute
   '/internships': typeof InternshipsRoute
   '/login': typeof LoginRoute
   '/roadmaps': typeof RoadmapsRoute
@@ -102,12 +122,15 @@ export interface FileRoutesByFullPath {
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
+  '/api/interviews/notify': typeof ApiInterviewsNotifyRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
+  '/events': typeof EventsRoute
+  '/intern-portal': typeof InternPortalRoute
   '/internships': typeof InternshipsRoute
   '/login': typeof LoginRoute
   '/roadmaps': typeof RoadmapsRoute
@@ -117,6 +140,7 @@ export interface FileRoutesByTo {
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
+  '/api/interviews/notify': typeof ApiInterviewsNotifyRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRoutesById {
@@ -124,6 +148,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
+  '/events': typeof EventsRoute
+  '/intern-portal': typeof InternPortalRoute
   '/internships': typeof InternshipsRoute
   '/login': typeof LoginRoute
   '/roadmaps': typeof RoadmapsRoute
@@ -133,6 +159,7 @@ export interface FileRoutesById {
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials_/$slug': typeof TutorialsSlugRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
+  '/api/interviews/notify': typeof ApiInterviewsNotifyRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRouteTypes {
@@ -141,6 +168,8 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/contact'
+    | '/events'
+    | '/intern-portal'
     | '/internships'
     | '/login'
     | '/roadmaps'
@@ -150,12 +179,15 @@ export interface FileRouteTypes {
     | '/learn/$slug'
     | '/tutorials/$slug'
     | '/api/internships/apply'
+    | '/api/interviews/notify'
     | '/api/newsletter/subscribe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
     | '/contact'
+    | '/events'
+    | '/intern-portal'
     | '/internships'
     | '/login'
     | '/roadmaps'
@@ -165,12 +197,15 @@ export interface FileRouteTypes {
     | '/learn/$slug'
     | '/tutorials/$slug'
     | '/api/internships/apply'
+    | '/api/interviews/notify'
     | '/api/newsletter/subscribe'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/contact'
+    | '/events'
+    | '/intern-portal'
     | '/internships'
     | '/login'
     | '/roadmaps'
@@ -180,6 +215,7 @@ export interface FileRouteTypes {
     | '/learn/$slug'
     | '/tutorials_/$slug'
     | '/api/internships/apply'
+    | '/api/interviews/notify'
     | '/api/newsletter/subscribe'
   fileRoutesById: FileRoutesById
 }
@@ -187,6 +223,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   ContactRoute: typeof ContactRoute
+  EventsRoute: typeof EventsRoute
+  InternPortalRoute: typeof InternPortalRoute
   InternshipsRoute: typeof InternshipsRoute
   LoginRoute: typeof LoginRoute
   RoadmapsRoute: typeof RoadmapsRoute
@@ -196,6 +234,7 @@ export interface RootRouteChildren {
   LearnSlugRoute: typeof LearnSlugRoute
   TutorialsSlugRoute: typeof TutorialsSlugRoute
   ApiInternshipsApplyRoute: typeof ApiInternshipsApplyRoute
+  ApiInterviewsNotifyRoute: typeof ApiInterviewsNotifyRoute
   ApiNewsletterSubscribeRoute: typeof ApiNewsletterSubscribeRoute
 }
 
@@ -234,6 +273,20 @@ declare module '@tanstack/react-router' {
       path: '/internships'
       fullPath: '/internships'
       preLoaderRoute: typeof InternshipsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/intern-portal': {
+      id: '/intern-portal'
+      path: '/intern-portal'
+      fullPath: '/intern-portal'
+      preLoaderRoute: typeof InternPortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -285,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNewsletterSubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/interviews/notify': {
+      id: '/api/interviews/notify'
+      path: '/api/interviews/notify'
+      fullPath: '/api/interviews/notify'
+      preLoaderRoute: typeof ApiInterviewsNotifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/internships/apply': {
       id: '/api/internships/apply'
       path: '/api/internships/apply'
@@ -299,6 +359,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   ContactRoute: ContactRoute,
+  EventsRoute: EventsRoute,
+  InternPortalRoute: InternPortalRoute,
   InternshipsRoute: InternshipsRoute,
   LoginRoute: LoginRoute,
   RoadmapsRoute: RoadmapsRoute,
@@ -308,6 +370,7 @@ const rootRouteChildren: RootRouteChildren = {
   LearnSlugRoute: LearnSlugRoute,
   TutorialsSlugRoute: TutorialsSlugRoute,
   ApiInternshipsApplyRoute: ApiInternshipsApplyRoute,
+  ApiInterviewsNotifyRoute: ApiInterviewsNotifyRoute,
   ApiNewsletterSubscribeRoute: ApiNewsletterSubscribeRoute,
 }
 export const routeTree = rootRouteImport

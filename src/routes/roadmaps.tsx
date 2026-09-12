@@ -201,37 +201,45 @@ function Block({ title, children }: { title: string; children: React.ReactNode }
 }
 
 export function PageHeader({
-  crumbs, title, subtitle, theme = "dark"
+  crumbs, title, subtitle, theme = "dark", rightElement
 }: {
   crumbs: { label: string; to?: string }[];
   title: string;
   subtitle?: string;
   theme?: "dark" | "light";
+  rightElement?: React.ReactNode;
 }) {
   if (theme === "light") {
     return (
       <section className="bg-white pt-32 pb-12 md:pt-40 md:pb-16 border-b border-slate-200">
-        <div className="container-page text-left relative z-10">
-          <nav aria-label="Breadcrumb" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-            <ol className="flex flex-wrap items-center gap-1.5">
-              {crumbs.map((c, i) => (
-                <li key={i} className="flex items-center gap-1.5">
-                  {c.to ? (
-                    <Link to={c.to} className="hover:text-indigo-600 transition-colors">
-                      {c.label}
-                    </Link>
-                  ) : (
-                    <span className="text-slate-600">{c.label}</span>
-                  )}
-                  {i < crumbs.length - 1 && <ChevronRight className="h-3 w-3 text-slate-300" />}
-                </li>
-              ))}
-            </ol>
-          </nav>
-          <h1 className="mt-6 text-4xl font-bold text-slate-900 sm:text-5xl lg:text-6xl tracking-tight leading-tight">
-            {title}
-          </h1>
-          {subtitle && <p className="mt-4 max-w-2xl text-slate-600 text-lg leading-relaxed">{subtitle}</p>}
+        <div className="container-page text-left relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <nav aria-label="Breadcrumb" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              <ol className="flex flex-wrap items-center gap-1.5">
+                {crumbs.map((c, i) => (
+                  <li key={i} className="flex items-center gap-1.5">
+                    {c.to ? (
+                      <Link to={c.to} className="hover:text-indigo-600 transition-colors">
+                        {c.label}
+                      </Link>
+                    ) : (
+                      <span className="text-slate-600">{c.label}</span>
+                    )}
+                    {i < crumbs.length - 1 && <ChevronRight className="h-3 w-3 text-slate-300" />}
+                  </li>
+                ))}
+              </ol>
+            </nav>
+            <h1 className="mt-6 text-4xl font-bold text-slate-900 sm:text-5xl lg:text-6xl tracking-tight leading-tight">
+              {title}
+            </h1>
+            {subtitle && <p className="mt-4 max-w-2xl text-slate-600 text-lg leading-relaxed">{subtitle}</p>}
+          </div>
+          {rightElement && (
+            <div className="flex-shrink-0 mt-4 md:mt-0">
+              {rightElement}
+            </div>
+          )}
         </div>
       </section>
     );
@@ -241,27 +249,34 @@ export function PageHeader({
       {/* Subtle background glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
       
-      <div className="container-page pb-12 pt-32 md:pb-16 md:pt-40 text-left relative z-10">
-        <nav aria-label="Breadcrumb" className="text-xs text-[#C7CBCE]/70 font-orbitron">
-          <ol className="flex flex-wrap items-center gap-1.5">
-            {crumbs.map((c, i) => (
-              <li key={i} className="flex items-center gap-1.5">
-                {c.to ? (
-                  <Link to={c.to} className="hover:text-primary transition-colors">
-                    {c.label}
-                  </Link>
-                ) : (
-                  <span className="text-[#C7CBCE]">{c.label}</span>
-                )}
-                {i < crumbs.length - 1 && <ChevronRight className="h-3 w-3 text-[#333]" />}
-              </li>
-            ))}
-          </ol>
-        </nav>
-        <h1 className="mt-4 font-display text-4xl font-black text-white sm:text-5xl lg:text-6xl font-orbitron tracking-wide">
-          {title}
-        </h1>
-        {subtitle && <p className="mt-4 max-w-2xl text-[#C7CBCE] text-sm md:text-lg font-outfit font-bold">{subtitle}</p>}
+      <div className="container-page pb-12 pt-32 md:pb-16 md:pt-40 text-left relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <nav aria-label="Breadcrumb" className="text-xs text-[#C7CBCE]/70 font-orbitron">
+            <ol className="flex flex-wrap items-center gap-1.5">
+              {crumbs.map((c, i) => (
+                <li key={i} className="flex items-center gap-1.5">
+                  {c.to ? (
+                    <Link to={c.to} className="hover:text-primary transition-colors">
+                      {c.label}
+                    </Link>
+                  ) : (
+                    <span className="text-[#C7CBCE]">{c.label}</span>
+                  )}
+                  {i < crumbs.length - 1 && <ChevronRight className="h-3 w-3 text-[#333]" />}
+                </li>
+              ))}
+            </ol>
+          </nav>
+          <h1 className="mt-4 font-display text-4xl font-black text-white sm:text-5xl lg:text-6xl font-orbitron tracking-wide">
+            {title}
+          </h1>
+          {subtitle && <p className="mt-4 max-w-2xl text-[#C7CBCE] text-sm md:text-lg font-outfit font-bold">{subtitle}</p>}
+        </div>
+        {rightElement && (
+          <div className="flex-shrink-0 mt-2 md:mt-0 mb-1">
+            {rightElement}
+          </div>
+        )}
       </div>
     </section>
   );

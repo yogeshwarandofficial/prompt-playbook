@@ -131,6 +131,8 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  const isPortalOrAdmin = router.state.location.pathname.startsWith("/intern-portal") || router.state.location.pathname.startsWith("/admin");
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -141,23 +143,24 @@ function RootComponent() {
           <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-cyan-400/5 rounded-full blur-[120px] mix-blend-multiply opacity-50" />
         </div>
 
-        <Navbar />
+        {!isPortalOrAdmin && <Navbar />}
         <main id="main" className="flex-1">
           <Outlet />
         </main>
-        <Footer />
+        {!isPortalOrAdmin && <Footer />}
 
-        {/* Floating WhatsApp Button */}
-        <a
-          href="https://whatsapp.com/channel/0029VbCVGAtBVJkxGWCc4002"
-          target="_blank"
-          rel="noreferrer"
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-bold text-white shadow-[0_4px_15px_rgba(37,211,102,0.3)] transition-all hover:-translate-y-1 hover:bg-[#20bd5a] hover:shadow-[0_6px_20px_rgba(37,211,102,0.4)] font-orbitron"
-          aria-label="Join student community on WhatsApp"
-        >
-          <MessageCircle className="h-5 w-5" />
-          <span className="hidden sm:inline">Join student community</span>
-        </a>
+        {!isPortalOrAdmin && (
+          <a
+            href="https://whatsapp.com/channel/0029VbCVGAtBVJkxGWCc4002"
+            target="_blank"
+            rel="noreferrer"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-bold text-white shadow-[0_4px_15px_rgba(37,211,102,0.3)] transition-all hover:-translate-y-1 hover:bg-[#20bd5a] hover:shadow-[0_6px_20px_rgba(37,211,102,0.4)] font-orbitron"
+            aria-label="Join student community on WhatsApp"
+          >
+            <MessageCircle className="h-5 w-5" />
+            <span className="hidden sm:inline">Join student community</span>
+          </a>
+        )}
       </div>
     </QueryClientProvider>
   );

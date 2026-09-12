@@ -60,22 +60,28 @@ export const Route = createFileRoute("/api/internships/apply")({
           const domain = parts[0] ?? subdomain;
           const subdomainValue = parts[1] ?? null;
 
-          const docRef = await addDoc(internshipsRef, {
-            full_name: fullName,
-            email: email.toLowerCase(),
-            mobile: mobile.replace(/\D/g, "").slice(-10),
-            college_name: college,
-            domain,
-            subdomain: subdomainValue,
-            message: message || null,
-            resume_url: null,
-            resume_sent_via_email: true,
-            resume_filename: resumeName,
-            ip_address: ip,
-            submitted_at: new Date().toISOString()
+          const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+          const backendRes = await fetch(`${API_URL}/api/applications`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: fullName,
+              email: email.toLowerCase(),
+              phone: mobile.replace(/\D/g, "").slice(-10),
+              college: college,
+              domainId: domain,
+              specializationId: subdomainValue || undefined,
+              resumeUrl: undefined, // Update this if resume upload is implemented
+              message: message || undefined
+            })
           });
-          
-          const data = { id: docRef.id };
+
+          if (!backendRes.ok) {
+             throw new Error(`Backend error: ${await backendRes.text()}`);
+          }
+
+          const backendApp = await backendRes.json();
+          const applicationId = backendApp.id;
 
           // Send emails via Resend
           try {
@@ -148,7 +154,7 @@ export const Route = createFileRoute("/api/internships/apply")({
             {
               success: true,
               message: "Application submitted successfully!",
-              application_id: data.id,
+              application_id: applicationId,
             },
             { status: 201 }
           );
