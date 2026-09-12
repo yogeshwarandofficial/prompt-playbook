@@ -568,17 +568,26 @@ function StudentCertificateView() {
                 <Award className={`h-10 w-10 ${cert.status === 'ACTIVE' ? 'text-indigo-600' : 'text-slate-300'}`} />
               </div>
               <div className="space-y-2 mb-6">
-                <p className="text-sm text-slate-600"><span className="font-semibold">Issued To:</span> {cert.student.name}</p>
+                <p className="text-sm text-slate-600"><span className="font-semibold">Issued To:</span> {cert.studentProject.student.name}</p>
                 <p className="text-sm text-slate-600"><span className="font-semibold">Date:</span> {new Date(cert.issuedAt).toLocaleDateString()}</p>
                 {cert.grade && <p className="text-sm text-slate-600"><span className="font-semibold">Grade:</span> {cert.grade}</p>}
                 <p className="text-sm text-slate-600"><span className="font-semibold">Certificate ID:</span> <span className="font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">{cert.certificateNo}</span></p>
               </div>
-              <div className="pt-4 border-t border-slate-100 flex gap-3">
+              <div className="pt-4 border-t border-slate-100 flex flex-col gap-3">
+                <button 
+                  onClick={() => {
+                    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+                    window.open(`${API_URL}/api/student/certificate/download/${cert.studentProject.id}`, '_blank');
+                  }}
+                  className="w-full bg-indigo-600 text-white py-2 rounded-lg text-sm font-semibold text-center hover:bg-indigo-700 transition-colors"
+                >
+                  Download Certificate
+                </button>
                 <a 
                   href={`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/certificates/verify/${cert.verificationToken}`}
                   target="_blank" 
                   rel="noreferrer"
-                  className="flex-1 bg-indigo-50 text-indigo-700 py-2 rounded-lg text-sm font-semibold text-center hover:bg-indigo-100 transition-colors"
+                  className="w-full bg-indigo-50 text-indigo-700 py-2 rounded-lg text-sm font-semibold text-center hover:bg-indigo-100 transition-colors block"
                 >
                   Verify Online
                 </a>
