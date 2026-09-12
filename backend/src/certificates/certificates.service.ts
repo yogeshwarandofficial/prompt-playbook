@@ -10,7 +10,8 @@ import { randomUUID } from 'crypto';
 import * as path from 'path';
 
 // Use require for jimp to avoid TS issues if typings aren't strictly set up
-const { Jimp } = require('jimp');
+const { Jimp, loadFont, HorizontalAlign, VerticalAlign, JimpMime } = require('jimp');
+const fonts = require('jimp/fonts');
 
 function generateCertNo(): string {
   const year = new Date().getFullYear();
@@ -49,18 +50,21 @@ export class CertificatesService {
     }
 
     // Add student name (Top Center for testing)
-    // Jimp v1 API requires fetching a font
-    // Assuming Jimp is v0 or v1, standard font loading is Jimp.loadFont
-    const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
+    const font = await loadFont(fonts.SANS_64_WHITE);
     
     // Print the name at the top (x=0, y=50, width=1000 to center)
-    image.print(font, 0, 50, {
+    image.print({
+      font,
+      x: 0,
+      y: 50,
       text: sp.student.name,
-      alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
-      alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE
-    }, 1000, 100);
+      maxWidth: 1000,
+      maxHeight: 100,
+      alignmentX: HorizontalAlign.CENTER,
+      alignmentY: VerticalAlign.MIDDLE
+    });
 
-    return await image.getBufferAsync(Jimp.MIME_PNG);
+    return await image.getBuffer(JimpMime.png);
   }
 
   /**
