@@ -197,17 +197,36 @@ export class CertificatesService {
 
   /** Student-facing: get their own certificate status by studentId */
   async getStudentCertificate(studentId: string) {
-    return this.prisma.certificate.findMany({
-      where: { studentId },
+    const completedProjects = await this.prisma.studentProject.findMany({
+      where: { studentId, status: 'COMPLETED' },
       include: {
-        studentProject: {
-          include: {
-            student: { select: { id: true, name: true, email: true, studentId: true } },
-            project: { select: { id: true, title: true } },
-          },
-        },
+        certificate: true,
+        project: true,
+        student: true,
       },
-      orderBy: { issuedAt: 'desc' },
+      orderBy: { completedAt: 'desc' },
+    });
+
+    // Map completed projects to look like certificates for the frontend
+    return completedProjects.map((sp) => {
+      if (sp.certificate) {
+        return {
+          ...sp.certificate,
+          studentProject: sp,
+        };
+      }
+      
+      // If no certificate record exists yet, mock one for dynamic downloading
+      return {
+        id: sp.id, // Use project id as a fallback
+        studentId: sp.studentId,
+        studentProjectId: sp.id,
+        certificateNo: `PENDING-${sp.id.substring(0,6).toUpperCase()}`,
+        verificationToken: sp.id,
+        status: 'ACTIVE',
+        issuedAt: sp.completedAt || new Date(),
+        studentProject: sp,
+      };
     });
   }
 }
