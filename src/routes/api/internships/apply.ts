@@ -1,7 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { db } from "@/lib/firebase";
-import { collection, query, where, getCountFromServer, addDoc } from "firebase/firestore";
 import { internshipSchema } from "@/lib/validators";
 
 export const Route = createFileRoute("/api/internships/apply")({
@@ -36,24 +34,6 @@ export const Route = createFileRoute("/api/internships/apply")({
             request.headers.get("x-forwarded-for")?.split(",")[0] ||
             request.headers.get("x-real-ip") ||
             "unknown";
-
-          // Rate limit: 100 per email per day (relaxed for testing/development)
-          const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-          const internshipsRef = collection(db, "internships");
-          const q = query(
-            internshipsRef,
-            where("email", "==", email.toLowerCase()),
-            where("submitted_at", ">=", dayAgo)
-          );
-          const snapshot = await getCountFromServer(q);
-          const count = snapshot.data().count;
-
-          if (count >= 100) {
-            return Response.json(
-              { success: false, message: "Too many applications. Please try again tomorrow." },
-              { status: 429 }
-            );
-          }
 
           // Parse domain / subdomain from the combined subdomain field
           const parts = subdomain.split("__");
