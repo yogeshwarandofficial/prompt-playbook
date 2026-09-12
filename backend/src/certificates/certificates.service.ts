@@ -7,6 +7,10 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { IssueCertificateDto, RevokeCertificateDto } from './dto/certificate.dto';
 import { randomUUID } from 'crypto';
+import * as path from 'path';
+
+// Use require for jimp to avoid TS issues if typings aren't strictly set up
+const { Jimp } = require('jimp');
 
 function generateCertNo(): string {
   const year = new Date().getFullYear();
@@ -17,6 +21,47 @@ function generateCertNo(): string {
 @Injectable()
 export class CertificatesService {
   constructor(private prisma: PrismaService) {}
+
+  async generateDynamicCertificate(studentProjectId: string, studentId: string): Promise<Buffer> {
+    const sp = await this.prisma.studentProject.findUnique({
+      where: { id: studentProjectId },
+      include: {
+        student: true,
+        project: true
+      }
+    });
+
+    if (!sp || sp.studentId !== studentId) {
+      throw new NotFoundException('Project not found');
+    }
+
+    if (sp.status !== 'COMPLETED') {
+      throw new BadRequestException('Project is not yet completed');
+    }
+
+    // Attempt to read the template
+    const templatePath = path.join(process.cwd(), 'assets', 'certificate_template.png');
+    let image;
+    try {
+      image = await Jimp.read(templatePath);
+    } catch (e) {
+      throw new BadRequestException('Certificate template not found on server.');
+    }
+
+    // Add student name (Top Center for testing)
+    // Jimp v1 API requires fetching a font
+    // Assuming Jimp is v0 or v1, standard font loading is Jimp.loadFont
+    const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
+    
+    // Print the name at the top (x=0, y=50, width=1000 to center)
+    image.print(font, 0, 50, {
+      text: sp.student.name,
+      alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+      alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE
+    }, 1000, 100);
+
+    return await image.getBufferAsync(Jimp.MIME_PNG);
+  }
 
   /**
    * Determines eligibility: ALL project phases must be COMPLETED and
@@ -152,52 +197,17 @@ export class CertificatesService {
 
   /** Student-facing: get their own certificate status by studentId */
   async getStudentCertificate(studentId: string) {
-    // Find all their completed projects
-    const completedProjects = await this.prisma.studentProject.findMany({
-      where: { studentId, status: 'COMPLETED' },
+    return this.prisma.certificate.findMany({
+      where: { studentId },
       include: {
-        certificate: true,
-        project: { select: { id: true, title: true } },
-        phases: { select: { status: true } },
-      },
-      orderBy: { completedAt: 'desc' },
-    });
-
-    if (completedProjects.length === 0) {
-      // Check if any project is in progress to give a helpful reason
-      const activeProject = await this.prisma.studentProject.findFirst({
-        where: { studentId, status: { in: ['ASSIGNED', 'IN_PROGRESS'] } },
-        include: {
-          project: { select: { title: true } },
-          phases: { select: { status: true } },
+        studentProject: {
+          include: {
+            student: { select: { id: true, name: true, email: true, studentId: true } },
+            project: { select: { id: true, title: true } },
+          },
         },
-      });
-
-      return {
-        eligibility: 'NOT_ELIGIBLE',
-        reason: activeProject
-          ? `Your internship project "${activeProject.project.title}" is still in progress. Complete all phases to become eligible.`
-          : 'No active or completed internship project found.',
-        certificate: null,
-      };
-    }
-
-    // Use the most recently completed project
-    const sp = completedProjects[0];
-
-    if (sp.certificate) {
-      return {
-        eligibility: sp.certificate.status === 'REVOKED' ? 'REVOKED' : 'ISSUED',
-        certificate: sp.certificate,
-        projectTitle: sp.project.title,
-      };
-    }
-
-    return {
-      eligibility: 'ELIGIBLE',
-      reason: 'Your internship is complete. Your certificate will be issued by an administrator.',
-      certificate: null,
-      projectTitle: sp.project.title,
-    };
+      },
+      orderBy: { issuedAt: 'desc' },
+    });
   }
 }
