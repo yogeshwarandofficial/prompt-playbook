@@ -60,7 +60,7 @@ export const Route = createFileRoute("/api/internships/apply")({
           const domain = parts[0] ?? subdomain;
           const subdomainValue = parts[1] ?? null;
 
-          const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+          const API_URL = process.env.VITE_API_URL || 'http://localhost:3001';
           const backendRes = await fetch(`${API_URL}/api/applications`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
