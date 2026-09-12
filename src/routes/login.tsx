@@ -67,16 +67,7 @@ function LoginPage() {
             <div className="absolute top-1/3 -right-20 w-80 h-80 bg-indigo-500/20 blur-3xl rounded-full mix-blend-screen"></div>
           </div>
 
-          <div className="relative z-10 flex items-center gap-2">
-             <div className="rounded-lg p-1">
-                {/* Minimal logo placeholder */}
-                <svg className="w-8 h-8 text-blue-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor" fillOpacity="0.1"/>
-                  <path d="M12 7V17M8 11L12 15L16 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-             </div>
-             <span className="text-white text-xl font-bold tracking-tight">Infynux <span className="text-blue-500 font-medium">Academy</span></span>
-          </div>
+
 
           <div className="relative z-10 max-w-md mt-20">
             <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight">

@@ -132,7 +132,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
-  const isPortalOrAdmin = router.state.location.pathname.startsWith("/intern-portal") || router.state.location.pathname.startsWith("/admin");
+  const hideNavbarAndFooter = router.state.location.pathname.startsWith("/intern-portal") || router.state.location.pathname.startsWith("/admin") || router.state.location.pathname === "/login";
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -143,13 +143,13 @@ function RootComponent() {
           <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-cyan-400/5 rounded-full blur-[120px] mix-blend-multiply opacity-50" />
         </div>
 
-        {!isPortalOrAdmin && <Navbar />}
+        {!hideNavbarAndFooter && <Navbar />}
         <main id="main" className="flex-1">
           <Outlet />
         </main>
-        {!isPortalOrAdmin && <Footer />}
+        {!hideNavbarAndFooter && <Footer />}
 
-        {!isPortalOrAdmin && (
+        {!hideNavbarAndFooter && (
           <a
             href="https://whatsapp.com/channel/0029VbCVGAtBVJkxGWCc4002"
             target="_blank"
