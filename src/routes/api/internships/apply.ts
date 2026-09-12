@@ -107,7 +107,7 @@ export const Route = createFileRoute("/api/internships/apply")({
                 attachments: [
                   {
                     filename: resumeName,
-                    content: Buffer.from(resumeData, "base64"),
+                    content: resumeData, // Send raw base64 string natively
                     contentType: resumeType,
                   },
                 ],
