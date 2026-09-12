@@ -41,6 +41,12 @@ export const Route = createFileRoute("/api/internships/apply")({
           const subdomainValue = parts[1] ?? null;
 
           const API_URL = process.env.VITE_API_URL || 'http://localhost:3001';
+          
+          let resumeDataUri: string | undefined = undefined;
+          if (resumeData && resumeType) {
+            resumeDataUri = `data:${resumeType};base64,${resumeData}`;
+          }
+          
           const backendRes = await fetch(`${API_URL}/api/applications`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -51,7 +57,7 @@ export const Route = createFileRoute("/api/internships/apply")({
               college: college,
               domainId: domain,
               specializationId: subdomainValue || undefined,
-              resumeUrl: undefined, // Update this if resume upload is implemented
+              resumeUrl: resumeDataUri,
               message: message || undefined
             })
           });
