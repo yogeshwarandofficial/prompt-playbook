@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowLeft } from "lucide-react";
-import { signIn, getSession, DEMO_CREDENTIALS } from "@/lib/auth";
+import { signIn, getSession } from "@/lib/auth";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -136,11 +136,7 @@ function LoginPage() {
               {loading ? "Signing in…" : "Sign In"}
             </button>
 
-            <div className="rounded-xl border border-black bg-slate-50 px-5 py-4 text-sm text-slate-600">
-              <p className="font-semibold text-slate-800 mb-2 text-xs uppercase tracking-widest">Demo credentials</p>
-              <p className="mt-0.5"><span className="text-slate-500">Student ID:</span> <span className="font-semibold text-slate-900">{DEMO_CREDENTIALS.email}</span></p>
-              <p className="mt-1"><span className="text-slate-500">Password:</span> <span className="font-semibold text-slate-900">{DEMO_CREDENTIALS.password}</span></p>
-            </div>
+
 
             <p className="text-center text-sm font-medium text-slate-500 mt-6 pt-2 border-t border-slate-100">
               <Link to="/" className="hover:text-slate-900 transition-colors flex items-center justify-center gap-2 mt-4">
