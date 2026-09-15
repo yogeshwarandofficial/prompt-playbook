@@ -112,8 +112,8 @@ model ProjectPhaseTopic {
   id             String       @id @default(uuid())
   projectPhaseId String
   title          String
-  description    String
-  blogUrl        String?
+  description    String?
+  blogUrl        String
   order          Int
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
