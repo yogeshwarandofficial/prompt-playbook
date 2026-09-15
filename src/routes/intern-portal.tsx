@@ -401,8 +401,24 @@ function ProjectsView() {
           <h3 className="text-lg font-semibold text-slate-900">Submit Work: {selectedPhase.phase.title}</h3>
         </div>
         <div className="p-6">
+          {selectedPhase.phase.topics && selectedPhase.phase.topics.length > 0 && (
+            <div className="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 className="font-bold text-slate-800 mb-2">📚 Topics to Know</h4>
+              <div className="space-y-4">
+                {selectedPhase.phase.topics.map((t: any, idx: number) => (
+                  <div key={idx} className="border-l-4 border-indigo-500 pl-4 py-1">
+                    <h5 className="font-semibold text-slate-800">{t.title}</h5>
+                    {t.description && <p className="text-sm text-slate-600 mt-1">{t.description}</p>}
+                    <a href={t.blogUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-semibold mt-2 hover:text-indigo-800">
+                      Read Article &rarr;
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
-            <h4 className="font-bold text-slate-800 mb-2">Instructions</h4>
+            <h4 className="font-bold text-slate-800 mb-2">📋 Instructions</h4>
             <div className="text-sm text-slate-600 whitespace-pre-wrap">{selectedPhase.phase.instructions}</div>
           </div>
           
@@ -483,10 +499,28 @@ function ProjectsView() {
                         </div>
 
                         {viewingPhaseId === phase.id && (
-                          <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                            <h4 className="font-bold text-slate-800 mb-2">Instructions</h4>
-                            <div className="text-sm text-slate-600 whitespace-pre-wrap">{phase.phase.instructions}</div>
-                          </div>
+                          <>
+                            {phase.phase.topics && phase.phase.topics.length > 0 && (
+                              <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                <h4 className="font-bold text-slate-800 mb-2">📚 Topics to Know</h4>
+                                <div className="space-y-4">
+                                  {phase.phase.topics.map((t: any, idx: number) => (
+                                    <div key={idx} className="border-l-4 border-indigo-500 pl-4 py-1">
+                                      <h5 className="font-semibold text-slate-800">{t.title}</h5>
+                                      {t.description && <p className="text-sm text-slate-600 mt-1">{t.description}</p>}
+                                      <a href={t.blogUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-semibold mt-2 hover:text-indigo-800">
+                                        Read Article &rarr;
+                                      </a>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                              <h4 className="font-bold text-slate-800 mb-2">📋 Instructions</h4>
+                              <div className="text-sm text-slate-600 whitespace-pre-wrap">{phase.phase.instructions}</div>
+                            </div>
+                          </>
                         )}
                         
                         {phase.submissions?.length > 0 && (

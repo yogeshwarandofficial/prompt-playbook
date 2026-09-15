@@ -8,6 +8,9 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { CreatePhaseDto } from './dto/create-phase.dto';
 import { ReorderPhasesDto } from './dto/reorder-phases.dto';
+import { CreateTopicDto } from './dto/create-topic.dto';
+import { UpdateTopicDto } from './dto/update-topic.dto';
+import { ReorderTopicsDto } from './dto/reorder-topics.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -45,7 +48,10 @@ export class ProjectsService {
       where: { id },
       include: {
         course: { select: { id: true, name: true } },
-        phases: { orderBy: { phaseOrder: 'asc' } },
+        phases: { 
+          orderBy: { phaseOrder: 'asc' },
+          include: { topics: { orderBy: { order: 'asc' } } }
+        },
         _count: { select: { assignments: true } },
       },
     });
@@ -128,5 +134,68 @@ export class ProjectsService {
     const phase = await this.prisma.projectPhase.findFirst({ where: { id: phaseId, projectId } });
     if (!phase) throw new NotFoundException('Phase not found');
     return this.prisma.projectPhase.delete({ where: { id: phaseId } });
+  }
+
+  async addTopic(projectId: string, phaseId: string, dto: CreateTopicDto) {
+    const phase = await this.prisma.projectPhase.findFirst({ where: { id: phaseId, projectId }, include: { topics: true } });
+    if (!phase) throw new NotFoundException('Phase not found');
+
+    const nextOrder = phase.topics.length > 0
+      ? Math.max(...phase.topics.map(t => t.order)) + 1
+      : 1;
+
+    return this.prisma.projectPhaseTopic.create({
+      data: {
+        projectPhaseId: phaseId,
+        title: dto.title,
+        description: dto.description,
+        blogUrl: dto.blogUrl,
+        order: dto.order ?? nextOrder,
+      },
+    });
+  }
+
+  async updateTopic(projectId: string, phaseId: string, topicId: string, dto: UpdateTopicDto) {
+    const phase = await this.prisma.projectPhase.findFirst({ where: { id: phaseId, projectId } });
+    if (!phase) throw new NotFoundException('Phase not found');
+    
+    const topic = await this.prisma.projectPhaseTopic.findFirst({ where: { id: topicId, projectPhaseId: phaseId } });
+    if (!topic) throw new NotFoundException('Topic not found');
+
+    return this.prisma.projectPhaseTopic.update({ where: { id: topicId }, data: dto });
+  }
+
+  async reorderTopics(projectId: string, phaseId: string, dto: ReorderTopicsDto) {
+    const phase = await this.prisma.projectPhase.findFirst({ where: { id: phaseId, projectId }, include: { topics: true } });
+    if (!phase) throw new NotFoundException('Phase not found');
+
+    const existingIds = phase.topics.map(t => t.id);
+    for (const id of dto.topicIds) {
+      if (!existingIds.includes(id)) {
+        throw new BadRequestException(`Topic ${id} does not belong to this phase`);
+      }
+    }
+    if (dto.topicIds.length !== existingIds.length) {
+      throw new BadRequestException('All topic IDs must be provided for reordering');
+    }
+
+    return this.prisma.$transaction(
+      dto.topicIds.map((topicId, index) =>
+        this.prisma.projectPhaseTopic.update({
+          where: { id: topicId },
+          data: { order: index + 1 },
+        }),
+      ),
+    );
+  }
+
+  async deleteTopic(projectId: string, phaseId: string, topicId: string) {
+    const phase = await this.prisma.projectPhase.findFirst({ where: { id: phaseId, projectId } });
+    if (!phase) throw new NotFoundException('Phase not found');
+    
+    const topic = await this.prisma.projectPhaseTopic.findFirst({ where: { id: topicId, projectPhaseId: phaseId } });
+    if (!topic) throw new NotFoundException('Topic not found');
+
+    return this.prisma.projectPhaseTopic.delete({ where: { id: topicId } });
   }
 }

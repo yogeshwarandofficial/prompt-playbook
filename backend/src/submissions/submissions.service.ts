@@ -102,7 +102,9 @@ export class SubmissionsService {
         },
         phases: {
           include: {
-            phase: true,
+            phase: {
+              include: { topics: { orderBy: { order: 'asc' } } },
+            },
             submissions: {
               include: { reviews: { include: { reviewer: { select: { name: true, role: true } } } } },
               orderBy: { submittedAt: 'desc' },

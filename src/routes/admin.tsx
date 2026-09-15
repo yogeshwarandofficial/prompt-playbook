@@ -1424,6 +1424,7 @@ export function ProjectsView() {
   const [phaseDesc, setPhaseDesc] = useState("");
   const [phaseInst, setPhaseInst] = useState("");
   const [editingPhaseId, setEditingPhaseId] = useState("");
+  const [phaseTopics, setPhaseTopics] = useState<any[]>([]);
 
   // Assign form
   const [assignStudentId, setAssignStudentId] = useState("");
@@ -1553,7 +1554,32 @@ export function ProjectsView() {
       });
       
       if (res.ok) {
-        setPhaseTitle(""); setPhaseDesc(""); setPhaseInst(""); setEditingPhaseId("");
+        const phaseData = await res.json();
+        const phaseId = editingPhaseId || phaseData.id;
+
+        // Save topics
+        for (let i = 0; i < phaseTopics.length; i++) {
+          const t = phaseTopics[i];
+          if (t.isDeleted && t.id) {
+            await fetch(`${API_URL}/api/admin/projects/${selectedProject.id}/phases/${phaseId}/topics/${t.id}`, { method: 'DELETE', credentials: 'include' });
+          } else if (!t.isDeleted && t.id) {
+            await fetch(`${API_URL}/api/admin/projects/${selectedProject.id}/phases/${phaseId}/topics/${t.id}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ title: t.title, description: t.description, blogUrl: t.blogUrl, order: i + 1 })
+            });
+          } else if (!t.isDeleted && !t.id) {
+            await fetch(`${API_URL}/api/admin/projects/${selectedProject.id}/phases/${phaseId}/topics`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ title: t.title, description: t.description, blogUrl: t.blogUrl, order: i + 1 })
+            });
+          }
+        }
+
+        setPhaseTitle(""); setPhaseDesc(""); setPhaseInst(""); setEditingPhaseId(""); setPhaseTopics([]);
         await reloadSelectedProject(selectedProject.id);
         await fetchProjects();
       } else {
@@ -1707,6 +1733,7 @@ export function ProjectsView() {
                       <button onClick={() => movePhase(p.id, 'down')} disabled={idx===phases.length-1} className="p-1 text-slate-400 hover:text-indigo-600 disabled:opacity-30"><ChevronDown className="w-4 h-4"/></button>
                       <button onClick={() => {
                         setEditingPhaseId(p.id); setPhaseTitle(p.title); setPhaseDesc(p.description); setPhaseInst(p.instructions);
+                        setPhaseTopics(p.topics ? JSON.parse(JSON.stringify(p.topics)) : []);
                       }} className="p-1 text-slate-400 hover:text-indigo-600"><Edit className="w-4 h-4"/></button>
                     </div>
                   </div>
@@ -1729,12 +1756,49 @@ export function ProjectsView() {
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Instructions / Requirements</label>
                 <textarea required value={phaseInst} onChange={e=>setPhaseInst(e.target.value)} rows={4} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
               </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-semibold text-slate-700">Topics to Know</label>
+                  <button type="button" onClick={() => setPhaseTopics([...phaseTopics, { title: '', description: '', blogUrl: '' }])} className="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-100">+ Add Topic</button>
+                </div>
+                {phaseTopics.length === 0 ? <p className="text-xs text-slate-500">No topics added.</p> : (
+                  <div className="space-y-3">
+                    {phaseTopics.map((t, idx) => !t.isDeleted && (
+                      <div key={idx} className="border border-slate-200 p-3 rounded-xl bg-slate-50 text-sm">
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="font-semibold text-slate-800">Topic {idx + 1}</span>
+                          <div className="flex items-center gap-1">
+                            <button type="button" onClick={() => {
+                              const nt = [...phaseTopics];
+                              if (idx > 0) { [nt[idx], nt[idx-1]] = [nt[idx-1], nt[idx]]; setPhaseTopics(nt); }
+                            }} disabled={idx === 0} className="text-slate-400 hover:text-indigo-600 disabled:opacity-30"><ChevronUp className="w-4 h-4"/></button>
+                            <button type="button" onClick={() => {
+                              const nt = [...phaseTopics];
+                              if (idx < nt.length - 1) { [nt[idx], nt[idx+1]] = [nt[idx+1], nt[idx]]; setPhaseTopics(nt); }
+                            }} disabled={idx === phaseTopics.length-1} className="text-slate-400 hover:text-indigo-600 disabled:opacity-30"><ChevronDown className="w-4 h-4"/></button>
+                            <button type="button" onClick={() => {
+                              const nt = [...phaseTopics];
+                              nt[idx].isDeleted = true;
+                              setPhaseTopics(nt);
+                            }} className="text-slate-400 hover:text-red-600 ml-2"><Trash2 className="w-4 h-4"/></button>
+                          </div>
+                        </div>
+                        <input required type="text" placeholder="Title" value={t.title} onChange={e => { const nt = [...phaseTopics]; nt[idx].title = e.target.value; setPhaseTopics(nt); }} className="w-full mb-2 rounded border border-slate-300 px-3 py-1.5" />
+                        <textarea placeholder="Description (Optional)" value={t.description || ''} onChange={e => { const nt = [...phaseTopics]; nt[idx].description = e.target.value; setPhaseTopics(nt); }} rows={2} className="w-full mb-2 rounded border border-slate-300 px-3 py-1.5" />
+                        <input required type="url" placeholder="https://blog.infynux.com/..." value={t.blogUrl} onChange={e => { const nt = [...phaseTopics]; nt[idx].blogUrl = e.target.value; setPhaseTopics(nt); }} className="w-full rounded border border-slate-300 px-3 py-1.5" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="flex gap-2 pt-2">
                 <button disabled={isSubmitting} type="submit" className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-indigo-700">
                   {editingPhaseId ? "Update Phase" : "Add Phase"}
                 </button>
                 {editingPhaseId && (
-                  <button type="button" onClick={() => {setEditingPhaseId(""); setPhaseTitle(""); setPhaseDesc(""); setPhaseInst("");}} className="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-300">
+                  <button type="button" onClick={() => {setEditingPhaseId(""); setPhaseTitle(""); setPhaseDesc(""); setPhaseInst(""); setPhaseTopics([]);}} className="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-300">
                     Cancel
                   </button>
                 )}
