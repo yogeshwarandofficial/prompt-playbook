@@ -19,8 +19,14 @@ async function bootstrap() {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+  // CORS
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:8080',
+    origin: process.env.CORS_ORIGIN?.split(',') || [
+      'http://localhost:8080',
+      'http://localhost:5173',
+      'https://infynuxacademy.in',
+      'https://www.infynuxacademy.in',
+    ],
     credentials: true,
   });
 
@@ -41,6 +47,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(3001);
+  // Render Port
+  const port = process.env.PORT || 3001;
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();
