@@ -9,9 +9,9 @@ import { IssueCertificateDto, RevokeCertificateDto } from './dto/certificate.dto
 import { randomUUID } from 'crypto';
 import * as path from 'path';
 
-// Use require for jimp to avoid TS issues if typings aren't strictly set up
-const { Jimp, loadFont, HorizontalAlign, VerticalAlign, JimpMime } = require('jimp');
-const fonts = require('jimp/fonts');
+// jimp exposes a v0.x-style flat API via its default/CJS export
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const Jimp = require('jimp');
 
 function generateCertNo(): string {
   const year = new Date().getFullYear();
@@ -49,22 +49,24 @@ export class CertificatesService {
       throw new BadRequestException('Certificate template not found on server.');
     }
 
-    // Add student name (Top Center for testing)
-    const font = await loadFont(fonts.SANS_64_WHITE);
-    
-    // Print the name at the top (x=0, y=50, width=1000 to center)
-    image.print({
-      font,
-      x: 0,
-      y: 50,
-      text: sp.student.name,
-      maxWidth: 1000,
-      maxHeight: 100,
-      alignmentX: HorizontalAlign.CENTER,
-      alignmentY: VerticalAlign.MIDDLE
-    });
+    // Add student name (Top Center)
+    const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
 
-    return await image.getBuffer(JimpMime.png);
+    // Print the name at the top (x=0, y=50, width=1000 to center)
+    image.print(
+      font,
+      0,
+      50,
+      {
+        text: sp.student.name,
+        alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+        alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
+      },
+      1000,
+      100,
+    );
+
+    return await image.getBuffer(Jimp.MIME_PNG);
   }
 
   /**
