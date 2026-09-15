@@ -101,9 +101,26 @@ model ProjectPhase {
   updatedAt     DateTime              @updatedAt
   project       Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
   studentPhases StudentProjectPhase[]
+  topics        ProjectPhaseTopic[]
 
   @@unique([projectId, phaseOrder])
   @@index([projectId])
+}
+
+/// A specific topic/module within a ProjectPhase.
+model ProjectPhaseTopic {
+  id             String       @id @default(uuid())
+  projectPhaseId String
+  title          String
+  description    String
+  blogUrl        String?
+  order          Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  phase          ProjectPhase @relation(fields: [projectPhaseId], references: [id], onDelete: Cascade)
+
+  @@unique([projectPhaseId, order])
+  @@index([projectPhaseId])
 }
 
 /// The assignment of a Project to a specific Student.
