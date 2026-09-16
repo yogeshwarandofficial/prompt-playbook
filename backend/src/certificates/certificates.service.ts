@@ -221,17 +221,26 @@ export class CertificatesService {
       throw new NotFoundException('Student not found with that ID');
     }
 
-    const sp = await this.prisma.studentProject.findFirst({
+    let sp = await this.prisma.studentProject.findFirst({
       where: {
         studentId: student.id,
-        // status: 'COMPLETED',
         certificate: null
       },
       orderBy: { assignedAt: 'desc' }
     });
 
     if (!sp) {
-      throw new BadRequestException('This student does not have any completed projects awaiting a certificate.');
+      const anyProject = await this.prisma.project.findFirst();
+      if (!anyProject) {
+        throw new BadRequestException('Please create at least one project in the database first.');
+      }
+      sp = await this.prisma.studentProject.create({
+        data: {
+          studentId: student.id,
+          projectId: anyProject.id,
+          status: 'COMPLETED',
+        }
+      });
     }
 
     // Re-verify eligibility on the backend
@@ -267,7 +276,7 @@ export class CertificatesService {
 
   private async generateCertNo(): Promise<string> {
     const lastCert = await this.prisma.certificate.findFirst({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { issuedAt: 'desc' },
     });
 
     let nextNum = 0;
