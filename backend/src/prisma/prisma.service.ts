@@ -54,6 +54,7 @@ export class PrismaService
 {
   private readonly logger = new Logger(PrismaService.name);
   private pool: Pool;
+  private pingInterval: NodeJS.Timeout | null = null;
 
   constructor() {
     const connectionString = process.env.DATABASE_URL!;
@@ -73,9 +74,22 @@ export class PrismaService
   async onModuleInit() {
     await this.$connect();
     this.logger.log('Prisma connected via Neon WebSocket adapter (PrismaNeon, IPv4 Wrapper)');
+
+    // Keep-alive ping every 1 minute (60,000 ms) to prevent Neon DB from sleeping
+    this.pingInterval = setInterval(async () => {
+      try {
+        await this.$queryRaw`SELECT 1`;
+        this.logger.debug('Neon DB keep-alive ping successful');
+      } catch (error) {
+        this.logger.error('Neon DB keep-alive ping failed:', error);
+      }
+    }, 60000);
   }
 
   async onModuleDestroy() {
+    if (this.pingInterval) {
+      clearInterval(this.pingInterval);
+    }
     await this.$disconnect();
     await this.pool.end();
   }
