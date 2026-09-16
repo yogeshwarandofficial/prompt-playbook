@@ -47,7 +47,7 @@ export class CertificatesService {
     }
 
     // Attempt to read the template
-    const templatePath = path.join(process.cwd(), 'assets', 'certificate_template.png');
+    const templatePath = path.join(process.cwd(), '..', 'public', 'template.png');
     let image;
     try {
       image = await jimp.Jimp.read(templatePath);
@@ -73,12 +73,12 @@ export class CertificatesService {
       maxHeight: 100,
     });
 
-    // Generate QR code for verification
+    // Generate QR code for verification (using Student ID as requested)
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:8080';
-    const verifyUrl = `${frontendUrl}/verify/${sp.certificate.verificationToken}`;
+    const verifyUrl = `${frontendUrl}/verify/${sp.student.studentId}`;
     const qrBuffer = await QRCode.toBuffer(verifyUrl, {
       margin: 1,
-      width: 150,
+      width: 120, // slightly smaller to fit nicely in the center box
       color: {
         dark: '#000000',
         light: '#ffffff'
@@ -86,9 +86,11 @@ export class CertificatesService {
     });
     const qrImage = await jimp.Jimp.read(qrBuffer);
 
-    // Composite QR code on the bottom right
-    const xPos = image.bitmap.width - 180;
-    const yPos = image.bitmap.height - 180;
+    // Composite QR code in the bottom center
+    const xPos = (image.bitmap.width / 2) - (qrImage.bitmap.width / 2);
+    // Approximate y position based on typical certificate layout (bottom portion)
+    const yPos = image.bitmap.height - 230;
+    
     image.composite(qrImage, xPos > 0 ? xPos : 0, yPos > 0 ? yPos : 0);
 
     return await image.getBuffer(jimp.JimpMime.png);
