@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { to: "/roadmaps", label: "Roadmaps" },
   { to: "/tutorials", label: "Tutorials" },
   { to: "/internships", label: "Internships" },
+  { to: "/verify", label: "Verify" },
   { to: "/contact", label: "Contact" },
   { to: "/events", label: "Events" },
 ] as const;
