@@ -57,55 +57,69 @@ export class CertificatesService {
     const font64 = await jimp.loadFont(fontPath64);
     const font32 = await jimp.loadFont(fontPath32);
 
-    // Print the name
-    image.print({
-      font: font64,
-      x: 0,
-      y: image.bitmap.height * 0.40,
-      text: {
-        text: sp.student.name,
-        alignmentX: jimp.HorizontalAlign.CENTER,
-        alignmentY: jimp.VerticalAlign.MIDDLE,
-      },
-      maxWidth: image.bitmap.width,
-      maxHeight: 100,
+    const printColorized = (img: any, font: any, x: number, y: number, textObj: any, maxWidth?: number, scale: number = 1) => {
+      // Create a temporary image for the text
+      const boxWidth = maxWidth ? maxWidth : img.bitmap.width;
+      const textImg = new jimp.Jimp({ width: boxWidth, height: 300 });
+      
+      const printArgs: any = { font, x: 0, y: 0, text: textObj };
+      if (maxWidth) printArgs.maxWidth = maxWidth;
+      textImg.print(printArgs);
+      
+      textImg.scan(0, 0, textImg.bitmap.width, textImg.bitmap.height, function(px: number, py: number, idx: number) {
+        if (this.bitmap.data[idx + 3] > 0) {
+          this.bitmap.data[idx + 0] = 12; // R (Navy Blue)
+          this.bitmap.data[idx + 1] = 31; // G
+          this.bitmap.data[idx + 2] = 56; // B
+        }
+      });
+
+      if (scale !== 1) {
+        textImg.scale(scale);
+      }
+
+      // Calculate new X to keep it centered if maxWidth was provided, or just use X
+      const finalX = maxWidth ? x + (maxWidth - textImg.bitmap.width) / 2 : x;
+      img.composite(textImg, finalX, y);
+    };
+
+    // Wipe out the template's first paragraph with a white rectangle to avoid overlapping
+    // Starting at y:585 and height 75 to keep the golden line above it intact
+    image.scan(150, 585, 1184, 75, function(x: number, y: number, idx: number) {
+      this.bitmap.data[idx + 0] = 255;
+      this.bitmap.data[idx + 1] = 255;
+      this.bitmap.data[idx + 2] = 255;
+      this.bitmap.data[idx + 3] = 255;
     });
+
+    // Print the name (sitting exactly on the golden line which is at y=564)
+    printColorized(image, font64, 0, 480, {
+      text: sp.student.name,
+      alignmentX: jimp.HorizontalAlign.CENTER,
+      alignmentY: jimp.VerticalAlign.TOP,
+    }, image.bitmap.width, 1);
 
     const startDate = sp.assignedAt ? new Date(sp.assignedAt).toLocaleDateString() : 'N/A';
     const endDate = sp.completedAt ? new Date(sp.completedAt).toLocaleDateString() : new Date().toLocaleDateString();
     const paragraph = `This certificate is proudly presented for successfully completing the ${sp.project.title} Internship at Infynux Solutions from ${startDate} to ${endDate}.`;
 
-    // Print the paragraph
-    image.print({
-      font: font32,
-      x: image.bitmap.width * 0.15,
-      y: image.bitmap.height * 0.55,
-      text: {
-        text: paragraph,
-        alignmentX: jimp.HorizontalAlign.CENTER,
-        alignmentY: jimp.VerticalAlign.TOP,
-      },
-      maxWidth: image.bitmap.width * 0.70,
-    });
+    // Print the paragraph without scaling to keep the font crisp. 
+    // Shifted Y to 580 to prevent touching the bottom paragraph.
+    printColorized(image, font32, image.bitmap.width * 0.15, 580, {
+      text: paragraph,
+      alignmentX: jimp.HorizontalAlign.CENTER,
+      alignmentY: jimp.VerticalAlign.TOP,
+    }, image.bitmap.width * 0.70, 1);
 
-    // Print Date
-    image.print({
-      font: font32,
-      x: image.bitmap.width * 0.20,
-      y: image.bitmap.height * 0.82,
-      text: new Date().toLocaleDateString(),
-    });
+    // Print Date (scaled to 75% to perfectly match 'Date :' size, aligned horizontally at X=390 to avoid collision)
+    printColorized(image, font32, 390, 895, new Date().toLocaleDateString(), undefined, 0.75);
 
-    // Print Certificate Code
-    image.print({
-      font: font32,
-      x: image.bitmap.width * 0.20,
-      y: image.bitmap.height * 0.88,
-      text: sp.certificate.certificateNo,
-    });
+    // Print Certificate Code (scaled to 75% to perfectly match 'Certificate Code : IS-IN-' size)
+    const codeOnly = sp.certificate.certificateNo.replace('IS-IN-', '');
+    printColorized(image, font32, 570, 936, codeOnly, undefined, 0.75);
 
     // Generate QR code for verification (using Student ID as requested)
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:8080';
+    const frontendUrl = process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://infynuxsolutions.in';
     const verifyUrl = `${frontendUrl}/verify/${sp.student.studentId}`;
     const qrBuffer = await QRCode.toBuffer(verifyUrl, {
       margin: 1,
@@ -369,7 +383,13 @@ export class CertificatesService {
   /** Student-facing: get their own certificate status by studentId */
   async getStudentCertificate(studentId: string) {
     const completedProjects = await this.prisma.studentProject.findMany({
-      where: { studentId, status: 'COMPLETED' },
+      where: {
+        studentId,
+        OR: [
+          { status: 'COMPLETED' },
+          { certificate: { isNot: null } }
+        ]
+      },
       include: {
         certificate: true,
         project: true,
