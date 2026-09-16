@@ -671,7 +671,6 @@ function TestimonialsSection() {
                 </div>
                 <div className="text-left">
                   <p className="text-base font-bold text-white tracking-tight">{t.name}</p>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-0.5">{t.college}</p>
                 </div>
               </div>
             </div>
