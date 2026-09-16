@@ -1,6 +1,6 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useRef, useState, useEffect } from "react";
-import { X, Upload, CheckCircle2, Loader2, AlertCircle, FileText } from "lucide-react";
+import { Upload, CheckCircle2, Loader2, AlertCircle, FileText, X } from "lucide-react";
 import { SUBDOMAIN_GROUPS } from "@/data/content";
 import { cn } from "@/lib/utils";
 
@@ -62,7 +62,6 @@ export function ApplicationModal({ open, domain, onClose }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
-  // Pre-select domain when opened from a specific card
   useEffect(() => {
     if (open) {
       if (domain) {
@@ -76,7 +75,6 @@ export function ApplicationModal({ open, domain, onClose }: Props) {
       }
       setTimeout(() => firstFieldRef.current?.focus(), 100);
     } else {
-      // Reset on close
       setTimeout(() => {
         setFormData(INITIAL);
         setErrors({});
@@ -150,13 +148,11 @@ export function ApplicationModal({ open, domain, onClose }: Props) {
     setServerMsg("");
 
     try {
-      // Convert resume file to Base64 so it can be emailed as an attachment
       const toBase64 = (file: File): Promise<string> =>
         new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => {
             const result = reader.result as string;
-            // Strip the data URL prefix (e.g. "data:application/pdf;base64,")
             resolve(result.split(",")[1]);
           };
           reader.onerror = reject;
@@ -209,214 +205,222 @@ export function ApplicationModal({ open, domain, onClose }: Props) {
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent
-        className="max-h-[90vh] overflow-y-auto sm:max-w-lg bg-white border border-slate-200 text-slate-900 p-8 shadow-[0_16px_48px_rgba(128,0,0,0.12)] rounded-2xl"
+        className="max-h-[95vh] w-[95vw] overflow-y-auto sm:max-w-[640px] p-0 bg-gradient-to-b from-[#090909] to-[#050505] border border-[#7CFF2B]/20 rounded-[24px] sm:rounded-[28px] shadow-[0_0_60px_rgba(124,255,43,0.08),0_30px_80px_rgba(0,0,0,0.75)] text-white font-sans [&>button]:hidden"
         aria-describedby="modal-desc"
       >
-        <DialogHeader className="text-left">
-          <DialogTitle className="font-display text-2xl font-bold text-slate-900 font-orbitron tracking-wide">
-            Internship Application
-          </DialogTitle>
-          <DialogDescription id="modal-desc" className="text-slate-500 font-outfit text-sm mt-2">
-            Fill in the details below to apply for an internship at Infynux Academy.
-          </DialogDescription>
-        </DialogHeader>
+        <div className="px-5 py-5 sm:px-8 sm:py-7 sm:pb-5 flex justify-between items-start border-b border-white/5">
+          <div>
+            <div className="flex items-center gap-3.5">
+              <div className="w-[48px] h-[48px] sm:w-[52px] sm:h-[52px] rounded-full flex items-center justify-center shrink-0 bg-transparent">
+                <img 
+                  src="/INfynux-Logo 1.png" 
+                  alt="Infynux Academy Logo"
+                  className="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(212,175,55,0.45)] drop-shadow-[0_0_18px_rgba(124,255,43,0.08)]"
+                />
+              </div>
+              <h2 className="text-[22px] sm:text-[26px] font-extrabold text-white">
+                Infynux <span className="text-[#7CFF2B]">Academy</span>
+              </h2>
+            </div>
+            <p id="modal-desc" className="mt-2 text-[#8F9B8F] text-sm leading-relaxed max-w-[95%] sm:max-w-[85%]">
+              Apply for a remote internship and become part of the Infynux Academy engineering pipeline.
+            </p>
+          </div>
+          <button 
+            onClick={onClose}
+            className="text-[#777] hover:text-white text-3xl leading-none cursor-pointer transition-colors pt-1 px-1"
+          >
+            &times;
+          </button>
+        </div>
 
         {/* SUCCESS STATE */}
         {state === "success" ? (
-          <div className="flex flex-col items-center py-10 text-center space-y-5">
-            <div className="grid h-20 w-20 place-items-center rounded-full bg-[#800000]/8 shadow-[0_4px_20px_rgba(128,0,0,0.15)] border border-[#800000]/15">
-              <CheckCircle2 className="h-10 w-10 text-[#800000]" />
+          <div className="flex flex-col items-center py-16 px-8 text-center space-y-6">
+            <div className="w-20 h-20 rounded-full flex items-center justify-center bg-[#7CFF2B]/10 shadow-[0_4px_20px_rgba(124,255,43,0.15)] border border-[#7CFF2B]/20">
+              <CheckCircle2 className="h-10 w-10 text-[#7CFF2B]" />
             </div>
-            <h3 className="font-display text-xl font-bold text-slate-900 font-orbitron tracking-wide">
+            <h3 className="text-2xl font-extrabold text-white">
               APPLICATION SUBMITTED!
             </h3>
-            <p className="text-sm text-slate-500 max-w-xs font-outfit leading-relaxed">
-              We'll review your credentials and reach out to you at your verified email address within <strong className="text-slate-700">2–3 business days</strong>.
+            <p className="text-[#8F9B8F] text-[15px] leading-relaxed max-w-sm mx-auto">
+              We'll review your credentials and reach out to you at your verified email address within <strong className="text-white">2–3 business days</strong>.
             </p>
             <button
               type="button"
               onClick={onClose}
-              className="w-full mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-[#800000] px-6 py-3.5 text-sm font-bold text-white shadow-[0_4px_15px_rgba(128,0,0,0.2)] hover:bg-[#6B0000] transition-all font-orbitron"
+              className="mt-4 w-full max-w-xs p-4 rounded-[18px] bg-gradient-to-r from-[#69FF2A] to-[#28E56A] text-[#050505] text-base font-extrabold transition-all hover:-translate-y-0.5 shadow-[0_12px_30px_rgba(124,255,43,0.25)] hover:shadow-[0_18px_40px_rgba(124,255,43,0.35)]"
             >
-              Close Window
+              CLOSE WINDOW
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-4 space-y-5 text-left" noValidate>
-            {/* Error banner */}
+          <form onSubmit={handleSubmit} className="px-5 py-6 sm:px-8 sm:py-7 sm:pb-8" noValidate>
+            
             {state === "error" && (
-              <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-sm text-red-600 font-orbitron" role="alert">
+              <div className="mb-6 flex items-start gap-3 rounded-[16px] border border-red-500/30 bg-red-500/10 px-4 py-3.5 text-sm text-red-400" role="alert">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                 {serverMsg || "Submission failed. Please try again."}
               </div>
             )}
 
-            {/* Full Name */}
-            <Field label="Full Name" id="fullName" error={errors.fullName} required>
-              <input
-                ref={firstFieldRef}
-                id="fullName" name="fullName" type="text"
-                value={formData.fullName} onChange={handleChange} onBlur={handleBlur}
-                placeholder="Ravi Kumar"
-                className={fieldClass(!!errors.fullName)}
-                autoComplete="name"
-              />
-            </Field>
-
-            {/* Email */}
-            <Field label="Email Address" id="email" error={errors.email} required>
-              <input
-                id="email" name="email" type="email"
-                value={formData.email} onChange={handleChange} onBlur={handleBlur}
-                placeholder="you@example.com"
-                className={fieldClass(!!errors.email)}
-                autoComplete="email"
-              />
-            </Field>
-
-            {/* Mobile */}
-            <Field label="Mobile Number" id="mobile" error={errors.mobile} required>
-              <input
-                id="mobile" name="mobile" type="tel"
-                value={formData.mobile} onChange={handleChange} onBlur={handleBlur}
-                placeholder="9876543210"
-                className={fieldClass(!!errors.mobile)}
-                autoComplete="tel"
-              />
-            </Field>
-
-            {/* College */}
-            <Field label="School / College Name" id="college" error={errors.college} required>
-              <input
-                id="college" name="college" type="text"
-                value={formData.college} onChange={handleChange} onBlur={handleBlur}
-                placeholder="ABC Engineering College"
-                className={fieldClass(!!errors.college)}
-                autoComplete="organization"
-              />
-            </Field>
-
-            {/* Domain */}
-            <Field label="Internship Domain" id="subdomain" error={errors.subdomain} required>
-              <select
-                id="subdomain" name="subdomain"
-                value={formData.subdomain} onChange={handleChange} onBlur={handleBlur}
-                className={fieldClass(!!errors.subdomain)}
-              >
-                <option value="" className="text-slate-400">— Select a domain —</option>
-                {SUBDOMAIN_GROUPS.map((group) =>
-                  group.options.map((opt) => (
-                    <option key={`${group.label}__${opt}`} value={`${group.label}__${opt}`}>
-                      {group.label} — {opt}
-                    </option>
-                  ))
-                )}
-              </select>
-            </Field>
-
-            {/* Message */}
-            <Field label="Additional Message" id="message" error={errors.message} hint="Optional · max 500 chars">
-              <textarea
-                id="message" name="message"
-                value={formData.message} onChange={handleChange} onBlur={handleBlur}
-                placeholder="Tell us a bit about yourself, your skills, and why you're interested..."
-                rows={3}
-                className={fieldClass(!!errors.message)}
-              />
-              <span className={cn("block text-right text-[10px] mt-1 font-orbitron", formData.message.length > 490 ? "text-amber-500" : "text-slate-400")}>
-                {formData.message.length}/500
-              </span>
-            </Field>
-
-            {/* Resume Upload */}
-            <div>
-              <label className="mb-1.5 block text-sm font-semibold text-slate-700 font-orbitron">
-                Resume File <span className="text-red-500">*</span>{" "}
-                <span className="text-xs text-slate-400 font-outfit">(PDF/DOC/DOCX · max 5MB)</span>
-              </label>
-              {resumeFile ? (
-                <div className="flex items-center gap-3 rounded-xl border border-[#800000]/15 bg-[#800000]/5 px-4 py-3.5">
-                  <FileText className="h-4 w-4 text-[#800000]" />
-                  <div className="flex-1 min-w-0">
-                    <p className="truncate text-sm font-semibold text-slate-800 font-orbitron">{resumeFile.name}</p>
-                    <p className="text-xs text-slate-400 font-outfit">{(resumeFile.size / 1024).toFixed(0)} KB</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setResumeFile(null)}
-                    className="rounded-lg p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
-                    aria-label="Remove resume"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-              ) : (
-                <div
-                  className={cn(
-                    "cursor-pointer rounded-xl border-2 border-dashed px-4 py-7 text-center transition-all duration-300",
-                    isDragging
-                      ? "border-[#800000] bg-[#800000]/5 shadow-[0_0_15px_rgba(128,0,0,0.08)]"
-                      : "border-slate-200 hover:border-[#800000]/30 hover:bg-[#800000]/3"
-                  )}
-                  onClick={() => fileInputRef.current?.click()}
-                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-                  onDragLeave={() => setIsDragging(false)}
-                  onDrop={handleDrop}
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Upload resume"
-                  onKeyDown={(e) => { if (e.key === "Enter") fileInputRef.current?.click(); }}
-                >
-                  <Upload className="mx-auto h-6 w-6 text-slate-400" aria-hidden="true" />
-                  <p className="mt-2.5 text-sm text-slate-600 font-outfit">
-                    <span className="font-semibold text-[#800000]">Click to upload</span> or drag and drop
-                  </p>
-                  <p className="text-xs text-slate-400 font-outfit mt-1">PDF, DOC, DOCX — max 5MB</p>
-                </div>
-              )}
-              <input
-                ref={fileInputRef} type="file"
-                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                className="hidden"
-                onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
-              />
-              {resumeError && (
-                <p className="mt-1 text-xs text-red-500 font-orbitron" role="alert">{resumeError}</p>
-              )}
-            </div>
-
-            {/* Agreement */}
-            <div className="space-y-1">
-              <label className="flex items-start gap-2.5 cursor-pointer">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[18px]">
+              
+              <Field label="Full Name" id="fullName" error={errors.fullName} required className="sm:col-span-2">
                 <input
-                  id="agreement" name="agreement" type="checkbox"
-                  checked={formData.agreement} onChange={handleChange}
-                  className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 text-[#800000] focus:ring-[#800000]/30 focus:ring-2 focus:ring-offset-0"
+                  ref={firstFieldRef}
+                  id="fullName" name="fullName" type="text"
+                  value={formData.fullName} onChange={handleChange} onBlur={handleBlur}
+                  placeholder="Yogeshwaran D"
+                  className={fieldClass(!!errors.fullName)}
+                  autoComplete="name"
                 />
-                <span className="text-sm text-slate-500 font-outfit select-none">
-                  I agree to the{" "}
-                  <a href="#" className="text-[#800000] hover:underline">Terms of Service</a>
-                  {" "}and{" "}
-                  <a href="#" className="text-[#800000] hover:underline">Privacy Policy</a>
-                </span>
-              </label>
-              {errors.agreement && touched.agreement && (
-                <p className="mt-1 text-xs text-red-500 font-orbitron" role="alert">{errors.agreement}</p>
-              )}
+              </Field>
+
+              <Field label="Email Address" id="email" error={errors.email} required>
+                <input
+                  id="email" name="email" type="email"
+                  value={formData.email} onChange={handleChange} onBlur={handleBlur}
+                  placeholder="you@example.com"
+                  className={fieldClass(!!errors.email)}
+                  autoComplete="email"
+                />
+              </Field>
+
+              <Field label="Mobile Number" id="mobile" error={errors.mobile} required>
+                <input
+                  id="mobile" name="mobile" type="tel"
+                  value={formData.mobile} onChange={handleChange} onBlur={handleBlur}
+                  placeholder="9876543210"
+                  className={fieldClass(!!errors.mobile)}
+                  autoComplete="tel"
+                />
+              </Field>
+
+              <Field label="School / College Name" id="college" error={errors.college} required className="sm:col-span-2">
+                <input
+                  id="college" name="college" type="text"
+                  value={formData.college} onChange={handleChange} onBlur={handleBlur}
+                  placeholder="ABC Engineering College"
+                  className={fieldClass(!!errors.college)}
+                  autoComplete="organization"
+                />
+              </Field>
+
+              <Field label="Internship Domain" id="subdomain" error={errors.subdomain} required className="sm:col-span-2">
+                <select
+                  id="subdomain" name="subdomain"
+                  value={formData.subdomain} onChange={handleChange} onBlur={handleBlur}
+                  className={fieldClass(!!errors.subdomain)}
+                >
+                  <option value="" className="text-[#666]" disabled>Select your preferred domain</option>
+                  {SUBDOMAIN_GROUPS.map((group) =>
+                    group.options.map((opt) => (
+                      <option key={`${group.label}__${opt}`} value={`${group.label}__${opt}`} className="bg-[#101010] text-white">
+                        {group.label} — {opt}
+                      </option>
+                    ))
+                  )}
+                </select>
+              </Field>
+
+              <Field label="Additional Message" id="message" error={errors.message} hint="(Optional · max 500 characters)" className="sm:col-span-2">
+                <textarea
+                  id="message" name="message"
+                  value={formData.message} onChange={handleChange} onBlur={handleBlur}
+                  placeholder="Tell us about yourself, your skills, projects, and why you're interested in this internship."
+                  className={fieldClass(!!errors.message) + " min-h-[130px] resize-none"}
+                />
+                <div className="text-right text-[#666] text-xs mt-1.5">
+                  <span className={formData.message.length > 490 ? "text-red-400" : ""}>{formData.message.length}</span> / 500
+                </div>
+              </Field>
+
+              <div className="flex flex-col gap-2.5 sm:col-span-2">
+                <label className="text-[13px] text-[#D8D8D8] font-semibold tracking-wide">
+                  Resume <span className="text-[#7CFF2B]">*</span>
+                </label>
+                {resumeFile ? (
+                  <div className="flex items-center gap-3 rounded-[20px] border border-[#7CFF2B]/25 bg-[#7CFF2B]/5 px-5 py-4">
+                    <FileText className="h-6 w-6 text-[#7CFF2B]" />
+                    <div className="flex-1 min-w-0">
+                      <p className="truncate text-[15px] font-semibold text-white">{resumeFile.name}</p>
+                      <p className="text-[13px] text-[#777]">{(resumeFile.size / 1024).toFixed(0)} KB</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setResumeFile(null)}
+                      className="rounded-full p-2 text-[#777] hover:text-white hover:bg-white/10 transition-colors"
+                      aria-label="Remove resume"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    className={cn(
+                      "bg-[#090909] border-2 border-dashed rounded-[20px] px-5 py-[30px] text-center transition-all cursor-pointer",
+                      isDragging
+                        ? "border-[#7CFF2B] bg-[#0d1307]"
+                        : "border-[#7CFF2B]/25 hover:border-[#7CFF2B] hover:bg-[#0d1307]"
+                    )}
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={handleDrop}
+                  >
+                    <div className="w-16 h-16 mx-auto rounded-full bg-[#7CFF2B]/10 flex items-center justify-center text-[#7CFF2B] text-2xl mb-4">
+                      &#8679;
+                    </div>
+                    <div className="text-[15px] text-white">
+                      <strong className="text-[#7CFF2B] font-semibold">Click to upload</strong> or drag & drop
+                    </div>
+                    <p className="text-[#777] mt-1.5 text-[13px]">PDF, DOC or DOCX • Maximum file size 5 MB</p>
+                  </div>
+                )}
+                <input
+                  ref={fileInputRef} type="file"
+                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  className="hidden"
+                  onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
+                />
+                {resumeError && <p className="mt-1 text-xs text-red-400" role="alert">{resumeError}</p>}
+              </div>
+
+              <div className="flex flex-col gap-2.5 sm:col-span-2">
+                <div className="flex items-start gap-3 mt-2">
+                  <input
+                    id="agreement" name="agreement" type="checkbox"
+                    checked={formData.agreement} onChange={handleChange}
+                    className="w-5 h-5 accent-[#7CFF2B] mt-0.5 cursor-pointer"
+                  />
+                  <label htmlFor="agreement" className="text-[#999] font-normal leading-relaxed text-sm cursor-pointer select-none">
+                    I agree to the <a href="#" className="text-[#7CFF2B] no-underline hover:underline">Terms of Service</a> and <a href="#" className="text-[#7CFF2B] no-underline hover:underline">Privacy Policy</a>.
+                  </label>
+                </div>
+                {errors.agreement && touched.agreement && (
+                  <p className="text-xs text-red-400 mt-1" role="alert">{errors.agreement}</p>
+                )}
+              </div>
+
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={state === "loading"}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#800000] px-5 py-3.5 text-sm font-bold text-white shadow-[0_4px_15px_rgba(128,0,0,0.20)] hover:bg-[#6B0000] hover:shadow-[0_4px_20px_rgba(128,0,0,0.30)] transition-all disabled:cursor-not-allowed disabled:opacity-60 font-orbitron"
+              className="mt-6 w-full p-[18px] border-none rounded-[18px] bg-gradient-to-r from-[#69FF2A] to-[#28E56A] text-[#050505] text-base font-extrabold cursor-pointer transition-all duration-300 tracking-wide shadow-[0_12px_30px_rgba(124,255,43,0.25)] hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(124,255,43,0.35)] disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none flex justify-center items-center gap-2"
             >
               {state === "loading" ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> SUBMITTING APPLICATION...</>
+                <><Loader2 className="h-5 w-5 animate-spin" /> SUBMITTING...</>
               ) : (
                 "SUBMIT APPLICATION"
               )}
             </button>
+
+            <p className="text-center text-[#666] mt-5 text-xs">
+              Powered by Infynux Academy • Learn. Build. Get Hired.
+            </p>
+
           </form>
         )}
       </DialogContent>
@@ -426,10 +430,10 @@ export function ApplicationModal({ open, domain, onClose }: Props) {
 
 function fieldClass(hasError: boolean) {
   return cn(
-    "w-full rounded-xl border bg-slate-50 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 font-outfit transition-all focus:outline-none focus:ring-2",
+    "w-full bg-[#101010] border text-white px-4 py-[15px] rounded-[16px] outline-none transition-all text-[15px] placeholder:text-[#666] focus:ring-4",
     hasError
-      ? "border-red-300 focus:border-red-400 focus:ring-red-100"
-      : "border-slate-200 focus:border-[#800000] focus:ring-[#800000]/10"
+      ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/10"
+      : "border-[#242424] focus:border-[#7CFF2B] focus:ring-[#7CFF2B]/10"
   );
 }
 
@@ -440,6 +444,7 @@ function Field({
   error,
   required,
   hint,
+  className
 }: {
   label: string;
   id: string;
@@ -447,18 +452,20 @@ function Field({
   error?: string;
   required?: boolean;
   hint?: string;
+  className?: string;
 }) {
   return (
-    <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-semibold text-slate-700 font-orbitron">
-        {label}
-        {required && <span className="ml-1 text-red-500" aria-hidden="true">*</span>}
-        {hint && <span className="ml-1 text-xs text-slate-400 font-outfit">({hint})</span>}
+    <div className={cn("flex flex-col gap-2.5", className)}>
+      <label htmlFor={id} className="text-[13px] text-[#D8D8D8] font-semibold tracking-wide flex justify-between items-center">
+        <span>
+          {label} {required && <span className="text-[#7CFF2B] ml-0.5">*</span>}
+        </span>
+        {hint && <span className="text-[#777] font-medium ml-2">{hint}</span>}
       </label>
       {children}
       {error && (
-        <p className="mt-1 flex items-center gap-1 text-xs text-red-500 font-orbitron" role="alert" aria-live="polite">
-          <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        <p className="flex items-center gap-1 text-xs text-red-400" role="alert">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
           {error}
         </p>
       )}
