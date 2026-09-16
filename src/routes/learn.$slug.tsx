@@ -22,22 +22,18 @@ import {
   DOMAIN_NAME_MAP,
   type Roadmap,
   type RoadmapModule,
+  ROADMAPS,
 } from "@/data/content";
 import { PageHeader } from "./roadmaps";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/learn/$slug")({
   loader: async ({ params }): Promise<{ roadmap: Roadmap }> => {
-    try {
-      const res = await fetch(`${(import.meta as any).env.VITE_API_URL || 'http://localhost:3001'}/api/roadmaps/${params.slug}`);
-      if (res.ok) {
-        const roadmap = await res.json();
-        return { roadmap };
-      }
-    } catch (e) {
-      console.error(e);
+    const roadmap = ROADMAPS.find((r) => r.slug === params.slug);
+    if (!roadmap) {
+      throw notFound();
     }
-    throw notFound();
+    return { roadmap };
   },
   head: ({ loaderData }) => {
     const r = loaderData?.roadmap;

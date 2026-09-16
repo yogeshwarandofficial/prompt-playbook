@@ -102,7 +102,7 @@ function HomePage() {
 function HeroSection() {
   return (
     <section
-      className="relative overflow-hidden pb-32 pt-32 md:pb-40 md:pt-48 bg-white rounded-b-[40px] md:rounded-b-[80px] shadow-2xl z-10"
+      className="relative overflow-hidden pb-32 pt-32 md:pb-40 md:pt-48  bg-white rounded-b-[40px] md:rounded-b-[80px] shadow-2xl z-10"
       aria-label="Hero"
     >
       {/* Decorative maroon gradient orb */}
