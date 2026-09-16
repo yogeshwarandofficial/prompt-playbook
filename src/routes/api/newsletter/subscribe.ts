@@ -1,71 +1,29 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { db } from "@/lib/firebase";
-import { collection, query, where, getDocs, setDoc, doc } from "firebase/firestore";
-import { newsletterSchema } from "@/lib/validators";
 
+/**
+ * POST /api/newsletter/subscribe  — thin proxy to the NestJS NewsletterController.
+ * All business logic (duplicate-checking, DB persistence, welcome email) lives in the backend.
+ */
 export const Route = createFileRoute("/api/newsletter/subscribe")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         try {
           const body = await request.json();
-          const parsed = newsletterSchema.safeParse(body);
-          if (!parsed.success) {
-            return Response.json(
-              { success: false, errors: parsed.error.flatten().fieldErrors },
-              { status: 400 }
-            );
-          }
+          const API_URL = process.env.VITE_API_URL || "http://localhost:3001";
 
-          const { email } = parsed.data;
+          const backendRes = await fetch(`${API_URL}/api/newsletter/subscribe`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
 
-          // Check if already subscribed to prevent duplicate welcome emails
-          const subscribersRef = collection(db, "newsletter_subscribers");
-          const q = query(subscribersRef, where("email", "==", email.toLowerCase()));
-          const querySnapshot = await getDocs(q);
+          const data = await backendRes.json().catch(() => ({}));
 
-          if (!querySnapshot.empty) {
-            return Response.json(
-              { success: true, message: "You're already subscribed! 🎉" },
-              { status: 200 }
-            );
-          }
-
-          // Upsert — do nothing if already subscribed
-          const newDocRef = doc(subscribersRef);
-          await setDoc(newDocRef, { email: email.toLowerCase(), subscribed_at: new Date().toISOString() });
-
-          // Send welcome email via Resend
-          try {
-            const { getResendClient, getResendFromEmail, getResendToEmail } = await import("@/lib/resend");
-            const resend = getResendClient();
-            if (resend) {
-              await resend.emails.send({
-                from: `Infynux Academy <${getResendFromEmail()}>`,
-                to: email.toLowerCase(),
-                subject: "Welcome to Infynux Academy! 🚀",
-                html: `
-                  <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; rounded: 12px;">
-                    <h2 style="color: #6d28d9; font-size: 24px; font-weight: bold; margin-bottom: 16px;">Welcome to Infynux Academy! 🎉</h2>
-                    <p style="font-size: 16px; line-height: 1.5; color: #374151;">Thanks for subscribing to our newsletter. You'll be the first to know about new learning roadmaps, tutorial updates, and exclusive remote internship openings.</p>
-                    <hr style="border: 0; border-top: 1px solid #eaeaea; margin: 24px 0;" />
-                    <p style="font-size: 14px; color: #6b7280;">If you have any questions, feel free to reply to this email.</p>
-                    <p style="font-size: 14px; font-weight: 600; color: #374151; margin-top: 8px;">— The Infynux Academy Team</p>
-                  </div>
-                `,
-              });
-            }
-          } catch (emailErr) {
-            console.warn("Failed to send welcome email:", emailErr);
-          }
-
-          return Response.json(
-            { success: true, message: "You're subscribed! 🎉" },
-            { status: 200 }
-          );
+          return Response.json(data, { status: backendRes.status });
         } catch (err) {
-          console.error("[newsletter]", err);
+          console.error("[api/newsletter/subscribe proxy]", err);
           return Response.json(
             { success: false, message: "Server error. Please try again." },
             { status: 500 }

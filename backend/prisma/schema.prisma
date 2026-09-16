@@ -459,6 +459,24 @@ model AutomatedReview {
   submission     Submission            @relation(fields: [submissionId], references: [id], onDelete: Cascade)
 }
 
+model ContactSubmission {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+model NewsletterSubscriber {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  subscribedAt DateTime @default(now())
+}
+
+
+
 enum Role {
   STUDENT
   MENTOR

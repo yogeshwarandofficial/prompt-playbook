@@ -1,12 +1,17 @@
-import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { EmailService } from '../email/email.service';
 import { ScheduleInterviewDto } from './dto/schedule-interview.dto';
 import { RecordInterviewResultDto } from './dto/record-result.dto';
 import { UpdateInterviewDto } from './dto/update-interview.dto';
 
 @Injectable()
 export class InterviewsService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(InterviewsService.name);
+  constructor(
+    private prisma: PrismaService,
+    private email: EmailService,
+  ) {}
 
   async scheduleInterview(dto: ScheduleInterviewDto) {
     const application = await this.prisma.application.findUnique({
@@ -40,7 +45,7 @@ export class InterviewsService {
       });
     }
 
-    return this.prisma.interview.create({
+    const interview = await this.prisma.interview.create({
       data: {
         applicationId: dto.applicationId,
         scheduledAt: dto.scheduledAt ? new Date(dto.scheduledAt) : undefined,
@@ -53,6 +58,21 @@ export class InterviewsService {
         application: { select: { name: true, email: true, status: true } },
       },
     });
+
+    // Send invitation email immediately after persisting — fire-and-forget, never blocks the response
+    if (interview.application?.email && interview.scheduledAt) {
+      this.email
+        .sendInterviewInvitation({
+          applicantName: interview.application.name,
+          applicantEmail: interview.application.email,
+          scheduledAt: interview.scheduledAt,
+          meetingLink: interview.meetingLink,
+          interviewId: interview.id,
+        })
+        .catch((err) => this.logger.error('Failed to send interview invitation email', err));
+    }
+
+    return interview;
   }
 
   async findAll(status?: string) {

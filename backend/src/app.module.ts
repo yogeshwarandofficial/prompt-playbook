@@ -19,6 +19,9 @@ import { StudentCurriculumModule } from './student-curriculum/student-curriculum
 import { InterviewsModule } from './interviews/interviews.module';
 import { CertificatesModule } from './certificates/certificates.module';
 import { AutomatedReviewModule } from './automated-review/automated-review.module';
+import { EmailModule } from './email/email.module';
+import { ContactModule } from './contact/contact.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
 
 @Module({
   imports: [
@@ -42,6 +45,9 @@ import { AutomatedReviewModule } from './automated-review/automated-review.modul
     InterviewsModule,
     CertificatesModule,
     AutomatedReviewModule,
+    EmailModule,
+    ContactModule,
+    NewsletterModule,
   ],
   controllers: [],
   providers: [],

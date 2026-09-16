@@ -1,8 +1,3 @@
-export const DEMO_CREDENTIALS = {
-  email: "INFY-26-WEB-001",
-  password: "password123",
-};
-
 export interface AdminSession {
   id: string;
   studentId: string;
