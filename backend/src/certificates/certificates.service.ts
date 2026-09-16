@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { IssueCertificateDto, RevokeCertificateDto } from './dto/certificate.dto';
 import { randomUUID } from 'crypto';
 import * as path from 'path';
+import * as QRCode from 'qrcode';
 
 // jimp exposes a v1.x API
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -28,7 +29,8 @@ export class CertificatesService {
       where: { id: studentProjectId },
       include: {
         student: true,
-        project: true
+        project: true,
+        certificate: true
       }
     });
 
@@ -38,6 +40,10 @@ export class CertificatesService {
 
     if (sp.status !== 'COMPLETED') {
       throw new BadRequestException('Project is not yet completed');
+    }
+
+    if (!sp.certificate) {
+      throw new BadRequestException('Certificate has not been issued yet');
     }
 
     // Attempt to read the template
@@ -66,6 +72,24 @@ export class CertificatesService {
       maxWidth: 1000,
       maxHeight: 100,
     });
+
+    // Generate QR code for verification
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:8080';
+    const verifyUrl = `${frontendUrl}/verify/${sp.certificate.verificationToken}`;
+    const qrBuffer = await QRCode.toBuffer(verifyUrl, {
+      margin: 1,
+      width: 150,
+      color: {
+        dark: '#000000',
+        light: '#ffffff'
+      }
+    });
+    const qrImage = await jimp.Jimp.read(qrBuffer);
+
+    // Composite QR code on the bottom right
+    const xPos = image.bitmap.width - 180;
+    const yPos = image.bitmap.height - 180;
+    image.composite(qrImage, xPos > 0 ? xPos : 0, yPos > 0 ? yPos : 0);
 
     return await image.getBuffer(jimp.JimpMime.png);
   }
@@ -227,6 +251,65 @@ export class CertificatesService {
         revokeReason: dto.reason,
       },
     });
+  }
+
+  async verifyCertificate(tokenOrCertNo: string) {
+    const cert = await this.prisma.certificate.findFirst({
+      where: {
+        OR: [
+          { verificationToken: tokenOrCertNo },
+          { certificateNo: tokenOrCertNo }
+        ]
+      },
+      include: {
+        studentProject: {
+          include: {
+            student: { select: { name: true, studentId: true } },
+            project: { select: { title: true, courseId: true } }
+          }
+        }
+      }
+    });
+
+    if (!cert) {
+      throw new NotFoundException('Certificate not found or invalid.');
+    }
+
+    if (cert.status !== 'ACTIVE') {
+      throw new BadRequestException(`This certificate is ${cert.status}. Reason: ${cert.revokeReason || 'Unknown'}`);
+    }
+
+    return cert;
+  }
+
+  async verifyByStudentId(studentId: string) {
+    const certs = await this.prisma.certificate.findMany({
+      where: {
+        studentProject: {
+          student: {
+            studentId
+          }
+        },
+        status: 'ACTIVE'
+      },
+      include: {
+        studentProject: {
+          include: {
+            student: { select: { name: true, studentId: true } },
+            project: { select: { title: true, courseId: true } }
+          }
+        }
+      },
+      orderBy: {
+        issuedAt: 'desc'
+      }
+    });
+
+    if (!certs.length) {
+      throw new NotFoundException('No active certificates found for this student ID.');
+    }
+
+    return certs;
   }
 
   /** Student-facing: get their own certificate status by studentId */

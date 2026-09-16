@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as TutorialsRouteImport } from './routes/tutorials'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RoadmapsRouteImport } from './routes/roadmaps'
@@ -19,12 +20,18 @@ import { Route as EventsRouteImport } from './routes/events'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VerifyTokenRouteImport } from './routes/verify.$token'
 import { Route as TutorialsSlugRouteImport } from './routes/tutorials_.$slug'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
 import { Route as ApiContactRouteImport } from './routes/api/contact'
 import { Route as ApiNewsletterSubscribeRouteImport } from './routes/api/newsletter/subscribe'
 import { Route as ApiInternshipsApplyRouteImport } from './routes/api/internships/apply'
 
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TutorialsRoute = TutorialsRouteImport.update({
   id: '/tutorials',
   path: '/tutorials',
@@ -75,6 +82,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerifyTokenRoute = VerifyTokenRouteImport.update({
+  id: '/$token',
+  path: '/$token',
+  getParentRoute: () => VerifyRoute,
+} as any)
 const TutorialsSlugRoute = TutorialsSlugRouteImport.update({
   id: '/tutorials_/$slug',
   path: '/tutorials/$slug',
@@ -112,9 +124,11 @@ export interface FileRoutesByFullPath {
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tutorials': typeof TutorialsRoute
+  '/verify': typeof VerifyRouteWithChildren
   '/api/contact': typeof ApiContactRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
+  '/verify/$token': typeof VerifyTokenRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
@@ -129,9 +143,11 @@ export interface FileRoutesByTo {
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tutorials': typeof TutorialsRoute
+  '/verify': typeof VerifyRouteWithChildren
   '/api/contact': typeof ApiContactRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
+  '/verify/$token': typeof VerifyTokenRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
@@ -147,9 +163,11 @@ export interface FileRoutesById {
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tutorials': typeof TutorialsRoute
+  '/verify': typeof VerifyRouteWithChildren
   '/api/contact': typeof ApiContactRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials_/$slug': typeof TutorialsSlugRoute
+  '/verify/$token': typeof VerifyTokenRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
@@ -166,9 +184,11 @@ export interface FileRouteTypes {
     | '/roadmaps'
     | '/sitemap.xml'
     | '/tutorials'
+    | '/verify'
     | '/api/contact'
     | '/learn/$slug'
     | '/tutorials/$slug'
+    | '/verify/$token'
     | '/api/internships/apply'
     | '/api/newsletter/subscribe'
   fileRoutesByTo: FileRoutesByTo
@@ -183,9 +203,11 @@ export interface FileRouteTypes {
     | '/roadmaps'
     | '/sitemap.xml'
     | '/tutorials'
+    | '/verify'
     | '/api/contact'
     | '/learn/$slug'
     | '/tutorials/$slug'
+    | '/verify/$token'
     | '/api/internships/apply'
     | '/api/newsletter/subscribe'
   id:
@@ -200,9 +222,11 @@ export interface FileRouteTypes {
     | '/roadmaps'
     | '/sitemap.xml'
     | '/tutorials'
+    | '/verify'
     | '/api/contact'
     | '/learn/$slug'
     | '/tutorials_/$slug'
+    | '/verify/$token'
     | '/api/internships/apply'
     | '/api/newsletter/subscribe'
   fileRoutesById: FileRoutesById
@@ -218,6 +242,7 @@ export interface RootRouteChildren {
   RoadmapsRoute: typeof RoadmapsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TutorialsRoute: typeof TutorialsRoute
+  VerifyRoute: typeof VerifyRouteWithChildren
   ApiContactRoute: typeof ApiContactRoute
   LearnSlugRoute: typeof LearnSlugRoute
   TutorialsSlugRoute: typeof TutorialsSlugRoute
@@ -227,6 +252,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tutorials': {
       id: '/tutorials'
       path: '/tutorials'
@@ -297,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verify/$token': {
+      id: '/verify/$token'
+      path: '/$token'
+      fullPath: '/verify/$token'
+      preLoaderRoute: typeof VerifyTokenRouteImport
+      parentRoute: typeof VerifyRoute
+    }
     '/tutorials_/$slug': {
       id: '/tutorials_/$slug'
       path: '/tutorials/$slug'
@@ -335,6 +374,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface VerifyRouteChildren {
+  VerifyTokenRoute: typeof VerifyTokenRoute
+}
+
+const VerifyRouteChildren: VerifyRouteChildren = {
+  VerifyTokenRoute: VerifyTokenRoute,
+}
+
+const VerifyRouteWithChildren =
+  VerifyRoute._addFileChildren(VerifyRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -346,6 +396,7 @@ const rootRouteChildren: RootRouteChildren = {
   RoadmapsRoute: RoadmapsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TutorialsRoute: TutorialsRoute,
+  VerifyRoute: VerifyRouteWithChildren,
   ApiContactRoute: ApiContactRoute,
   LearnSlugRoute: LearnSlugRoute,
   TutorialsSlugRoute: TutorialsSlugRoute,
