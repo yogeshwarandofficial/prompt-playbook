@@ -113,11 +113,11 @@ model ProjectPhaseTopic {
   projectPhaseId String
   title          String
   description    String?
-  blogUrl        String
+  blogUrl        String?
   order          Int
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
-  phase          ProjectPhase @relation(fields: [projectPhaseId], references: [id], onDelete: Cascade)
+  projectPhase   ProjectPhase @relation(fields: [projectPhaseId], references: [id], onDelete: Cascade)
 
   @@unique([projectPhaseId, order])
   @@index([projectPhaseId])

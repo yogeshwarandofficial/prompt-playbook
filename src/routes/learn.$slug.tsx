@@ -17,7 +17,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import {
-  ROADMAPS,
   DOMAINS,
   DOMAIN_COLORS,
   DOMAIN_NAME_MAP,
@@ -28,10 +27,17 @@ import { PageHeader } from "./roadmaps";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/learn/$slug")({
-  loader: ({ params }): { roadmap: Roadmap } => {
-    const roadmap = ROADMAPS.find((r) => r.slug === params.slug);
-    if (!roadmap) throw notFound();
-    return { roadmap };
+  loader: async ({ params }): Promise<{ roadmap: Roadmap }> => {
+    try {
+      const res = await fetch(`${(import.meta as any).env.VITE_API_URL || 'http://localhost:3001'}/api/roadmaps/${params.slug}`);
+      if (res.ok) {
+        const roadmap = await res.json();
+        return { roadmap };
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    throw notFound();
   },
   head: ({ loaderData }) => {
     const r = loaderData?.roadmap;

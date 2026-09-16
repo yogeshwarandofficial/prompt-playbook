@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { DomainsView } from "../components/admin/DomainsView";
 import { BatchesView } from "../components/admin/BatchesView";
-import { CurriculumView } from "../components/admin/CurriculumView";
+
 import { ApplicationsView } from "../components/admin/ApplicationsView";
 import { InterviewsView } from "../components/admin/InterviewsView";
 import { CertificatesView } from "../components/admin/CertificatesView";
@@ -21,7 +21,8 @@ import {
   BookOpen,
   Briefcase,
   ClipboardList,
-  Plus, Edit, ListChecks, UserCheck, ChevronUp, ChevronDown, Trash2, Eye, ArrowLeft, ExternalLink, MessageSquare, Check, XCircle
+  Plus, Edit, ListChecks, UserCheck, ChevronUp, ChevronDown, Trash2, Eye, ArrowLeft, ExternalLink, MessageSquare, Check, XCircle,
+  Target, Map
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminDashboard,
 });
 
-type ViewState = 'dashboard' | 'applications' | 'mentors' | 'students' | 'batches' | 'domains' | 'curriculum' | 'courses' | 'events' | 'projects' | 'interviews' | 'certificates' | 'analytics' | 'submissions';
+type ViewState = 'dashboard' | 'applications' | 'mentors' | 'students' | 'batches' | 'domains' | 'courses' | 'events' | 'projects' | 'interviews' | 'certificates' | 'analytics' | 'submissions';
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -158,7 +159,7 @@ function AdminDashboard() {
             
             {currentView === 'domains' && <DomainsView />}
             {currentView === 'batches' && <BatchesView />}
-            {currentView === 'curriculum' && <CurriculumView />}
+
             {currentView === 'applications' && <ApplicationsView />}
             {currentView === 'mentors' && <div className="p-8 text-center text-slate-500">Mentors view coming soon</div>}
             {currentView === 'interviews' && <InterviewsView />}
@@ -248,7 +249,7 @@ function SidebarNav({
           <li>
             <div className="text-xs font-semibold leading-6 text-slate-500 uppercase tracking-wider mb-2 px-2">Content</div>
             <ul role="list" className="space-y-1">
-              <NavItem view="curriculum" icon={ClipboardList} label="Curriculum" />
+
               <NavItem view="projects" icon={Briefcase} label="Projects" />
               <NavItem view="courses" icon={BookOpen} label="Courses" />
               <NavItem view="events" icon={BookOpen} label="Events" />
@@ -736,12 +737,32 @@ function StudentsView() {
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500">
                       {new Date(student.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm flex gap-2">
                       <button
                         onClick={() => { setAddCourseFor(student); setAddCourseId(""); setAddCourseError(""); }}
                         className="inline-flex items-center gap-1 text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg font-medium hover:bg-indigo-100 transition-colors"
                       >
                         <Plus className="h-3 w-3" /> Add Course
+                      </button>
+                      <button
+                        onClick={async () => {
+                          try {
+                            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+                            const res = await fetch(`${API_URL}/api/admin/students/${student.id}/access`, {
+                              method: 'PATCH',
+                              headers: { 'Content-Type': 'application/json' },
+                              credentials: 'include',
+                              body: JSON.stringify({ enabled: !student.isActive }),
+                            });
+                            if (!res.ok) throw new Error('Failed to update access');
+                            fetchStudents();
+                          } catch(err) {
+                            alert('Failed to update student access');
+                          }
+                        }}
+                        className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg font-medium transition-colors ${student.isActive ? 'bg-red-50 text-red-700 hover:bg-red-100' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'}`}
+                      >
+                        {student.isActive ? 'Revoke Access' : 'Restore Access'}
                       </button>
                     </td>
                   </tr>
@@ -1473,7 +1494,8 @@ export function ProjectsView() {
     setFormSuccess("");
   };
 
-  const handleCreateSubmit = async (e: React.FormEvent) => {
+  const handleCreateSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     e.preventDefault();
     setIsSubmitting(true);
     setFormError("");
@@ -1499,7 +1521,8 @@ export function ProjectsView() {
     }
   };
 
-  const handleEditSubmit = async (e: React.FormEvent) => {
+  const handleEditSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     e.preventDefault();
     setIsSubmitting(true);
     setFormError("");
@@ -1664,7 +1687,7 @@ export function ProjectsView() {
         </div>
         <div className="p-6">
           {formError && <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{formError}</div>}
-          <form onSubmit={viewMode === 'create' ? handleCreateSubmit : handleEditSubmit} className="space-y-4">
+          <div className="space-y-4">
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-1">Title</label>
               <input required type="text" value={title} onChange={e=>setTitle(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
@@ -1694,121 +1717,125 @@ export function ProjectsView() {
                 <input type="url" placeholder="https://notion.so/..." value={projectLink} onChange={e=>setProjectLink(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
               </div>
             </div>
-            <div className="pt-4">
-              <button disabled={isSubmitting} type="submit" className="bg-indigo-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-indigo-700">
-                {isSubmitting ? "Saving..." : "Save Project"}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  if (viewMode === 'phases' && selectedProject) {
-    const phases = [...(selectedProject.phases || [])].sort((a,b) => a.phaseOrder - b.phaseOrder);
-    return (
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button onClick={() => setViewMode('list')} className="p-1 hover:bg-slate-200 rounded-md">
-              <ArrowLeft className="w-5 h-5 text-slate-600" />
-            </button>
-            <h3 className="text-lg font-semibold text-slate-900">Manage Phases: {selectedProject.title}</h3>
           </div>
-        </div>
-        <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div>
-            <h4 className="font-bold text-slate-800 mb-4">Existing Phases</h4>
-            {phases.length === 0 ? <p className="text-sm text-slate-500">No phases added yet.</p> : (
-              <div className="space-y-3">
-                {phases.map((p: any, idx: number) => (
-                  <div key={p.id} className="border border-slate-200 rounded-xl p-4 bg-slate-50 flex items-start justify-between">
-                    <div>
-                      <h5 className="font-semibold text-slate-900">Phase {idx + 1}: {p.title}</h5>
-                      <p className="text-xs text-slate-500 mt-1">{p.description}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => movePhase(p.id, 'up')} disabled={idx===0} className="p-1 text-slate-400 hover:text-indigo-600 disabled:opacity-30"><ChevronUp className="w-4 h-4"/></button>
-                      <button onClick={() => movePhase(p.id, 'down')} disabled={idx===phases.length-1} className="p-1 text-slate-400 hover:text-indigo-600 disabled:opacity-30"><ChevronDown className="w-4 h-4"/></button>
-                      <button onClick={() => {
-                        setEditingPhaseId(p.id); setPhaseTitle(p.title); setPhaseDesc(p.description); setPhaseInst(p.instructions);
-                        setPhaseTopics(p.topics ? JSON.parse(JSON.stringify(p.topics)) : []);
-                      }} className="p-1 text-slate-400 hover:text-indigo-600"><Edit className="w-4 h-4"/></button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div>
-            <h4 className="font-bold text-slate-800 mb-4">{editingPhaseId ? "Edit Phase" : "Add New Phase"}</h4>
-            <form onSubmit={handlePhaseSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Title</label>
-                <input required type="text" value={phaseTitle} onChange={e=>setPhaseTitle(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Description</label>
-                <textarea required value={phaseDesc} onChange={e=>setPhaseDesc(e.target.value)} rows={2} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Instructions / Requirements</label>
-                <textarea required value={phaseInst} onChange={e=>setPhaseInst(e.target.value)} rows={4} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
-              </div>
 
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="block text-sm font-semibold text-slate-700">Topics to Know</label>
-                  <button type="button" onClick={() => setPhaseTopics([...phaseTopics, { title: '', description: '', blogUrl: '' }])} className="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-100">+ Add Topic</button>
+          {viewMode === 'edit' && selectedProject && (
+            <div className="mt-12 border-t border-slate-200 pt-8">
+              <div className="mb-6 flex justify-between items-end">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">PROJECT ROADMAP</h3>
+                  <p className="text-sm text-slate-500 mt-1">Define the phases students will follow to complete this project.</p>
                 </div>
-                {phaseTopics.length === 0 ? <p className="text-xs text-slate-500">No topics added.</p> : (
-                  <div className="space-y-3">
-                    {phaseTopics.map((t, idx) => !t.isDeleted && (
-                      <div key={idx} className="border border-slate-200 p-3 rounded-xl bg-slate-50 text-sm">
-                        <div className="flex justify-between items-start mb-2">
-                          <span className="font-semibold text-slate-800">Topic {idx + 1}</span>
-                          <div className="flex items-center gap-1">
+                <button type="button" onClick={() => { setEditingPhaseId(""); setPhaseTitle(""); setPhaseDesc(""); setPhaseInst(""); setPhaseTopics([]); }} className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-indigo-100 flex items-center gap-2">
+                  <Plus className="w-4 h-4" /> Add Phase
+                </button>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                  <h4 className="font-bold text-slate-800 mb-4">Existing Phases</h4>
+                  {(!selectedProject.phases || selectedProject.phases.length === 0) ? <p className="text-sm text-slate-500">No phases have been added to this project yet.</p> : (
+                    <div className="space-y-3">
+                      {[...(selectedProject.phases || [])].sort((a,b) => a.phaseOrder - b.phaseOrder).map((p: any, idx: number, arr: any[]) => (
+                        <div key={p.id} className="border border-slate-200 rounded-xl p-4 bg-slate-50 flex items-start justify-between">
+                          <div>
+                            <h5 className="font-semibold text-slate-900">Phase {idx + 1}: {p.title}</h5>
+                            <p className="text-xs text-slate-500 mt-1">{p.description}</p>
+                            <p className="text-xs text-slate-400 font-semibold mt-1">Topics to Know: {p.topics?.length || 0}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button type="button" onClick={() => movePhase(p.id, 'up')} disabled={idx===0} className="p-1 text-slate-400 hover:text-indigo-600 disabled:opacity-30"><ChevronUp className="w-4 h-4"/></button>
+                            <button type="button" onClick={() => movePhase(p.id, 'down')} disabled={idx===arr.length-1} className="p-1 text-slate-400 hover:text-indigo-600 disabled:opacity-30"><ChevronDown className="w-4 h-4"/></button>
                             <button type="button" onClick={() => {
-                              const nt = [...phaseTopics];
-                              if (idx > 0) { [nt[idx], nt[idx-1]] = [nt[idx-1], nt[idx]]; setPhaseTopics(nt); }
-                            }} disabled={idx === 0} className="text-slate-400 hover:text-indigo-600 disabled:opacity-30"><ChevronUp className="w-4 h-4"/></button>
-                            <button type="button" onClick={() => {
-                              const nt = [...phaseTopics];
-                              if (idx < nt.length - 1) { [nt[idx], nt[idx+1]] = [nt[idx+1], nt[idx]]; setPhaseTopics(nt); }
-                            }} disabled={idx === phaseTopics.length-1} className="text-slate-400 hover:text-indigo-600 disabled:opacity-30"><ChevronDown className="w-4 h-4"/></button>
-                            <button type="button" onClick={() => {
-                              const nt = [...phaseTopics];
-                              nt[idx].isDeleted = true;
-                              setPhaseTopics(nt);
-                            }} className="text-slate-400 hover:text-red-600 ml-2"><Trash2 className="w-4 h-4"/></button>
+                              setEditingPhaseId(p.id); setPhaseTitle(p.title); setPhaseDesc(p.description); setPhaseInst(p.instructions);
+                              setPhaseTopics(p.topics ? JSON.parse(JSON.stringify(p.topics)) : []);
+                            }} className="p-1 text-slate-400 hover:text-indigo-600"><Edit className="w-4 h-4"/></button>
+                            <button type="button" onClick={() => handleDeletePhase(p.id)} className="p-1 text-slate-400 hover:text-red-600"><Trash2 className="w-4 h-4"/></button>
                           </div>
                         </div>
-                        <input required type="text" placeholder="Title" value={t.title} onChange={e => { const nt = [...phaseTopics]; nt[idx].title = e.target.value; setPhaseTopics(nt); }} className="w-full mb-2 rounded border border-slate-300 px-3 py-1.5" />
-                        <textarea placeholder="Description (Optional)" value={t.description || ''} onChange={e => { const nt = [...phaseTopics]; nt[idx].description = e.target.value; setPhaseTopics(nt); }} rows={2} className="w-full mb-2 rounded border border-slate-300 px-3 py-1.5" />
-                        <input required type="url" placeholder="https://blog.infynux.com/..." value={t.blogUrl} onChange={e => { const nt = [...phaseTopics]; nt[idx].blogUrl = e.target.value; setPhaseTopics(nt); }} className="w-full rounded border border-slate-300 px-3 py-1.5" />
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-800 mb-4">{editingPhaseId ? "Edit Phase" : "Add New Phase"}</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Title</label>
+                      <input required type="text" value={phaseTitle} onChange={e=>setPhaseTitle(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Description</label>
+                      <textarea required value={phaseDesc} onChange={e=>setPhaseDesc(e.target.value)} rows={2} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Instructions / Requirements</label>
+                      <textarea required value={phaseInst} onChange={e=>setPhaseInst(e.target.value)} rows={4} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
+                    </div>
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="block text-sm font-semibold text-slate-700">Topics to Know</label>
+                        <button type="button" onClick={() => setPhaseTopics([...phaseTopics, { title: '', description: '', blogUrl: '' }])} className="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-100">+ Add Topic</button>
                       </div>
-                    ))}
+                      {phaseTopics.length === 0 ? <p className="text-xs text-slate-500">No topics added.</p> : (
+                        <div className="space-y-3">
+                          {phaseTopics.map((topic, idx) => (
+                            <div key={idx} className="border border-slate-200 rounded-lg p-3 bg-white space-y-3">
+                              <div className="flex justify-between items-center">
+                                <h6 className="text-xs font-bold text-slate-700">Topic {idx + 1}</h6>
+                                <div className="flex items-center gap-1">
+                                  <button type="button" onClick={() => {
+                                    if(idx===0) return;
+                                    const t = [...phaseTopics];
+                                    [t[idx], t[idx-1]] = [t[idx-1], t[idx]];
+                                    setPhaseTopics(t);
+                                  }} disabled={idx===0} className="p-1 text-slate-400 hover:text-indigo-600 disabled:opacity-30"><ChevronUp className="w-3 h-3"/></button>
+                                  <button type="button" onClick={() => {
+                                    if(idx===phaseTopics.length-1) return;
+                                    const t = [...phaseTopics];
+                                    [t[idx], t[idx+1]] = [t[idx+1], t[idx]];
+                                    setPhaseTopics(t);
+                                  }} disabled={idx===phaseTopics.length-1} className="p-1 text-slate-400 hover:text-indigo-600 disabled:opacity-30"><ChevronDown className="w-3 h-3"/></button>
+                                  <button type="button" onClick={() => {
+                                    setPhaseTopics(phaseTopics.filter((_, i) => i !== idx));
+                                  }} className="p-1 text-slate-400 hover:text-red-600"><Trash2 className="w-3 h-3"/></button>
+                                </div>
+                              </div>
+                              <input required type="text" placeholder="Topic Title" value={topic.title} onChange={e => {
+                                const t = [...phaseTopics]; t[idx].title = e.target.value; setPhaseTopics(t);
+                              }} className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-xs" />
+                              <textarea placeholder="Short Description" value={topic.description} onChange={e => {
+                                const t = [...phaseTopics]; t[idx].description = e.target.value; setPhaseTopics(t);
+                              }} rows={2} className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-xs" />
+                              <input required type="url" placeholder="Blog/Resource URL" value={topic.blogUrl} onChange={e => {
+                                const t = [...phaseTopics]; t[idx].blogUrl = e.target.value; setPhaseTopics(t);
+                              }} className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-xs" />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="pt-4 flex justify-end">
+                      <button type="button" onClick={(e) => handlePhaseSubmit(e)} className="bg-indigo-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-indigo-700">
+                        {editingPhaseId ? "Save Phase Changes" : "Save New Phase"}
+                      </button>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
+            </div>
+          )}
 
-              <div className="flex gap-2 pt-2">
-                <button disabled={isSubmitting} type="submit" className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-indigo-700">
-                  {editingPhaseId ? "Update Phase" : "Add Phase"}
-                </button>
-                {editingPhaseId && (
-                  <button type="button" onClick={() => {setEditingPhaseId(""); setPhaseTitle(""); setPhaseDesc(""); setPhaseInst(""); setPhaseTopics([]);}} className="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-300">
-                    Cancel
-                  </button>
-                )}
-              </div>
-            </form>
+          <div className="pt-8 mt-8 border-t border-slate-200">
+            <button disabled={isSubmitting} type="button" onClick={() => viewMode === 'create' ? handleCreateSubmit() : handleEditSubmit()} className="w-full md:w-auto bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700">
+              {isSubmitting ? "Saving..." : "Save Project"}
+            </button>
           </div>
         </div>
       </div>
     );
   }
+
+
 
   if (viewMode === 'assign' && selectedProject) {
     return (
@@ -1889,7 +1916,7 @@ export function ProjectsView() {
                     <td className="px-3 py-4 text-sm text-slate-500">{p._count?.phases || 0} phases</td>
                     <td className="px-3 py-4 text-sm text-slate-500">{p._count?.assignments || 0} assigned</td>
                     <td className="px-3 py-4 text-sm text-right flex items-center justify-end gap-2">
-                      <button onClick={() => { setSelectedProject(p); setTitle(p.title); setDescription(p.description); setCourseId(p.courseId||""); setProjectLink(p.projectLink||""); setStatus(p.status); setViewMode('edit'); }} className="text-slate-400 hover:text-indigo-600" title="Edit"><Edit className="w-4 h-4"/></button>
+                      <button onClick={() => { setSelectedProject(p); setTitle(p.title); setDescription(p.description); setCourseId(p.courseId||""); setProjectLink(p.projectLink||""); setStatus(p.status); reloadSelectedProject(p.id).then(()=>setViewMode('edit')); }} className="text-slate-400 hover:text-indigo-600" title="Edit"><Edit className="w-4 h-4"/></button>
                       <button onClick={() => { setSelectedProject(p); reloadSelectedProject(p.id).then(()=>setViewMode('phases')); }} className="text-slate-400 hover:text-indigo-600" title="Manage Phases"><ListChecks className="w-4 h-4"/></button>
                       <button onClick={() => { setSelectedProject(p); setViewMode('assign'); }} className="text-slate-400 hover:text-emerald-600" title="Assign Student"><UserCheck className="w-4 h-4"/></button>
                     </td>

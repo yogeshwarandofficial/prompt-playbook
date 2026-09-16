@@ -85,7 +85,7 @@ export class ProjectsService {
       ? Math.max(...project.phases.map(p => p.phaseOrder)) + 1
       : 1;
 
-    return this.prisma.projectPhase.create({
+    const newPhase = await this.prisma.projectPhase.create({
       data: {
         projectId,
         title: dto.title,
@@ -94,6 +94,23 @@ export class ProjectsService {
         phaseOrder: nextOrder,
       },
     });
+
+    // Automatically sync this new phase to all existing active student projects
+    const existingAssignments = await this.prisma.studentProject.findMany({
+      where: { projectId },
+      include: { phases: true },
+    });
+
+    if (existingAssignments.length > 0) {
+      const spPhasesData = existingAssignments.map((assignment) => ({
+        studentProjectId: assignment.id,
+        phaseId: newPhase.id,
+        status: assignment.phases.length === 0 ? 'AVAILABLE' as const : 'LOCKED' as const,
+      }));
+      await this.prisma.studentProjectPhase.createMany({ data: spPhasesData });
+    }
+
+    return newPhase;
   }
 
   async updatePhase(projectId: string, phaseId: string, dto: Partial<CreatePhaseDto>) {
@@ -148,7 +165,7 @@ export class ProjectsService {
       data: {
         projectPhaseId: phaseId,
         title: dto.title,
-        description: dto.description,
+        description: dto.description ?? '',
         blogUrl: dto.blogUrl,
         order: dto.order ?? nextOrder,
       },

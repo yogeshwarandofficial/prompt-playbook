@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { getSession, signOut, type AdminSession } from "@/lib/auth";
 import { 
@@ -220,9 +220,13 @@ function InterPortal() {
                             {course.description}
                           </p>
                           <div className="mt-4 pt-4 border-t border-slate-100">
-                            <button className="w-full rounded-xl bg-indigo-50 text-indigo-700 px-4 py-2 text-sm font-semibold hover:bg-indigo-100 transition-colors">
+                            <Link 
+                              to="/tutorials"
+                              search={{ filter: course.key }}
+                              className="w-full flex justify-center rounded-xl bg-indigo-50 text-indigo-700 px-4 py-2 text-sm font-semibold hover:bg-indigo-100 transition-colors"
+                            >
                               Access Course Workspace
-                            </button>
+                            </Link>
                           </div>
                         </div>
                       </div>
@@ -470,6 +474,11 @@ function ProjectsView() {
             <div className="p-6">
               <h4 className="font-bold text-slate-800 mb-4">Internship Timeline</h4>
               <div className="space-y-4">
+                {(!sp.phases || sp.phases.length === 0) && (
+                  <div className="p-6 bg-white border border-slate-200 rounded-xl text-center text-slate-500 shadow-sm">
+                    Your internship roadmap is being prepared.
+                  </div>
+                )}
                 {sp.phases?.sort((a:any, b:any) => a.phase.phaseOrder - b.phase.phaseOrder).map((phase: any, idx: number) => {
                   const isInteractive = phase.status === 'AVAILABLE' || phase.status === 'CHANGES_REQUESTED';
                   return (
@@ -617,14 +626,6 @@ function StudentCertificateView() {
                 >
                   Download Certificate
                 </button>
-                <a 
-                  href={`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/certificates/verify/${cert.verificationToken}`}
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="w-full bg-indigo-50 text-indigo-700 py-2 rounded-lg text-sm font-semibold text-center hover:bg-indigo-100 transition-colors block"
-                >
-                  Verify Online
-                </a>
               </div>
             </div>
           ))}

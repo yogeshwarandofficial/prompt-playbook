@@ -1,6 +1,11 @@
 const { neon } = require('@neondatabase/serverless');
 
-const url = 'postgresql://neondb_owner:npg_OUlSwHEsc0r4@ep-spring-tree-aeob5o5w-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&pgbouncer=true';
+require('dotenv').config();
+const url = process.env.DATABASE_URL;
+if (!url) {
+  console.error('ERROR: DATABASE_URL not set in environment.');
+  process.exit(1);
+}
 
 console.log('Testing Neon HTTP fetch mode...');
 const sql = neon(url);

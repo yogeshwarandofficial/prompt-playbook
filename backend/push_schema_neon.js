@@ -1,7 +1,12 @@
 // Push schema to Neon via HTTP (bypasses TCP/IPv6 issues)
 const { neon } = require('@neondatabase/serverless');
 
-const DATABASE_URL = 'postgresql://neondb_owner:npg_OUlSwHEsc0r4@ep-spring-tree-aeob5o5w-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require';
+require('dotenv').config();
+const DATABASE_URL = process.env.DATABASE_URL;
+if (!DATABASE_URL) {
+  console.error('ERROR: DATABASE_URL not set in environment.');
+  process.exit(1);
+}
 
 const sql = neon(DATABASE_URL);
 

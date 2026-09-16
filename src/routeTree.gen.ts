@@ -23,7 +23,6 @@ import { Route as TutorialsSlugRouteImport } from './routes/tutorials_.$slug'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
 import { Route as ApiContactRouteImport } from './routes/api/contact'
 import { Route as ApiNewsletterSubscribeRouteImport } from './routes/api/newsletter/subscribe'
-import { Route as ApiInterviewsNotifyRouteImport } from './routes/api/interviews/notify'
 import { Route as ApiInternshipsApplyRouteImport } from './routes/api/internships/apply'
 
 const TutorialsRoute = TutorialsRouteImport.update({
@@ -96,11 +95,6 @@ const ApiNewsletterSubscribeRoute = ApiNewsletterSubscribeRouteImport.update({
   path: '/api/newsletter/subscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiInterviewsNotifyRoute = ApiInterviewsNotifyRouteImport.update({
-  id: '/api/interviews/notify',
-  path: '/api/interviews/notify',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiInternshipsApplyRoute = ApiInternshipsApplyRouteImport.update({
   id: '/api/internships/apply',
   path: '/api/internships/apply',
@@ -122,7 +116,6 @@ export interface FileRoutesByFullPath {
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
-  '/api/interviews/notify': typeof ApiInterviewsNotifyRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRoutesByTo {
@@ -140,7 +133,6 @@ export interface FileRoutesByTo {
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
-  '/api/interviews/notify': typeof ApiInterviewsNotifyRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRoutesById {
@@ -159,7 +151,6 @@ export interface FileRoutesById {
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials_/$slug': typeof TutorialsSlugRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
-  '/api/interviews/notify': typeof ApiInterviewsNotifyRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
 export interface FileRouteTypes {
@@ -179,7 +170,6 @@ export interface FileRouteTypes {
     | '/learn/$slug'
     | '/tutorials/$slug'
     | '/api/internships/apply'
-    | '/api/interviews/notify'
     | '/api/newsletter/subscribe'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -197,7 +187,6 @@ export interface FileRouteTypes {
     | '/learn/$slug'
     | '/tutorials/$slug'
     | '/api/internships/apply'
-    | '/api/interviews/notify'
     | '/api/newsletter/subscribe'
   id:
     | '__root__'
@@ -215,7 +204,6 @@ export interface FileRouteTypes {
     | '/learn/$slug'
     | '/tutorials_/$slug'
     | '/api/internships/apply'
-    | '/api/interviews/notify'
     | '/api/newsletter/subscribe'
   fileRoutesById: FileRoutesById
 }
@@ -234,7 +222,6 @@ export interface RootRouteChildren {
   LearnSlugRoute: typeof LearnSlugRoute
   TutorialsSlugRoute: typeof TutorialsSlugRoute
   ApiInternshipsApplyRoute: typeof ApiInternshipsApplyRoute
-  ApiInterviewsNotifyRoute: typeof ApiInterviewsNotifyRoute
   ApiNewsletterSubscribeRoute: typeof ApiNewsletterSubscribeRoute
 }
 
@@ -338,13 +325,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNewsletterSubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/interviews/notify': {
-      id: '/api/interviews/notify'
-      path: '/api/interviews/notify'
-      fullPath: '/api/interviews/notify'
-      preLoaderRoute: typeof ApiInterviewsNotifyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/internships/apply': {
       id: '/api/internships/apply'
       path: '/api/internships/apply'
@@ -370,7 +350,6 @@ const rootRouteChildren: RootRouteChildren = {
   LearnSlugRoute: LearnSlugRoute,
   TutorialsSlugRoute: TutorialsSlugRoute,
   ApiInternshipsApplyRoute: ApiInternshipsApplyRoute,
-  ApiInterviewsNotifyRoute: ApiInterviewsNotifyRoute,
   ApiNewsletterSubscribeRoute: ApiNewsletterSubscribeRoute,
 }
 export const routeTree = rootRouteImport

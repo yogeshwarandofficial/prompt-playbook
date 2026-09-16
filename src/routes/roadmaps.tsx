@@ -1,11 +1,24 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { X, ExternalLink, ArrowRight, ChevronRight } from "lucide-react";
-import { ROADMAPS, DOMAINS, DOMAIN_COLORS, type Roadmap } from "@/data/content";
+import { DOMAINS, DOMAIN_COLORS, type Roadmap } from "@/data/content";
 import { cn } from "@/lib/utils";
 
 
 export const Route = createFileRoute("/roadmaps")({
+  loader: async () => {
+    try {
+      const res = await fetch(`${(import.meta as any).env.VITE_API_URL || 'http://localhost:3001'}/api/roadmaps`);
+      if (res.ok) {
+        const roadmaps: Roadmap[] = await res.json();
+        return { roadmaps };
+      }
+    } catch (e) {
+      console.error('Failed to fetch roadmaps:', e);
+    }
+    // Fallback to empty if backend is not reachable
+    return { roadmaps: [] };
+  },
   head: () => ({
     meta: [
       { title: "Learning Roadmaps — Infynux Academy" },
@@ -21,6 +34,8 @@ const TABS = ["Overview", "Curriculum", "Projects", "Resources", "Careers"] as c
 type Tab = (typeof TABS)[number];
 
 function RoadmapsPage() {
+  const { roadmaps } = Route.useLoaderData();
+
   return (
     <>
       <PageHeader
@@ -30,7 +45,7 @@ function RoadmapsPage() {
       />
       <section className="pb-24 pt-8">
         <div className="container-page grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {ROADMAPS.map((r) => {
+          {roadmaps.map((r) => {
             const d = DOMAINS.find((x) => x.key === r.domain)!;
             return (
               <article key={r.slug} className="flex flex-col rounded-2xl border border-slate-100 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 ease-out text-left group overflow-hidden">

@@ -3,7 +3,12 @@ const https = require('https');
 const dns = require('dns');
 const { URL } = require('url');
 
-const connectionString = 'postgresql://neondb_owner:npg_OUlSwHEsc0r4@ep-spring-tree-aeob5o5w-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&pgbouncer=true';
+require('dotenv').config();
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  console.error('ERROR: DATABASE_URL not set in environment.');
+  process.exit(1);
+}
 
 // Parse connection string to get host
 const connUrl = new URL(connectionString.replace('postgresql://', 'https://'));

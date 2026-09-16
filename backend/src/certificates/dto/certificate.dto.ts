@@ -2,7 +2,7 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class IssueCertificateDto {
   @IsString()
-  studentProjectId: string;
+  studentId: string;
 
   @IsString()
   @IsOptional()

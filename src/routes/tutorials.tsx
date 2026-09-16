@@ -6,7 +6,16 @@ import { cn } from "@/lib/utils";
 import { PageHeader } from "./roadmaps";
 import { DomainBadge } from "./index";
 
+type TutorialsSearch = {
+  filter?: Filter;
+};
+
 export const Route = createFileRoute("/tutorials")({
+  validateSearch: (search: Record<string, unknown>): TutorialsSearch => {
+    return {
+      filter: (search.filter as Filter) || undefined,
+    };
+  },
   head: () => ({
     meta: [
       { title: "Free Tutorials — Infynux Academy" },
@@ -34,8 +43,15 @@ const FILTERS: { key: Filter; label: string }[] = [
 ];
 
 function TutorialsPage() {
-  const [filter, setFilter] = useState<Filter>("all");
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const [filter, setFilter] = useState<Filter>(search.filter || "all");
   const [query, setQuery] = useState("");
+
+  const handleSetFilter = (f: Filter) => {
+    setFilter(f);
+    navigate({ search: { filter: f === "all" ? undefined : f } });
+  };
 
   const filtered = useMemo(() => {
     return TUTORIALS.filter((t) => {
@@ -90,7 +106,7 @@ function TutorialsPage() {
                 key={f.key}
                 role="tab"
                 aria-selected={filter === f.key}
-                onClick={() => setFilter(f.key)}
+                onClick={() => handleSetFilter(f.key)}
                 className={cn(
                   "whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition-all border",
                   filter === f.key

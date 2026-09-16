@@ -4,8 +4,8 @@ import { Calendar, Video, CheckCircle2, XCircle, Clock, AlertTriangle, Plus, Mai
 const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3001';
 
 /**
- * Sends interview invitation email to the applicant via the TanStack Start
- * server-side /api/interviews/notify route (which uses Resend).
+ * Sends interview invitation email to the applicant via the NestJS backend
+ * /api/admin/interviews/notify route (which uses Resend).
  * Returns { success, message } — never throws so it cannot break the interview flow.
  */
 async function sendInterviewNotification(params: {
@@ -16,9 +16,10 @@ async function sendInterviewNotification(params: {
   meetingLink?: string;
 }): Promise<{ success: boolean; message?: string }> {
   try {
-    const res = await fetch('/api/interviews/notify', {
+    const res = await fetch(`${API_URL}/api/admin/interviews/notify`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(params),
     });
     const data = await res.json().catch(() => ({}));

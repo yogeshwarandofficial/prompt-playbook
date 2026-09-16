@@ -5,11 +5,11 @@ export class CreateSubmissionDto {
   @IsNotEmpty()
   content: string;
 
-  @IsUrl()
+  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
   @IsOptional()
   repoUrl?: string;
 
-  @IsUrl()
+  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
   @IsOptional()
   liveUrl?: string;
 }

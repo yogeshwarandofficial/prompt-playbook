@@ -9,9 +9,9 @@ import { IssueCertificateDto, RevokeCertificateDto } from './dto/certificate.dto
 import { randomUUID } from 'crypto';
 import * as path from 'path';
 
-// jimp exposes a v0.x-style flat API via its default/CJS export
+// jimp exposes a v1.x API
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const Jimp = require('jimp');
+const jimp = require('jimp');
 
 function generateCertNo(): string {
   const year = new Date().getFullYear();
@@ -44,29 +44,30 @@ export class CertificatesService {
     const templatePath = path.join(process.cwd(), 'assets', 'certificate_template.png');
     let image;
     try {
-      image = await Jimp.read(templatePath);
+      image = await jimp.Jimp.read(templatePath);
     } catch (e) {
       throw new BadRequestException('Certificate template not found on server.');
     }
 
     // Add student name (Top Center)
-    const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
+    const fontPath = path.join(require.resolve('@jimp/plugin-print'), '../../fonts/open-sans/open-sans-64-white/open-sans-64-white.fnt');
+    const font = await jimp.loadFont(fontPath);
 
     // Print the name at the top (x=0, y=50, width=1000 to center)
-    image.print(
+    image.print({
       font,
-      0,
-      50,
-      {
+      x: 0,
+      y: 50,
+      text: {
         text: sp.student.name,
-        alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
-        alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
+        alignmentX: jimp.HorizontalAlign.CENTER,
+        alignmentY: jimp.VerticalAlign.MIDDLE,
       },
-      1000,
-      100,
-    );
+      maxWidth: 1000,
+      maxHeight: 100,
+    });
 
-    return await image.getBuffer(Jimp.MIME_PNG);
+    return await image.getBuffer(jimp.JimpMime.png);
   }
 
   /**
@@ -149,8 +150,35 @@ export class CertificatesService {
   }
 
   async issue(dto: IssueCertificateDto) {
+    const student = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: dto.studentId },
+          { studentId: dto.studentId }
+        ],
+        role: 'STUDENT'
+      }
+    });
+
+    if (!student) {
+      throw new NotFoundException('Student not found with that ID');
+    }
+
+    const sp = await this.prisma.studentProject.findFirst({
+      where: {
+        studentId: student.id,
+        status: 'COMPLETED',
+        certificate: null
+      },
+      orderBy: { completedAt: 'desc' }
+    });
+
+    if (!sp) {
+      throw new BadRequestException('This student does not have any completed projects awaiting a certificate.');
+    }
+
     // Re-verify eligibility on the backend
-    const { eligible, reason, studentProject } = await this.checkEligibility(dto.studentProjectId);
+    const { eligible, reason, studentProject } = await this.checkEligibility(sp.id);
     if (!eligible) throw new BadRequestException(reason ?? 'Student is not eligible for a certificate');
 
     // Check for duplicate
@@ -173,7 +201,7 @@ export class CertificatesService {
     return this.prisma.certificate.create({
       data: {
         studentId: studentProject.student.id,
-        studentProjectId: dto.studentProjectId,
+        studentProjectId: studentProject.id,
         certificateNo: certNo,
         verificationToken,
         domain: studentProject.project.title,

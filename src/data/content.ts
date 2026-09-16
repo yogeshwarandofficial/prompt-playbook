@@ -48,7 +48,7 @@ export const DOMAINS: DomainInfo[] = [
   },
   {
     key: "cloud",
-    name: "Cloud Computing (AWS)",
+    name: "Cloud AWS",
     short: "Cloud AWS",
     description: "Go from AWS fundamentals to architect-level production systems.",
     icon: "☁️",
