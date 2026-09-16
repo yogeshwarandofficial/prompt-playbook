@@ -14,11 +14,7 @@ import * as QRCode from 'qrcode';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const jimp = require('jimp');
 
-function generateCertNo(): string {
-  const year = new Date().getFullYear();
-  const rand = Math.floor(10000 + Math.random() * 90000);
-  return `INFY-${year}-${rand}`;
-}
+
 
 @Injectable()
 export class CertificatesService {
@@ -38,9 +34,9 @@ export class CertificatesService {
       throw new NotFoundException('Project not found');
     }
 
-    if (sp.status !== 'COMPLETED') {
-      throw new BadRequestException('Project is not yet completed');
-    }
+    // if (sp.status !== 'COMPLETED') {
+    //   throw new BadRequestException('Project is not yet completed');
+    // }
 
     if (!sp.certificate) {
       throw new BadRequestException('Certificate has not been issued yet');
@@ -55,22 +51,57 @@ export class CertificatesService {
       throw new BadRequestException('Certificate template not found on server.');
     }
 
-    // Add student name (Top Center)
-    const fontPath = path.join(require.resolve('@jimp/plugin-print'), '../../fonts/open-sans/open-sans-64-white/open-sans-64-white.fnt');
-    const font = await jimp.loadFont(fontPath);
+    // Load standard black fonts for a white certificate
+    const fontPath64 = path.join(require.resolve('@jimp/plugin-print'), '../../fonts/open-sans/open-sans-64-black/open-sans-64-black.fnt');
+    const fontPath32 = path.join(require.resolve('@jimp/plugin-print'), '../../fonts/open-sans/open-sans-32-black/open-sans-32-black.fnt');
+    const font64 = await jimp.loadFont(fontPath64);
+    const font32 = await jimp.loadFont(fontPath32);
 
-    // Print the name at the top (x=0, y=50, width=1000 to center)
+    // Print the name
     image.print({
-      font,
+      font: font64,
       x: 0,
-      y: 50,
+      y: image.bitmap.height * 0.40,
       text: {
         text: sp.student.name,
         alignmentX: jimp.HorizontalAlign.CENTER,
         alignmentY: jimp.VerticalAlign.MIDDLE,
       },
-      maxWidth: 1000,
+      maxWidth: image.bitmap.width,
       maxHeight: 100,
+    });
+
+    const startDate = sp.assignedAt ? new Date(sp.assignedAt).toLocaleDateString() : 'N/A';
+    const endDate = sp.completedAt ? new Date(sp.completedAt).toLocaleDateString() : new Date().toLocaleDateString();
+    const paragraph = `This certificate is proudly presented for successfully completing the ${sp.project.title} Internship at Infynux Solutions from ${startDate} to ${endDate}.`;
+
+    // Print the paragraph
+    image.print({
+      font: font32,
+      x: image.bitmap.width * 0.15,
+      y: image.bitmap.height * 0.55,
+      text: {
+        text: paragraph,
+        alignmentX: jimp.HorizontalAlign.CENTER,
+        alignmentY: jimp.VerticalAlign.TOP,
+      },
+      maxWidth: image.bitmap.width * 0.70,
+    });
+
+    // Print Date
+    image.print({
+      font: font32,
+      x: image.bitmap.width * 0.20,
+      y: image.bitmap.height * 0.82,
+      text: new Date().toLocaleDateString(),
+    });
+
+    // Print Certificate Code
+    image.print({
+      font: font32,
+      x: image.bitmap.width * 0.20,
+      y: image.bitmap.height * 0.88,
+      text: sp.certificate.certificateNo,
     });
 
     // Generate QR code for verification (using Student ID as requested)
@@ -116,14 +147,14 @@ export class CertificatesService {
     });
     if (!sp) throw new NotFoundException('StudentProject not found');
 
-    if (sp.status !== 'COMPLETED') {
-      const incompletePhases = sp.phases.filter((p) => p.status !== 'COMPLETED');
-      return {
-        eligible: false,
-        reason: `Project not completed. Status: ${sp.status}. ${incompletePhases.length} phase(s) still incomplete.`,
-        studentProject: sp,
-      };
-    }
+    // if (sp.status !== 'COMPLETED') {
+    //   const incompletePhases = sp.phases.filter((p) => p.status !== 'COMPLETED');
+    //   return {
+    //     eligible: false,
+    //     reason: `Project not completed. Status: ${sp.status}. ${incompletePhases.length} phase(s) still incomplete.`,
+    //     studentProject: sp,
+    //   };
+    // }
 
     return { eligible: true, studentProject: sp };
   }
@@ -193,10 +224,10 @@ export class CertificatesService {
     const sp = await this.prisma.studentProject.findFirst({
       where: {
         studentId: student.id,
-        status: 'COMPLETED',
+        // status: 'COMPLETED',
         certificate: null
       },
-      orderBy: { completedAt: 'desc' }
+      orderBy: { assignedAt: 'desc' }
     });
 
     if (!sp) {
@@ -213,14 +244,8 @@ export class CertificatesService {
     }
 
     // Generate unique cert number (retry loop to be safe)
-    let certNo: string;
-    let attempts = 0;
-    do {
-      certNo = generateCertNo();
-      const dup = await this.prisma.certificate.findUnique({ where: { certificateNo: certNo } });
-      if (!dup) break;
-      attempts++;
-    } while (attempts < 5);
+    // Generate unique cert number (IS-IN-000 auto increment)
+    let certNo = await this.generateCertNo();
 
     const verificationToken = randomUUID();
 
@@ -233,12 +258,30 @@ export class CertificatesService {
         domain: studentProject.project.title,
         specialization: null,
         startDate: studentProject.assignedAt,
-        endDate: studentProject.completedAt!,
+        endDate: studentProject.completedAt || new Date(),
         issuedAt: new Date(),
         status: 'ACTIVE',
       },
     });
   }
+
+  private async generateCertNo(): Promise<string> {
+    const lastCert = await this.prisma.certificate.findFirst({
+      orderBy: { createdAt: 'desc' },
+    });
+
+    let nextNum = 0;
+    if (lastCert && lastCert.certificateNo.startsWith('IS-IN-')) {
+      const parts = lastCert.certificateNo.split('-');
+      if (parts.length === 3) {
+        nextNum = parseInt(parts[2], 10) + 1;
+      }
+    }
+
+    return `IS-IN-${String(nextNum).padStart(3, '0')}`;
+  }
+
+
 
   async revoke(id: string, dto: RevokeCertificateDto) {
     const cert = await this.prisma.certificate.findUnique({ where: { id } });
