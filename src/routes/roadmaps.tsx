@@ -1,23 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { X, ExternalLink, ArrowRight, ChevronRight } from "lucide-react";
-import { DOMAINS, DOMAIN_COLORS, type Roadmap } from "@/data/content";
+import { DOMAINS, DOMAIN_COLORS, type Roadmap, ROADMAPS } from "@/data/content";
 import { cn } from "@/lib/utils";
 
 
 export const Route = createFileRoute("/roadmaps")({
   loader: async () => {
-    try {
-      const res = await fetch(`${(import.meta as any).env.VITE_API_URL || 'http://localhost:3001'}/api/roadmaps`);
-      if (res.ok) {
-        const roadmaps: Roadmap[] = await res.json();
-        return { roadmaps };
-      }
-    } catch (e) {
-      console.error('Failed to fetch roadmaps:', e);
-    }
-    // Fallback to empty if backend is not reachable
-    return { roadmaps: [] };
+    return { roadmaps: ROADMAPS };
   },
   head: () => ({
     meta: [
