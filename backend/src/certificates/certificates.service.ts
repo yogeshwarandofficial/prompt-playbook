@@ -46,12 +46,12 @@ export class CertificatesService {
     }
 
     // Attempt to read the blank template
-    const templatePath = path.join(process.cwd(), '..', 'public', 'template_blank.png');
+    const templatePath = path.join(process.cwd(), 'public', 'template_blank.png');
     let image;
     try {
       image = await jimp.Jimp.read(templatePath);
     } catch (e) {
-      throw new BadRequestException('Certificate template not found on server.');
+      throw new BadRequestException('Certificate template error: ' + (e as Error).message + ' Path: ' + templatePath);
     }
 
     // Load standard black fonts for a white certificate
@@ -88,7 +88,7 @@ export class CertificatesService {
 
 
     // Render the student name using pureimage to support custom TTF fonts
-    const fontPathPinyon = path.join(process.cwd(), '..', 'public', 'PinyonScript-Regular.ttf');
+    const fontPathPinyon = path.join(process.cwd(), 'public', 'PinyonScript-Regular.ttf');
     const customFont = PImage.registerFont(fontPathPinyon, 'PinyonScript');
     customFont.loadSync();
 
