@@ -382,13 +382,9 @@ export class CertificatesService {
 
   /** Student-facing: get their own certificate status by studentId */
   async getStudentCertificate(studentId: string) {
-    const completedProjects = await this.prisma.studentProject.findMany({
+    const studentProjects = await this.prisma.studentProject.findMany({
       where: {
         studentId,
-        OR: [
-          { status: 'COMPLETED' },
-          { certificate: { isNot: null } }
-        ]
       },
       include: {
         certificate: true,
@@ -397,6 +393,10 @@ export class CertificatesService {
       },
       orderBy: { completedAt: 'desc' },
     });
+
+    const completedProjects = studentProjects.filter(
+      sp => sp.status === 'COMPLETED' || sp.certificate
+    );
 
     // Map completed projects to look like certificates for the frontend
     return completedProjects.map((sp) => {
