@@ -83,9 +83,9 @@ export class CertificatesService {
       img.composite(textImg, finalX, y);
     };
 
-    // Wipe out the template's first paragraph with a white rectangle to avoid overlapping
-    // Starting at y:585 and height 75 to keep the golden line above it intact
-    image.scan(150, 585, 1184, 75, function(x: number, y: number, idx: number) {
+    // Wipe out the template's paragraphs with a white rectangle to avoid overlapping
+    // Starting at y:575 and height 190 to clear both the dynamic and static paragraphs
+    image.scan(150, 575, 1184, 190, function(x: number, y: number, idx: number) {
       this.bitmap.data[idx + 0] = 255;
       this.bitmap.data[idx + 1] = 255;
       this.bitmap.data[idx + 2] = 255;
@@ -101,22 +101,34 @@ export class CertificatesService {
 
     const startDate = sp.assignedAt ? new Date(sp.assignedAt).toLocaleDateString() : 'N/A';
     const endDate = sp.completedAt ? new Date(sp.completedAt).toLocaleDateString() : new Date().toLocaleDateString();
-    const paragraph = `This certificate is proudly presented for successfully completing the [${sp.project.title}] Internship at Infynux Solutions from [${startDate}] to [${endDate}].`;
+    
+    // First paragraph (Dynamic)
+    const paragraph1 = `This certificate is proudly presented for successfully completing the ${sp.project.title} Internship at Infynux Solutions from ${startDate} to ${endDate}.`;
+    
+    // Second paragraph (Static replacement)
+    const paragraph2 = `During the internship, hands-on experience was gained through practical training, technical assignments, and real-world projects, demonstrating dedication and commitment to learning. We appreciate the efforts and wish continued growth and success in the professional journey.`;
 
-    // Print the paragraph. 
-    // Scaled down slightly to match the static paragraph below it, and colored dark grey.
+    // Render both paragraphs with the exact same font, size (scale 0.6), and color.
+    // We use scale 0.6 so the font looks lighter, matching professional certificates like Coursera.
     printColorized(image, font32, image.bitmap.width * 0.15, 580, {
-      text: paragraph,
+      text: paragraph1,
       alignmentX: jimp.HorizontalAlign.CENTER,
       alignmentY: jimp.VerticalAlign.TOP,
-    }, image.bitmap.width * 0.70, 0.75, [85, 85, 85]);
+    }, image.bitmap.width * 0.70, 0.6, [60, 60, 60]);
+
+    // Give some spacing between paragraphs (approx 60px based on rendered height)
+    printColorized(image, font32, image.bitmap.width * 0.15, 640, {
+      text: paragraph2,
+      alignmentX: jimp.HorizontalAlign.CENTER,
+      alignmentY: jimp.VerticalAlign.TOP,
+    }, image.bitmap.width * 0.70, 0.6, [60, 60, 60]);
 
     // Print Date (scaled to 75% to perfectly match 'Date :' size, aligned horizontally at X=390 to avoid collision)
     printColorized(image, font32, 390, 895, new Date().toLocaleDateString(), undefined, 0.75);
 
-    // Print full Certificate Code (scaled to 75% to perfectly match 'Certificate Code :' size)
+    // Print full Certificate Code (scaled down to 0.65 to match 'Certificate Code :' better)
     const certCode = sp.certificate.certificateNo;
-    printColorized(image, font32, 490, 936, certCode, undefined, 0.75);
+    printColorized(image, font32, 490, 936, certCode, undefined, 0.65);
 
     // Generate QR code for verification (using Student ID as requested)
     const frontendUrl = process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://infynuxsolutions.in';
