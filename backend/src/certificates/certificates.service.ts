@@ -81,6 +81,7 @@ export class CertificatesService {
       // Calculate new X to keep it centered if maxWidth was provided, or just use X
       const finalX = maxWidth ? x + (maxWidth - textImg.bitmap.width) / 2 : x;
       img.composite(textImg, finalX, y);
+    };
 
 
     // Print the name (sitting exactly on the golden line which is at y=564)
