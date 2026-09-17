@@ -99,27 +99,26 @@ export class CertificatesService {
     // Second paragraph (Static replacement)
     const paragraph2 = `During the internship, hands-on experience was gained through practical training, technical assignments, and real-world projects, demonstrating dedication and commitment to learning. We appreciate the efforts and wish continued growth and success in the professional journey.`;
 
-    // Render both paragraphs with the exact same font, size (scale 0.6), and color.
-    // We use scale 0.6 so the font looks lighter, matching professional certificates like Coursera.
+    // Render both paragraphs with slightly larger font size (scale 0.7)
     printColorized(image, font32, image.bitmap.width * 0.15, 580, {
       text: paragraph1,
       alignmentX: jimp.HorizontalAlign.CENTER,
       alignmentY: jimp.VerticalAlign.TOP,
-    }, image.bitmap.width * 0.70, 0.6, [60, 60, 60]);
+    }, image.bitmap.width * 0.70, 0.7, [60, 60, 60]);
 
-    // Give some spacing between paragraphs (approx 60px based on rendered height)
-    printColorized(image, font32, image.bitmap.width * 0.15, 640, {
+    // Give some spacing between paragraphs (approx 80px based on rendered height)
+    printColorized(image, font32, image.bitmap.width * 0.15, 660, {
       text: paragraph2,
       alignmentX: jimp.HorizontalAlign.CENTER,
       alignmentY: jimp.VerticalAlign.TOP,
-    }, image.bitmap.width * 0.70, 0.6, [60, 60, 60]);
+    }, image.bitmap.width * 0.70, 0.7, [60, 60, 60]);
 
     // Print Date 
-    const dateStr = `Date : ${new Date().toLocaleDateString()}`;
+    const dateStr = `Date: ${new Date().toLocaleDateString()}`;
     printColorized(image, font32, 330, 895, dateStr, undefined, 0.65);
 
-    // Print full Certificate Code
-    const certCode = `Certificate Code : ${sp.certificate.certificateNo}`;
+    // Print full Certificate Code without extra gaps
+    const certCode = `Certificate Code: ${sp.certificate.certificateNo}`;
     printColorized(image, font32, 330, 936, certCode, undefined, 0.65);
 
     // Generate QR code for verification (using Student ID as requested)
