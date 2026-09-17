@@ -32,7 +32,6 @@ const NAV_SECTIONS = [
     title: "Company",
     links: [
       { label: "Contact", to: "/contact" },
-      { label: "Verify Certificate", to: "/verify" },
       { label: "Privacy Policy", to: "/contact" },
       { label: "Terms of Service", to: "/contact" },
     ],
