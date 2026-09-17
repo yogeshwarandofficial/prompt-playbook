@@ -145,7 +145,10 @@ export class CertificatesService {
     printColorized(image, font32, 505, 936, certCode, undefined, 0.75);
 
     // Generate QR code for verification (using Student ID as requested)
-    const frontendUrl = process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://infynuxsolutions.in';
+    let frontendUrl = process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://infynuxsolutions.in';
+    if (frontendUrl.includes(',')) {
+      frontendUrl = frontendUrl.split(',')[0].trim();
+    }
     const verifyUrl = `${frontendUrl}/verify/${sp.student.studentId}`;
     const qrBuffer = await QRCode.toBuffer(verifyUrl, {
       margin: 1,
