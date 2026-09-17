@@ -273,14 +273,22 @@ export class CertificatesService {
     });
 
     if (!sp) {
-      const anyProject = await this.prisma.project.findFirst();
-      if (!anyProject) {
-        throw new BadRequestException('Please create at least one project in the database first.');
+      // Find a project that the student is not already assigned to
+      const unassignedProject = await this.prisma.project.findFirst({
+        where: {
+          assignments: {
+            none: { studentId: student.id }
+          }
+        }
+      });
+
+      if (!unassignedProject) {
+        throw new BadRequestException('This student has already received certificates for all available projects.');
       }
       sp = await this.prisma.studentProject.create({
         data: {
           studentId: student.id,
-          projectId: anyProject.id,
+          projectId: unassignedProject.id,
           status: 'COMPLETED',
         }
       });
@@ -318,18 +326,23 @@ export class CertificatesService {
   }
 
   private async generateCertNo(): Promise<string> {
-    const lastCert = await this.prisma.certificate.findFirst({
-      orderBy: { issuedAt: 'desc' },
+    const certs = await this.prisma.certificate.findMany({
+      where: { certificateNo: { startsWith: 'IS-IN-' } },
+      select: { certificateNo: true }
     });
 
-    let nextNum = 0;
-    if (lastCert && lastCert.certificateNo.startsWith('IS-IN-')) {
-      const parts = lastCert.certificateNo.split('-');
+    let maxNum = -1;
+    for (const cert of certs) {
+      const parts = cert.certificateNo.split('-');
       if (parts.length === 3) {
-        nextNum = parseInt(parts[2], 10) + 1;
+        const num = parseInt(parts[2], 10);
+        if (!isNaN(num) && num > maxNum) {
+          maxNum = num;
+        }
       }
     }
 
+    const nextNum = maxNum + 1;
     return `IS-IN-${String(nextNum).padStart(3, '0')}`;
   }
 
