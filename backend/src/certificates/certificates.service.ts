@@ -116,11 +116,11 @@ export class CertificatesService {
 
     // Print Date (only dynamic part, template already has 'Date : ')
     const dateStr = new Date().toLocaleDateString();
-    printColorized(image, font32, 400, 895, dateStr, undefined, 0.75);
+    printColorized(image, font32, 385, 895, dateStr, undefined, 0.75);
 
     // Print Certificate Code (only dynamic part, template already has 'Certificate Code : ')
     const certCode = sp.certificate.certificateNo;
-    printColorized(image, font32, 530, 936, certCode, undefined, 0.75);
+    printColorized(image, font32, 515, 936, certCode, undefined, 0.75);
 
     // Generate QR code for verification (using Student ID as requested)
     const frontendUrl = process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://infynuxsolutions.in';
