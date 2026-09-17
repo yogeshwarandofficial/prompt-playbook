@@ -20,7 +20,7 @@ import { Route as EventsRouteImport } from './routes/events'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as VerifyTokenRouteImport } from './routes/verify.$token'
+import { Route as VerifyTokenRouteImport } from './routes/verify_.$token'
 import { Route as TutorialsSlugRouteImport } from './routes/tutorials_.$slug'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
 import { Route as ApiContactRouteImport } from './routes/api/contact'
@@ -83,9 +83,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const VerifyTokenRoute = VerifyTokenRouteImport.update({
-  id: '/$token',
-  path: '/$token',
-  getParentRoute: () => VerifyRoute,
+  id: '/verify_/$token',
+  path: '/verify/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TutorialsSlugRoute = TutorialsSlugRouteImport.update({
   id: '/tutorials_/$slug',
@@ -124,7 +124,7 @@ export interface FileRoutesByFullPath {
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tutorials': typeof TutorialsRoute
-  '/verify': typeof VerifyRouteWithChildren
+  '/verify': typeof VerifyRoute
   '/api/contact': typeof ApiContactRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
@@ -143,7 +143,7 @@ export interface FileRoutesByTo {
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tutorials': typeof TutorialsRoute
-  '/verify': typeof VerifyRouteWithChildren
+  '/verify': typeof VerifyRoute
   '/api/contact': typeof ApiContactRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
@@ -163,11 +163,11 @@ export interface FileRoutesById {
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tutorials': typeof TutorialsRoute
-  '/verify': typeof VerifyRouteWithChildren
+  '/verify': typeof VerifyRoute
   '/api/contact': typeof ApiContactRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/tutorials_/$slug': typeof TutorialsSlugRoute
-  '/verify/$token': typeof VerifyTokenRoute
+  '/verify_/$token': typeof VerifyTokenRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
   '/api/newsletter/subscribe': typeof ApiNewsletterSubscribeRoute
 }
@@ -226,7 +226,7 @@ export interface FileRouteTypes {
     | '/api/contact'
     | '/learn/$slug'
     | '/tutorials_/$slug'
-    | '/verify/$token'
+    | '/verify_/$token'
     | '/api/internships/apply'
     | '/api/newsletter/subscribe'
   fileRoutesById: FileRoutesById
@@ -242,10 +242,11 @@ export interface RootRouteChildren {
   RoadmapsRoute: typeof RoadmapsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TutorialsRoute: typeof TutorialsRoute
-  VerifyRoute: typeof VerifyRouteWithChildren
+  VerifyRoute: typeof VerifyRoute
   ApiContactRoute: typeof ApiContactRoute
   LearnSlugRoute: typeof LearnSlugRoute
   TutorialsSlugRoute: typeof TutorialsSlugRoute
+  VerifyTokenRoute: typeof VerifyTokenRoute
   ApiInternshipsApplyRoute: typeof ApiInternshipsApplyRoute
   ApiNewsletterSubscribeRoute: typeof ApiNewsletterSubscribeRoute
 }
@@ -329,12 +330,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/verify/$token': {
-      id: '/verify/$token'
-      path: '/$token'
+    '/verify_/$token': {
+      id: '/verify_/$token'
+      path: '/verify/$token'
       fullPath: '/verify/$token'
       preLoaderRoute: typeof VerifyTokenRouteImport
-      parentRoute: typeof VerifyRoute
+      parentRoute: typeof rootRouteImport
     }
     '/tutorials_/$slug': {
       id: '/tutorials_/$slug'
@@ -374,17 +375,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface VerifyRouteChildren {
-  VerifyTokenRoute: typeof VerifyTokenRoute
-}
-
-const VerifyRouteChildren: VerifyRouteChildren = {
-  VerifyTokenRoute: VerifyTokenRoute,
-}
-
-const VerifyRouteWithChildren =
-  VerifyRoute._addFileChildren(VerifyRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -396,10 +386,11 @@ const rootRouteChildren: RootRouteChildren = {
   RoadmapsRoute: RoadmapsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TutorialsRoute: TutorialsRoute,
-  VerifyRoute: VerifyRouteWithChildren,
+  VerifyRoute: VerifyRoute,
   ApiContactRoute: ApiContactRoute,
   LearnSlugRoute: LearnSlugRoute,
   TutorialsSlugRoute: TutorialsSlugRoute,
+  VerifyTokenRoute: VerifyTokenRoute,
   ApiInternshipsApplyRoute: ApiInternshipsApplyRoute,
   ApiNewsletterSubscribeRoute: ApiNewsletterSubscribeRoute,
 }

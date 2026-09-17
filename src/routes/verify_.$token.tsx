@@ -3,7 +3,7 @@ import { PageHeader } from './roadmaps';
 import { ShieldCheck, XCircle, Calendar, Award, User, Hash } from 'lucide-react';
 import { format } from 'date-fns';
 
-export const Route = createFileRoute('/verify/$token')({
+export const Route = createFileRoute('/verify_/$token')({
   loader: async ({ params }) => {
     const query = params.token;
     try {
@@ -86,14 +86,14 @@ function VerifyResultPage() {
                           <User className="w-4 h-4 text-slate-400" />
                           <div>
                             <p className="text-slate-500 text-xs uppercase tracking-wider font-semibold">Awarded To</p>
-                            <p className="font-medium text-slate-800">{cert.studentProject?.student?.name}</p>
+                            <p className="font-medium text-slate-800">{cert.student?.name}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
                           <Hash className="w-4 h-4 text-slate-400" />
                           <div>
                             <p className="text-slate-500 text-xs uppercase tracking-wider font-semibold">Student ID</p>
-                            <p className="font-medium text-slate-800 font-mono">{cert.studentProject?.student?.studentId}</p>
+                            <p className="font-medium text-slate-800 font-mono">{cert.student?.studentId}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">

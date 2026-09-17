@@ -23,25 +23,21 @@ const jimp = require('jimp');
 export class CertificatesService {
   constructor(private prisma: PrismaService) {}
 
-  async generateDynamicCertificate(studentProjectId: string, studentId: string): Promise<Buffer> {
-    const sp = await this.prisma.studentProject.findUnique({
-      where: { id: studentProjectId },
+  async generateDynamicCertificate(studentCourseId: string, studentId: string): Promise<Buffer> {
+    const sc = await this.prisma.studentCourse.findUnique({
+      where: { id: studentCourseId },
       include: {
         student: true,
-        project: true,
+        course: true,
         certificate: true
       }
     });
 
-    if (!sp || sp.studentId !== studentId) {
-      throw new NotFoundException('Project not found');
+    if (!sc || sc.studentId !== studentId) {
+      throw new NotFoundException('Course enrollment not found');
     }
 
-    // if (sp.status !== 'COMPLETED') {
-    //   throw new BadRequestException('Project is not yet completed');
-    // }
-
-    if (!sp.certificate) {
+    if (!sc.certificate) {
       throw new BadRequestException('Certificate has not been issued yet');
     }
 
@@ -98,10 +94,10 @@ export class CertificatesService {
     ctx.fillStyle = 'rgba(12, 31, 56, 1)'; // Navy blue
     ctx.font = "96pt 'PinyonScript'"; // Larger cursive font size
     
-    const textWidth = ctx.measureText(sp.student.name).width;
+    const textWidth = ctx.measureText(sc.student.name).width;
     const nameX = (image.bitmap.width - textWidth) / 2;
     // pureimage draws from the baseline
-    ctx.fillText(sp.student.name, nameX, 130);
+    ctx.fillText(sc.student.name, nameX, 130);
 
     const passThrough = new PassThrough();
     const chunks: Buffer[] = [];
@@ -113,11 +109,11 @@ export class CertificatesService {
     // Composite the name onto the main image (y=410 so the baseline sits on the golden line)
     image.composite(nameJimpImage, 0, 410);
 
-    const startDate = sp.assignedAt ? new Date(sp.assignedAt).toLocaleDateString() : 'N/A';
-    const endDate = sp.completedAt ? new Date(sp.completedAt).toLocaleDateString() : new Date().toLocaleDateString();
+    const startDate = sc.createdAt ? new Date(sc.createdAt).toLocaleDateString() : 'N/A';
+    const endDate = sc.certificate.issuedAt ? new Date(sc.certificate.issuedAt).toLocaleDateString() : new Date().toLocaleDateString();
     
     // First paragraph (Dynamic)
-    const paragraph1 = `This certificate is proudly presented for successfully completing the ${sp.project.title} Internship at Infynux Solutions from ${startDate} to ${endDate}.`;
+    const paragraph1 = `This certificate is proudly presented for successfully completing the ${sc.course.name} Internship at Infynux Solutions from ${startDate} to ${endDate}.`;
     
     // Second paragraph (Static replacement)
     const paragraph2 = `During the internship, hands-on experience was gained through practical training, technical assignments, and real-world projects, demonstrating dedication and commitment to learning. We appreciate the efforts and wish continued growth and success in the professional journey.`;
@@ -141,7 +137,7 @@ export class CertificatesService {
     printColorized(image, font32, 385, 895, dateStr, undefined, 0.75);
 
     // Print Certificate Code (only dynamic part, template already has 'Certificate Code : ')
-    const certCode = sp.certificate.certificateNo;
+    const certCode = sc.certificate.certificateNo;
     printColorized(image, font32, 505, 936, certCode, undefined, 0.75);
 
     // Generate QR code for verification (using Student ID as requested)
@@ -149,7 +145,7 @@ export class CertificatesService {
     if (frontendUrl.includes(',')) {
       frontendUrl = frontendUrl.split(',')[0].trim();
     }
-    const verifyUrl = `${frontendUrl}/verify/${sp.student.studentId}`;
+    const verifyUrl = `${frontendUrl}/verify/${sc.student.studentId}`;
     const qrBuffer = await QRCode.toBuffer(verifyUrl, {
       margin: 1,
       width: 120, // slightly smaller to fit nicely in the center box
@@ -171,61 +167,48 @@ export class CertificatesService {
   }
 
   /**
-   * Determines eligibility: ALL project phases must be COMPLETED and
-   * StudentProject must be COMPLETED.
+   * Determines eligibility
    */
-  async checkEligibility(studentProjectId: string): Promise<{
+  async checkEligibility(studentCourseId: string): Promise<{
     eligible: boolean;
     reason?: string;
-    studentProject?: any;
+    studentCourse?: any;
   }> {
-    const sp = await this.prisma.studentProject.findUnique({
-      where: { id: studentProjectId },
+    const sc = await this.prisma.studentCourse.findUnique({
+      where: { id: studentCourseId },
       include: {
-        phases: { include: { submissions: { include: { reviews: true } } } },
         student: { select: { id: true, name: true, email: true, studentId: true } },
-        project: { select: { id: true, title: true } },
+        course: { select: { id: true, name: true } },
         certificate: true,
       },
     });
-    if (!sp) throw new NotFoundException('StudentProject not found');
+    if (!sc) throw new NotFoundException('StudentCourse not found');
 
-    // if (sp.status !== 'COMPLETED') {
-    //   const incompletePhases = sp.phases.filter((p) => p.status !== 'COMPLETED');
-    //   return {
-    //     eligible: false,
-    //     reason: `Project not completed. Status: ${sp.status}. ${incompletePhases.length} phase(s) still incomplete.`,
-    //     studentProject: sp,
-    //   };
-    // }
-
-    return { eligible: true, studentProject: sp };
+    return { eligible: true, studentCourse: sc };
   }
 
-  /** List all COMPLETED StudentProjects that don't yet have a certificate. */
+  /** List all completed courses that don't yet have a certificate. */
   async findEligible() {
-    const completedProjects = await this.prisma.studentProject.findMany({
-      where: { status: 'COMPLETED', certificate: null },
+    // For now, any studentCourse without a certificate is eligible
+    const eligibleCourses = await this.prisma.studentCourse.findMany({
+      where: { certificate: null },
       include: {
         student: { select: { id: true, name: true, email: true, studentId: true } },
-        project: { select: { id: true, title: true } },
-        phases: {
-          select: { status: true },
-        },
+        course: { select: { id: true, name: true } },
       },
-      orderBy: { completedAt: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
-    return completedProjects;
+    return eligibleCourses;
   }
 
   /** List all issued certificates. */
   async findAll() {
     return this.prisma.certificate.findMany({
       include: {
-        studentProject: {
+        studentCourse: {
           include: {
             student: { select: { id: true, name: true, email: true, studentId: true } },
-            project: { select: { id: true, title: true } },
+            course: { select: { id: true, name: true } },
           },
         },
       },
@@ -237,10 +220,10 @@ export class CertificatesService {
     const cert = await this.prisma.certificate.findUnique({
       where: { id },
       include: {
-        studentProject: {
+        studentCourse: {
           include: {
             student: { select: { id: true, name: true, email: true, studentId: true } },
-            project: { select: { id: true, title: true } },
+            course: { select: { id: true, name: true } },
           },
         },
       },
@@ -264,61 +247,58 @@ export class CertificatesService {
       throw new NotFoundException('Student not found with that ID');
     }
 
-    let sp = await this.prisma.studentProject.findFirst({
+    let sc = await this.prisma.studentCourse.findFirst({
       where: {
         studentId: student.id,
         certificate: null
       },
-      orderBy: { assignedAt: 'desc' }
+      orderBy: { createdAt: 'desc' }
     });
 
-    if (!sp) {
-      // Find a project that the student is not already assigned to
-      const unassignedProject = await this.prisma.project.findFirst({
+    if (!sc) {
+      // Find a course that the student is not already assigned to
+      const unassignedCourse = await this.prisma.course.findFirst({
         where: {
-          assignments: {
+          students: {
             none: { studentId: student.id }
           }
         }
       });
 
-      if (!unassignedProject) {
-        throw new BadRequestException('This student has already received certificates for all available projects.');
+      if (!unassignedCourse) {
+        throw new BadRequestException('This student has already received certificates for all available courses.');
       }
-      sp = await this.prisma.studentProject.create({
+      sc = await this.prisma.studentCourse.create({
         data: {
           studentId: student.id,
-          projectId: unassignedProject.id,
-          status: 'COMPLETED',
+          courseId: unassignedCourse.id,
         }
       });
     }
 
     // Re-verify eligibility on the backend
-    const { eligible, reason, studentProject } = await this.checkEligibility(sp.id);
+    const { eligible, reason, studentCourse } = await this.checkEligibility(sc.id);
     if (!eligible) throw new BadRequestException(reason ?? 'Student is not eligible for a certificate');
 
     // Check for duplicate
-    if (studentProject.certificate) {
-      throw new ConflictException('A certificate has already been issued for this internship');
+    if (studentCourse.certificate) {
+      throw new ConflictException('A certificate has already been issued for this course');
     }
 
-    // Generate unique cert number (retry loop to be safe)
-    // Generate unique cert number (IS-IN-000 auto increment)
     let certNo = await this.generateCertNo();
 
     const verificationToken = randomUUID();
 
     return this.prisma.certificate.create({
       data: {
-        studentId: studentProject.student.id,
-        studentProjectId: studentProject.id,
+        studentId: studentCourse.student.id,
+        studentCourseId: studentCourse.id,
         certificateNo: certNo,
         verificationToken,
-        domain: studentProject.project.title,
+        domain: studentCourse.course.name,
         specialization: null,
-        startDate: studentProject.assignedAt,
-        endDate: studentProject.completedAt || new Date(),
+        startDate: studentCourse.createdAt,
+        endDate: new Date(),
         issuedAt: new Date(),
         status: 'ACTIVE',
       },
@@ -372,10 +352,10 @@ export class CertificatesService {
         ]
       },
       include: {
-        studentProject: {
+        student: { select: { name: true, studentId: true } },
+        studentCourse: {
           include: {
-            student: { select: { name: true, studentId: true } },
-            project: { select: { title: true, courseId: true } }
+            course: { select: { name: true, id: true } }
           }
         }
       }
@@ -395,18 +375,16 @@ export class CertificatesService {
   async verifyByStudentId(studentId: string) {
     const certs = await this.prisma.certificate.findMany({
       where: {
-        studentProject: {
-          student: {
-            studentId
-          }
+        student: {
+          studentId
         },
         status: 'ACTIVE'
       },
       include: {
-        studentProject: {
+        student: { select: { name: true, studentId: true } },
+        studentCourse: {
           include: {
-            student: { select: { name: true, studentId: true } },
-            project: { select: { title: true, courseId: true } }
+            course: { select: { name: true, id: true } }
           }
         }
       },
@@ -424,41 +402,40 @@ export class CertificatesService {
 
   /** Student-facing: get their own certificate status by studentId */
   async getStudentCertificate(studentId: string) {
-    const studentProjects = await this.prisma.studentProject.findMany({
+    const studentCourses = await this.prisma.studentCourse.findMany({
       where: {
         studentId,
       },
       include: {
         certificate: true,
-        project: true,
+        course: true,
         student: true,
       },
-      orderBy: { completedAt: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
 
-    const completedProjects = studentProjects.filter(
-      sp => sp.status === 'COMPLETED' || sp.certificate
-    );
+    // We consider any course assignment as eligible for testing
+    const completedCourses = studentCourses;
 
-    // Map completed projects to look like certificates for the frontend
-    return completedProjects.map((sp) => {
-      if (sp.certificate) {
+    // Map completed courses to look like certificates for the frontend
+    return completedCourses.map((sc) => {
+      if (sc.certificate) {
         return {
-          ...sp.certificate,
-          studentProject: sp,
+          ...sc.certificate,
+          studentCourse: sc,
         };
       }
       
       // If no certificate record exists yet, mock one for dynamic downloading
       return {
-        id: sp.id, // Use project id as a fallback
-        studentId: sp.studentId,
-        studentProjectId: sp.id,
-        certificateNo: `PENDING-${sp.id.substring(0,6).toUpperCase()}`,
-        verificationToken: sp.id,
+        id: sc.id, // Use course id as a fallback
+        studentId: sc.studentId,
+        studentCourseId: sc.id,
+        certificateNo: `PENDING-${sc.id.substring(0,6).toUpperCase()}`,
+        verificationToken: sc.id,
         status: 'ACTIVE',
-        issuedAt: sp.completedAt || new Date(),
-        studentProject: sp,
+        issuedAt: sc.createdAt || new Date(),
+        studentCourse: sc,
       };
     });
   }

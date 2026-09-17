@@ -29,6 +29,7 @@ model User {
   reviewsGiven     Review[]
   courses          StudentCourse[]
   studentProjects  StudentProject[]
+  certificates     Certificate[]
 }
 
 model Course {
@@ -53,6 +54,7 @@ model StudentCourse {
   createdAt DateTime @default(now())
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  certificate Certificate?
 
   @@unique([studentId, courseId])
 }
@@ -132,7 +134,6 @@ model StudentProject {
   assignedAt  DateTime              @default(now())
   dueDate     DateTime?
   completedAt DateTime?
-  certificate Certificate?
   project     Project               @relation(fields: [projectId], references: [id])
   student     User                  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   phases      StudentProjectPhase[]
@@ -411,6 +412,7 @@ model Interview {
 model Certificate {
   id                String            @id @default(uuid())
   studentId         String
+  student           User              @relation(fields: [studentId], references: [id], onDelete: Cascade)
   certificateNo     String            @unique
   verificationToken String            @unique
   domain            String
@@ -421,8 +423,8 @@ model Certificate {
   status            CertificateStatus
   revokedAt         DateTime?
   revokeReason      String?
-  studentProjectId  String            @unique
-  studentProject    StudentProject    @relation(fields: [studentProjectId], references: [id], onDelete: Cascade)
+  studentCourseId   String            @unique
+  studentCourse     StudentCourse     @relation(fields: [studentCourseId], references: [id], onDelete: Cascade)
 }
 
 model Notification {
