@@ -606,12 +606,12 @@ function StudentCertificateView() {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h4 className="font-bold text-lg text-slate-900">Internship Certificate</h4>
-                  <p className="text-sm font-medium text-indigo-600">{cert.studentProject.project.title}</p>
+                  <p className="text-sm font-medium text-indigo-600">{cert.studentCourse?.course?.name}</p>
                 </div>
                 <Award className={`h-10 w-10 ${cert.status === 'ACTIVE' ? 'text-indigo-600' : 'text-slate-300'}`} />
               </div>
               <div className="space-y-2 mb-6">
-                <p className="text-sm text-slate-600"><span className="font-semibold">Issued To:</span> {cert.studentProject.student.name}</p>
+                <p className="text-sm text-slate-600"><span className="font-semibold">Issued To:</span> {cert.studentCourse?.student?.name}</p>
                 <p className="text-sm text-slate-600"><span className="font-semibold">Date:</span> {new Date(cert.issuedAt).toLocaleDateString()}</p>
                 {cert.grade && <p className="text-sm text-slate-600"><span className="font-semibold">Grade:</span> {cert.grade}</p>}
                 <p className="text-sm text-slate-600"><span className="font-semibold">Certificate ID:</span> <span className="font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">{cert.certificateNo}</span></p>
@@ -620,7 +620,7 @@ function StudentCertificateView() {
                 <button 
                   onClick={() => {
                     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-                    window.open(`${API_URL}/api/student/certificate/download/${cert.studentProject.id}`, '_blank');
+                    window.open(`${API_URL}/api/student/certificate/download/${cert.studentCourse?.id}`, '_blank');
                   }}
                   className="w-full bg-indigo-600 text-white py-2 rounded-lg text-sm font-semibold text-center hover:bg-indigo-700 transition-colors"
                 >
