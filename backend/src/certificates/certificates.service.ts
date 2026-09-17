@@ -94,6 +94,7 @@ export class CertificatesService {
 
     const nameCanvas = PImage.make(image.bitmap.width, 200);
     const ctx = nameCanvas.getContext('2d');
+    ctx.clearRect(0, 0, image.bitmap.width, 200); // Clear default black background to transparent
     ctx.fillStyle = 'rgba(12, 31, 56, 1)'; // Navy blue
     ctx.font = "96pt 'PinyonScript'"; // Larger cursive font size
     
