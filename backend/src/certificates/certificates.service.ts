@@ -84,8 +84,8 @@ export class CertificatesService {
     };
 
     // Wipe out the template's paragraphs with a white rectangle to avoid overlapping
-    // Starting at y:575 and height 190 to clear both the dynamic and static paragraphs
-    image.scan(150, 575, 1184, 190, function(x: number, y: number, idx: number) {
+    // Starting at y:575 and height 220 to clear both the dynamic and static paragraphs completely
+    image.scan(150, 575, 1184, 220, function(x: number, y: number, idx: number) {
       this.bitmap.data[idx + 0] = 255;
       this.bitmap.data[idx + 1] = 255;
       this.bitmap.data[idx + 2] = 255;
@@ -128,7 +128,7 @@ export class CertificatesService {
 
     // Print full Certificate Code (scaled down to 0.65 to match 'Certificate Code :' better)
     const certCode = sp.certificate.certificateNo;
-    printColorized(image, font32, 490, 936, certCode, undefined, 0.65);
+    printColorized(image, font32, 530, 936, certCode, undefined, 0.65);
 
     // Generate QR code for verification (using Student ID as requested)
     const frontendUrl = process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://infynuxsolutions.in';
