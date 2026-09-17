@@ -100,18 +100,18 @@ export class CertificatesService {
     const paragraph2 = `During the internship, hands-on experience was gained through practical training, technical assignments, and real-world projects, demonstrating dedication and commitment to learning. We appreciate the efforts and wish continued growth and success in the professional journey.`;
 
     // Render both paragraphs with slightly larger font size (scale 0.7)
-    printColorized(image, font32, image.bitmap.width * 0.15, 580, {
+    printColorized(image, font32, image.bitmap.width * 0.075, 580, {
       text: paragraph1,
       alignmentX: jimp.HorizontalAlign.CENTER,
       alignmentY: jimp.VerticalAlign.TOP,
-    }, image.bitmap.width * 0.70, 0.7, [60, 60, 60]);
+    }, image.bitmap.width * 0.85, 0.7, [60, 60, 60]);
 
     // Give some spacing between paragraphs (approx 80px based on rendered height)
-    printColorized(image, font32, image.bitmap.width * 0.15, 660, {
+    printColorized(image, font32, image.bitmap.width * 0.075, 660, {
       text: paragraph2,
       alignmentX: jimp.HorizontalAlign.CENTER,
       alignmentY: jimp.VerticalAlign.TOP,
-    }, image.bitmap.width * 0.70, 0.7, [60, 60, 60]);
+    }, image.bitmap.width * 0.85, 0.7, [60, 60, 60]);
 
     // Print Date 
     const dateStr = `Date: ${new Date().toLocaleDateString()}`;
