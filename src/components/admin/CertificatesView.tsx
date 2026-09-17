@@ -20,6 +20,15 @@ function IssueModal({ onClose, onIssued }: IssueModalProps) {
   const [studentId, setStudentId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [courses, setCourses] = useState<any[]>([]);
+  const [courseId, setCourseId] = useState('');
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/admin/courses`, { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => setCourses(data))
+      .catch(err => console.error(err));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +41,7 @@ function IssueModal({ onClose, onIssued }: IssueModalProps) {
         credentials: 'include',
         body: JSON.stringify({
           studentId,
+          courseId: courseId || undefined
         }),
       });
       if (!res.ok) {
@@ -66,7 +76,21 @@ function IssueModal({ onClose, onIssued }: IssueModalProps) {
               placeholder="Database UUID of the Student"
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
-            <p className="text-xs text-slate-500 mt-1">Must refer to a valid Student ID. The system will automatically link their active project domain and name to the certificate.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Select Course (Domain) *</label>
+            <select
+              required
+              value={courseId}
+              onChange={(e) => setCourseId(e.target.value)}
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+            >
+              <option value="">-- Select a Course --</option>
+              {courses.map(c => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+            <p className="text-xs text-slate-500 mt-1">Select which course to issue this certificate for.</p>
           </div>
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="flex-1 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50 transition-colors">Cancel</button>
@@ -114,8 +138,8 @@ export function CertificatesView() {
 
   const filtered = certificates.filter(c => 
     c.certificateNo.toLowerCase().includes(search.toLowerCase()) || 
-    c.studentProject?.student.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.studentProject?.student.studentId.toLowerCase().includes(search.toLowerCase())
+    c.studentCourse?.student?.name.toLowerCase().includes(search.toLowerCase()) ||
+    c.studentCourse?.student?.studentId.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -168,12 +192,12 @@ export function CertificatesView() {
                 <tr key={cert.id} className="hover:bg-slate-50">
                   <td className="px-5 py-4 font-mono text-xs font-medium text-slate-700">{cert.certificateNo}</td>
                   <td className="px-5 py-4">
-                    <div className="font-medium text-slate-900 text-sm">{cert.studentProject?.student.name}</div>
-                    <div className="text-xs text-slate-500">{cert.studentProject?.student.studentId}</div>
+                    <div className="font-medium text-slate-900 text-sm">{cert.studentCourse?.student?.name}</div>
+                    <div className="text-xs text-slate-500">{cert.studentCourse?.student?.studentId}</div>
                   </td>
                   <td className="px-5 py-4">
-                    <div className="text-sm text-slate-700 truncate max-w-xs">{cert.studentProject.project.title}</div>
-                    <div className="text-xs text-slate-500 mt-0.5">{cert.studentProject.batch?.name || 'No Batch'}</div>
+                    <div className="text-sm text-slate-700 truncate max-w-xs">{cert.studentCourse?.course?.name}</div>
+                    <div className="text-xs text-slate-500 mt-0.5">Assigned</div>
                   </td>
                   <td className="px-5 py-4 text-sm text-slate-600">
                     {new Date(cert.issuedAt).toLocaleDateString()}

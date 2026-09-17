@@ -7,6 +7,10 @@ export class IssueCertificateDto {
   @IsString()
   @IsOptional()
   title?: string;
+
+  @IsString()
+  @IsOptional()
+  courseId?: string;
 }
 
 export class RevokeCertificateDto {

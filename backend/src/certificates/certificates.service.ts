@@ -250,6 +250,7 @@ export class CertificatesService {
     let sc = await this.prisma.studentCourse.findFirst({
       where: {
         studentId: student.id,
+        ...(dto.courseId ? { courseId: dto.courseId } : {}),
         certificate: null
       },
       orderBy: { createdAt: 'desc' }
