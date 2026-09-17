@@ -42,8 +42,8 @@ export class CertificatesService {
       throw new BadRequestException('Certificate has not been issued yet');
     }
 
-    // Attempt to read the template
-    const templatePath = path.join(process.cwd(), '..', 'public', 'template2.png');
+    // Attempt to read the blank template
+    const templatePath = path.join(process.cwd(), '..', 'public', 'template_blank.png');
     let image;
     try {
       image = await jimp.Jimp.read(templatePath);
@@ -81,16 +81,7 @@ export class CertificatesService {
       // Calculate new X to keep it centered if maxWidth was provided, or just use X
       const finalX = maxWidth ? x + (maxWidth - textImg.bitmap.width) / 2 : x;
       img.composite(textImg, finalX, y);
-    };
 
-    // Wipe out the template's paragraphs with a white rectangle to avoid overlapping
-    // Starting at y:575 and height 220 to clear both the dynamic and static paragraphs completely
-    image.scan(150, 575, 1184, 220, function(x: number, y: number, idx: number) {
-      this.bitmap.data[idx + 0] = 255;
-      this.bitmap.data[idx + 1] = 255;
-      this.bitmap.data[idx + 2] = 255;
-      this.bitmap.data[idx + 3] = 255;
-    });
 
     // Print the name (sitting exactly on the golden line which is at y=564)
     printColorized(image, font64, 0, 480, {
@@ -123,12 +114,13 @@ export class CertificatesService {
       alignmentY: jimp.VerticalAlign.TOP,
     }, image.bitmap.width * 0.70, 0.6, [60, 60, 60]);
 
-    // Print Date (scaled to 75% to perfectly match 'Date :' size, aligned horizontally at X=390 to avoid collision)
-    printColorized(image, font32, 390, 895, new Date().toLocaleDateString(), undefined, 0.75);
+    // Print Date 
+    const dateStr = `Date : ${new Date().toLocaleDateString()}`;
+    printColorized(image, font32, 330, 895, dateStr, undefined, 0.65);
 
-    // Print full Certificate Code (scaled down to 0.65 to match 'Certificate Code :' better)
-    const certCode = sp.certificate.certificateNo;
-    printColorized(image, font32, 530, 936, certCode, undefined, 0.65);
+    // Print full Certificate Code
+    const certCode = `Certificate Code : ${sp.certificate.certificateNo}`;
+    printColorized(image, font32, 330, 936, certCode, undefined, 0.65);
 
     // Generate QR code for verification (using Student ID as requested)
     const frontendUrl = process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://infynuxsolutions.in';
