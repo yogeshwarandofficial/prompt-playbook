@@ -758,8 +758,7 @@ export function InterviewsView() {
                 {selectedApp.resumeUrl ? (
                   <a 
                     href={selectedApp.resumeUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
+                    download={`${selectedApp.name.replace(/\s+/g, '_')}_Resume`}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-slate-800 transition-colors"
                   >
                     View / Download Resume
