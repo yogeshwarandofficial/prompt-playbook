@@ -280,14 +280,6 @@ function DomainsSection() {
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-cyan-400/20 rounded-full blur-[120px] mix-blend-multiply opacity-70" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-emerald-300/20 rounded-full blur-[120px] mix-blend-multiply opacity-50" />
       
-      {/* Top right image moved here to allow mix-blend-multiply to work against the section background */}
-      <img 
-        src="/path.jpg" 
-        alt="Learning Path" 
-        className="hidden lg:block absolute right-0 lg:right-[5%] top-24 w-72 lg:w-80 xl:w-96 object-contain mix-blend-multiply opacity-90 pointer-events-none"
-        aria-hidden="true"
-      />
-
       <div className="container-page relative z-10">
         <div className="flex justify-between items-start">
           <SectionHeader
@@ -299,47 +291,39 @@ function DomainsSection() {
           />
         </div>
         <div className="mt-16 relative">
-          {/* The "Real Rope" connecting the cards (only visible on large screens) */}
-          <div className="absolute top-[75px] left-[-20px] right-[-20px] hidden lg:flex items-center pointer-events-none z-0">
-             {/* Left stick and loop */}
-             <div className="relative shrink-0 flex items-center justify-center -mr-2 z-10">
-                <div className="w-5 h-16 bg-gradient-to-b from-[#8b5a2b] via-[#5c3a21] to-[#3e2723] rounded-sm border-2 border-[#2b1810] shadow-[3px_3px_5px_rgba(0,0,0,0.4)] z-20" />
-                <div className="absolute left-2 w-10 h-10 border-[6px] rounded-full z-10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]" style={{ borderColor: '#d4a373 #8b5a2b #5c3a21 #faedcd' }} />
-             </div>
-
-             {/* Rope body */}
-             <div className="flex-1 h-6 shadow-[0_6px_10px_rgba(0,0,0,0.15)] z-0"
-                  style={{
-                    backgroundImage: 'repeating-linear-gradient(-45deg, #d4a373 0px, #d4a373 6px, #8b5a2b 6px, #8b5a2b 10px, #faedcd 10px, #faedcd 14px, #5c3a21 14px, #5c3a21 18px)',
-                    borderTop: '2px solid #2b1810',
-                    borderBottom: '2px solid #2b1810',
-                  }}
-             />
-
-             {/* Right stick and loop */}
-             <div className="relative shrink-0 flex items-center justify-center -ml-2 z-10">
-                <div className="absolute right-2 w-10 h-10 border-[6px] rounded-full z-10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]" style={{ borderColor: '#5c3a21 #faedcd #d4a373 #8b5a2b' }} />
-                <div className="w-5 h-16 bg-gradient-to-b from-[#8b5a2b] via-[#5c3a21] to-[#3e2723] rounded-sm border-2 border-[#2b1810] shadow-[3px_3px_5px_rgba(0,0,0,0.4)] z-20" />
-             </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5 relative z-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 relative z-10">
             {DOMAINS.filter(d => d.key !== 'video').map((domain) => (
               <Link
                 key={domain.key}
                 to="/roadmaps"
-                className="flex flex-col items-center gap-4 rounded-3xl border-2 border-black bg-[#F4F7EB]/70 backdrop-blur-xl p-6 md:p-10 text-center hover:bg-[#F4F7EB]/90 hover:scale-[1.05] hover:shadow-[0_20px_50px_rgba(143,204,30,0.2)] hover:border-black transition-all duration-300 ease-out group relative"
+                className="group relative flex flex-col items-center sm:items-start p-8 rounded-3xl bg-white border border-slate-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)] hover:-translate-y-2 hover:border-slate-300 transition-all duration-300 ease-out overflow-hidden"
               >
+                {/* Background decorative gradient on hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-slate-50 to-transparent pointer-events-none" />
+                
                 <div
-                  className="grid h-20 w-20 place-items-center rounded-2xl shadow-sm transition-transform duration-300 group-hover:-translate-y-2 bg-primary border-2 border-black text-black relative z-10"
+                  className="grid h-16 w-16 place-items-center rounded-[18px] shadow-sm mb-6 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 relative z-10"
+                  style={{ background: DOMAIN_KEY_COLORS[domain.key as DomainKey] || 'rgba(0,0,0,0.05)', color: DOMAIN_TEXT_COLORS[domain.key as DomainKey] || '#000' }}
                   aria-hidden="true"
                 >
-                  <div className="scale-150">{DOMAIN_ICONS[domain.key]}</div>
+                  <div className="scale-[1.2]">{DOMAIN_ICONS[domain.key as DomainKey]}</div>
                 </div>
-                <div className="space-y-2 mt-4 relative z-10">
-                  <p className="text-xl font-black text-black font-orbitron leading-none">100+</p>
-                  <p className="text-2xl font-black text-black font-orbitron tracking-tight">{domain.name}</p>
-                  <p className="text-sm font-bold text-black font-outfit uppercase tracking-widest">{tutorialCounts[domain.key] || 0} tutorials</p>
+                
+                <div className="space-y-2 mt-2 relative z-10 text-center sm:text-left w-full">
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-tight tracking-tight">{domain.name}</h3>
+                  <div className="flex items-center justify-center sm:justify-start gap-2 pt-2">
+                    <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-600 uppercase tracking-widest border border-slate-200/50">
+                      100+ Hours
+                    </span>
+                    <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-600 uppercase tracking-widest border border-slate-200/50">
+                      {tutorialCounts[domain.key] || 0} Tutorials
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Bottom decorative line that fills on hover */}
+                <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-100">
+                  <div className="h-full w-0 bg-blue-500 transition-all duration-500 group-hover:w-full" style={{ backgroundColor: DOMAIN_TEXT_COLORS[domain.key as DomainKey] || '#3b82f6' }} />
                 </div>
               </Link>
             ))}
