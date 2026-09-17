@@ -9,6 +9,9 @@ import { IssueCertificateDto, RevokeCertificateDto } from './dto/certificate.dto
 import { randomUUID } from 'crypto';
 import * as path from 'path';
 import * as QRCode from 'qrcode';
+import { PassThrough } from 'stream';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const PImage = require('pureimage');
 
 // jimp exposes a v1.x API
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -84,12 +87,30 @@ export class CertificatesService {
     };
 
 
-    // Print the name (sitting exactly on the golden line which is at y=564)
-    printColorized(image, font64, 0, 480, {
-      text: sp.student.name,
-      alignmentX: jimp.HorizontalAlign.CENTER,
-      alignmentY: jimp.VerticalAlign.TOP,
-    }, image.bitmap.width, 1);
+    // Render the student name using pureimage to support custom TTF fonts
+    const fontPathPinyon = path.join(process.cwd(), '..', 'public', 'PinyonScript-Regular.ttf');
+    const customFont = PImage.registerFont(fontPathPinyon, 'PinyonScript');
+    customFont.loadSync();
+
+    const nameCanvas = PImage.make(image.bitmap.width, 200);
+    const ctx = nameCanvas.getContext('2d');
+    ctx.fillStyle = 'rgba(12, 31, 56, 1)'; // Navy blue
+    ctx.font = "96pt 'PinyonScript'"; // Larger cursive font size
+    
+    const textWidth = ctx.measureText(sp.student.name).width;
+    const nameX = (image.bitmap.width - textWidth) / 2;
+    // pureimage draws from the baseline
+    ctx.fillText(sp.student.name, nameX, 130);
+
+    const passThrough = new PassThrough();
+    const chunks: Buffer[] = [];
+    passThrough.on('data', chunk => chunks.push(Buffer.from(chunk)));
+    await PImage.encodePNGToStream(nameCanvas, passThrough);
+    const nameBuffer = Buffer.concat(chunks);
+    const nameJimpImage = await jimp.Jimp.read(nameBuffer);
+
+    // Composite the name onto the main image (y=410 so the baseline sits on the golden line)
+    image.composite(nameJimpImage, 0, 410);
 
     const startDate = sp.assignedAt ? new Date(sp.assignedAt).toLocaleDateString() : 'N/A';
     const endDate = sp.completedAt ? new Date(sp.completedAt).toLocaleDateString() : new Date().toLocaleDateString();
@@ -120,7 +141,7 @@ export class CertificatesService {
 
     // Print Certificate Code (only dynamic part, template already has 'Certificate Code : ')
     const certCode = sp.certificate.certificateNo;
-    printColorized(image, font32, 515, 936, certCode, undefined, 0.75);
+    printColorized(image, font32, 505, 936, certCode, undefined, 0.75);
 
     // Generate QR code for verification (using Student ID as requested)
     const frontendUrl = process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://infynuxsolutions.in';
