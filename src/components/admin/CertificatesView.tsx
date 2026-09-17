@@ -80,12 +80,11 @@ function IssueModal({ onClose, onIssued }: IssueModalProps) {
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Select Course (Domain) *</label>
             <select
-              required
               value={courseId}
               onChange={(e) => setCourseId(e.target.value)}
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             >
-              <option value="">-- Select a Course --</option>
+              <option value="">-- Auto-select assigned course --</option>
               {courses.map(c => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
