@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, UseGuards, Delete, Query } from '@nestjs/common';
 import { AssignmentsService } from './assignments.service';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -17,8 +17,13 @@ export class AssignmentsController {
   }
 
   @Get('project-assignments')
-  getAll() {
-    return this.assignmentsService.getAssignments();
+  getAll(@Query('projectId') projectId?: string) {
+    return this.assignmentsService.getAssignments(projectId);
+  }
+
+  @Delete('project-assignments/:id')
+  unassign(@Param('id') id: string) {
+    return this.assignmentsService.unassignProject(id);
   }
 
   @Get('students/:studentId/internship')

@@ -47,6 +47,11 @@ export class ProjectsController {
     return this.projectsService.updateProject(id, dto);
   }
 
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.projectsService.deleteProject(id);
+  }
+
   @Post(':id/phases')
   addPhase(@Param('id') id: string, @Body() dto: CreatePhaseDto) {
     return this.projectsService.addPhase(id, dto);

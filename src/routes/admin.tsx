@@ -1449,6 +1449,25 @@ export function ProjectsView() {
 
   // Assign form
   const [assignStudentId, setAssignStudentId] = useState("");
+  const [projectAssignments, setProjectAssignments] = useState<any[]>([]);
+
+  const fetchProjectAssignments = async (projectId: string) => {
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${API_URL}/api/admin/project-assignments?projectId=${projectId}`, { credentials: 'include' });
+      if (res.ok) {
+        setProjectAssignments(await res.json());
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    if (viewMode === 'assign' && selectedProject) {
+      fetchProjectAssignments(selectedProject.id);
+    }
+  }, [viewMode, selectedProject]);
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -1543,6 +1562,25 @@ export function ProjectsView() {
       setFormError("Network error");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteProject = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this project? This action cannot be undone.")) return;
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${API_URL}/api/admin/projects/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (res.ok) {
+        await fetchProjects();
+      } else {
+        const data = await res.json();
+        alert(data.message || "Failed to delete project");
+      }
+    } catch (err) {
+      alert("Network error");
     }
   };
 
@@ -1661,6 +1699,7 @@ export function ProjectsView() {
         setFormSuccess("Project assigned successfully!");
         setAssignStudentId("");
         await fetchProjects();
+        if (selectedProject) fetchProjectAssignments(selectedProject.id);
       } else {
         const d = await res.json();
         setFormError(d.message || "Failed to assign project");
@@ -1669,6 +1708,26 @@ export function ProjectsView() {
       setFormError("Network error");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleUnassignProject = async (assignmentId: string) => {
+    if (!window.confirm("Are you sure you want to unassign this student from the project?")) return;
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${API_URL}/api/admin/project-assignments/${assignmentId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (res.ok) {
+        await fetchProjects();
+        if (selectedProject) fetchProjectAssignments(selectedProject.id);
+      } else {
+        const d = await res.json();
+        alert(d.message || "Failed to unassign project");
+      }
+    } catch (err) {
+      alert("Network error");
     }
   };
 
@@ -1862,6 +1921,29 @@ export function ProjectsView() {
               </button>
             </div>
           </form>
+
+          {projectAssignments.length > 0 && (
+            <div className="mt-8 pt-6 border-t border-slate-100">
+              <h4 className="text-sm font-semibold text-slate-700 mb-4">Assigned Students ({projectAssignments.length})</h4>
+              <div className="space-y-3">
+                {projectAssignments.map(assignment => (
+                  <div key={assignment.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-200 bg-white shadow-sm">
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">{assignment.student.name}</p>
+                      <p className="text-xs text-slate-500">{assignment.student.studentId} • {assignment.student.email}</p>
+                    </div>
+                    <button
+                      onClick={() => handleUnassignProject(assignment.id)}
+                      className="text-slate-400 hover:text-red-600 p-2"
+                      title="Unassign Student"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -1917,6 +1999,7 @@ export function ProjectsView() {
                       <button onClick={() => { setSelectedProject(p); setTitle(p.title); setDescription(p.description); setCourseId(p.courseId||""); setProjectLink(p.projectLink||""); setStatus(p.status); reloadSelectedProject(p.id).then(()=>setViewMode('edit')); }} className="text-slate-400 hover:text-indigo-600" title="Edit"><Edit className="w-4 h-4"/></button>
                       <button onClick={() => { setSelectedProject(p); reloadSelectedProject(p.id).then(()=>setViewMode('phases')); }} className="text-slate-400 hover:text-indigo-600" title="Manage Phases"><ListChecks className="w-4 h-4"/></button>
                       <button onClick={() => { setSelectedProject(p); setViewMode('assign'); }} className="text-slate-400 hover:text-emerald-600" title="Assign Student"><UserCheck className="w-4 h-4"/></button>
+                      <button onClick={() => handleDeleteProject(p.id)} className="text-slate-400 hover:text-red-600" title="Delete Project"><Trash2 className="w-4 h-4"/></button>
                     </td>
                   </tr>
                 ))}

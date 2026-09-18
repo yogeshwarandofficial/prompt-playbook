@@ -73,6 +73,12 @@ export class ProjectsService {
     });
   }
 
+  async deleteProject(id: string) {
+    const project = await this.prisma.project.findUnique({ where: { id } });
+    if (!project) throw new NotFoundException('Project not found');
+    return this.prisma.project.delete({ where: { id } });
+  }
+
   async addPhase(projectId: string, dto: CreatePhaseDto) {
     const project = await this.prisma.project.findUnique({
       where: { id: projectId },

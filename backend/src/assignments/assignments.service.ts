@@ -70,14 +70,21 @@ export class AssignmentsService {
     });
   }
 
-  async getAssignments() {
+  async getAssignments(projectId?: string) {
     return this.prisma.studentProject.findMany({
+      where: projectId ? { projectId } : undefined,
       include: {
         student: { select: { id: true, name: true, studentId: true, email: true } },
         project: { select: { id: true, title: true, status: true } },
       },
       orderBy: { assignedAt: 'desc' },
     });
+  }
+
+  async unassignProject(assignmentId: string) {
+    const assignment = await this.prisma.studentProject.findUnique({ where: { id: assignmentId } });
+    if (!assignment) throw new NotFoundException('Assignment not found');
+    return this.prisma.studentProject.delete({ where: { id: assignmentId } });
   }
 
   async getStudentInternship(studentId: string) {
