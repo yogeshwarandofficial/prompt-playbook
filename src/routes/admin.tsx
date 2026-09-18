@@ -1596,6 +1596,27 @@ export function ProjectsView() {
     }
   };
 
+  const handleDeletePhase = async (phaseId: string) => {
+    if (!window.confirm("Are you sure you want to delete this phase?")) return;
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${API_URL}/api/admin/projects/${selectedProject.id}/phases/${phaseId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (res.ok) {
+        await reloadSelectedProject(selectedProject.id);
+        if (editingPhaseId === phaseId) {
+          setEditingPhaseId(""); setPhaseTitle(""); setPhaseDesc(""); setPhaseInst(""); setPhaseTopics([]);
+        }
+      } else {
+        alert("Failed to delete phase");
+      }
+    } catch (err) {
+      alert("Network error");
+    }
+  };
+
   const handlePhaseSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
