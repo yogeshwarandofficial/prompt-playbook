@@ -415,29 +415,12 @@ export class CertificatesService {
       orderBy: { createdAt: 'desc' },
     });
 
-    // We consider any course assignment as eligible for testing
-    const completedCourses = studentCourses;
-
-    // Map completed courses to look like certificates for the frontend
-    return completedCourses.map((sc) => {
-      if (sc.certificate) {
-        return {
-          ...sc.certificate,
-          studentCourse: sc,
-        };
-      }
-      
-      // If no certificate record exists yet, mock one for dynamic downloading
-      return {
-        id: sc.id, // Use course id as a fallback
-        studentId: sc.studentId,
-        studentCourseId: sc.id,
-        certificateNo: `PENDING-${sc.id.substring(0,6).toUpperCase()}`,
-        verificationToken: sc.id,
-        status: 'ACTIVE',
-        issuedAt: sc.createdAt || new Date(),
+    // Only return courses that actually have a certificate
+    return studentCourses
+      .filter((sc) => sc.certificate)
+      .map((sc) => ({
+        ...sc.certificate,
         studentCourse: sc,
-      };
-    });
+      }));
   }
 }
