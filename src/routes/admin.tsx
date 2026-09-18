@@ -1496,7 +1496,6 @@ export function ProjectsView() {
 
   const handleCreateSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    e.preventDefault();
     setIsSubmitting(true);
     setFormError("");
     try {
@@ -1523,7 +1522,6 @@ export function ProjectsView() {
 
   const handleEditSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    e.preventDefault();
     setIsSubmitting(true);
     setFormError("");
     try {
