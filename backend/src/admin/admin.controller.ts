@@ -24,6 +24,11 @@ export class AdminController {
     return this.adminService.getStudents();
   }
 
+  @Delete('students/:id')
+  removeStudent(@Param('id') id: string) {
+    return this.adminService.removeStudent(id);
+  }
+
   @Post('courses')
   createCourse(@Body() createCourseDto: CreateCourseDto) {
     return this.adminService.createCourse(createCourseDto);

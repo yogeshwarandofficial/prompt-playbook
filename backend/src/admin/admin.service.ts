@@ -109,6 +109,16 @@ export class AdminService {
     });
   }
 
+  async removeStudent(studentId: string) {
+    const student = await this.prisma.user.findUnique({ where: { id: studentId } });
+    if (!student || student.role !== 'STUDENT') {
+      throw new NotFoundException('Student not found');
+    }
+    
+    // Everything cascades according to schema
+    return this.prisma.user.delete({ where: { id: studentId } });
+  }
+
   async createCourse(dto: CreateCourseDto) {
     const existingCourse = await this.prisma.course.findUnique({
       where: { key: dto.key },

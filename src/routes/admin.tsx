@@ -470,6 +470,25 @@ function StudentsView() {
     fetchCourses();
   }, []);
 
+  const handleDeleteStudent = async (studentId: string) => {
+    if (!window.confirm("Are you ABSOLUTELY sure you want to completely delete this student? This will remove all their courses, projects, certificates, and submissions forever.")) return;
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${API_URL}/api/admin/students/${studentId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (res.ok) {
+        fetchStudents();
+      } else {
+        const data = await res.json();
+        alert(data.message || 'Failed to delete student');
+      }
+    } catch (err) {
+      alert('Network error');
+    }
+  };
+
   const handleCreateStudent = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
@@ -763,6 +782,13 @@ function StudentsView() {
                         className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg font-medium transition-colors ${student.isActive ? 'bg-red-50 text-red-700 hover:bg-red-100' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'}`}
                       >
                         {student.isActive ? 'Revoke Access' : 'Restore Access'}
+                      </button>
+                      <button
+                        onClick={() => handleDeleteStudent(student.id)}
+                        className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg font-medium transition-colors bg-red-100 text-red-700 hover:bg-red-200"
+                        title="Permanently Delete Student"
+                      >
+                        <Trash2 className="h-3 w-3" />
                       </button>
                     </td>
                   </tr>
