@@ -1,8 +1,9 @@
-import { Controller, Post, Body, Headers, HttpCode, HttpStatus, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, BadRequestException, Req } from '@nestjs/common';
 import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
+import type { Request } from 'express';
 
 @Controller('contact')
 export class ContactController {
@@ -12,8 +13,7 @@ export class ContactController {
   @HttpCode(HttpStatus.CREATED)
   async submit(
     @Body() body: CreateContactDto,
-    @Headers('x-forwarded-for') forwardedFor?: string,
-    @Headers('x-real-ip') realIp?: string,
+    @Req() req: Request,
   ) {
     const dto = plainToInstance(CreateContactDto, body);
     const errors = await validate(dto);
@@ -21,7 +21,10 @@ export class ContactController {
       throw new BadRequestException(errors.map(e => Object.values(e.constraints ?? {})).flat());
     }
 
-    const ip = forwardedFor?.split(',')[0]?.trim() || realIp || 'unknown';
+    // M-2: Use req.ip which respects the Express 'trust proxy' setting configured in main.ts.
+    // This returns the real client IP when behind Render's proxy, without being
+    // spoofable by a client sending a fake X-Forwarded-For header.
+    const ip = req.ip || req.socket.remoteAddress || 'unknown';
 
     const result = await this.contactService.submit(dto, ip);
 

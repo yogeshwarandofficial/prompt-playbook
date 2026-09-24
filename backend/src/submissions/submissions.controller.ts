@@ -1,10 +1,11 @@
-import { Controller, Post, Get, Body, Param, UseGuards, Req, Query } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, UseGuards, Req, Query, BadRequestException } from '@nestjs/common';
 import { SubmissionsService } from './submissions.service';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { SubmissionStatus } from '@prisma/client';
 
 @Controller()
 @UseGuards(JwtAuthGuard)
@@ -48,6 +49,10 @@ export class SubmissionsController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN', 'MENTOR')
   getAdminSubmissions(@Query('status') status?: string) {
+    // M-3: Guard against invalid status values to prevent Prisma internal error exposure
+    if (status && !Object.values(SubmissionStatus).includes(status as SubmissionStatus)) {
+      throw new BadRequestException(`Invalid status. Allowed: ${Object.values(SubmissionStatus).join(', ')}`);
+    }
     return this.submissionsService.getAdminSubmissions(status);
   }
 

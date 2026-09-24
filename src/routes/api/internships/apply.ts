@@ -49,7 +49,10 @@ export const Route = createFileRoute("/api/internships/apply")({
           
           const backendRes = await fetch(`${API_URL}/api/applications`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              'x-forwarded-for': ip,
+            },
             body: JSON.stringify({
               name: fullName,
               email: email.toLowerCase(),

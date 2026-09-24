@@ -4,6 +4,7 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { AssignCourseDto } from './dto/assign-course.dto';
 import { UpdateAccessDto } from './dto/update-access.dto';
+import { NotifyInterviewDto } from './dto/notify-interview.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -71,7 +72,7 @@ export class AdminController {
   }
 
   @Post('interviews/notify')
-  notifyInterview(@Body() body: any) {
+  notifyInterview(@Body() body: NotifyInterviewDto) {
     return this.adminService.notifyInterview(body);
   }
 

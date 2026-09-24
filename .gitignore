@@ -37,3 +37,10 @@ dist-ssr
 .env.local
 .env.*
 !.env.example
+
+# Security: block one-off migration / DB scripts that may contain credentials
+backend/migrate_*.js
+backend/fix_*.js
+backend/verify_*.js
+backend/test_connections.js
+backend/seed_*.js

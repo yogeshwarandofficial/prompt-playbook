@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Param, Patch, UseGuards, Query, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, UseGuards, Query, Req, BadRequestException } from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { ReviewApplicationDto } from './dto/review-application.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { ApplicationStatus } from '@prisma/client';
 
 @Controller('applications')
 export class ApplicationsController {
@@ -21,6 +22,10 @@ export class ApplicationsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   findAll(@Query('status') status?: string) {
+    // M-3: Validate status against the enum before hitting Prisma — prevents internal error leaks
+    if (status && !Object.values(ApplicationStatus).includes(status as ApplicationStatus)) {
+      throw new BadRequestException(`Invalid status. Allowed: ${Object.values(ApplicationStatus).join(', ')}`);
+    }
     return this.applicationsService.findAll(status);
   }
 

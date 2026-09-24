@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { ReviewApplicationDto } from './dto/review-application.dto';
 import * as bcrypt from 'bcrypt';
+import { randomBytes, randomInt } from 'crypto';
 
 import { Resend } from 'resend';
 
@@ -165,11 +166,12 @@ export class ApplicationsService {
           throw new ConflictException('User with this email already exists');
         }
 
-        // Generate student ID (simple format for demo)
-        const studentId = `INFY-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+        // Generate student ID using cryptographically secure randomInt (L-4)
+        const studentId = `INFY-${new Date().getFullYear()}-${randomInt(1000, 9999)}`;
+        // Generate a cryptographically random temp password (never hardcoded)
+        const tempPassword = randomBytes(12).toString('base64url');
         const salt = await bcrypt.genSalt(10);
-        // Default password for new students
-        const passwordHash = await bcrypt.hash('password123', salt);
+        const passwordHash = await bcrypt.hash(tempPassword, salt);
 
         const newUser = await tx.user.create({
           data: {
@@ -262,19 +264,24 @@ export class ApplicationsService {
         throw new ConflictException('User with this email already exists');
       }
 
-      // 2. Generate Student ID
+      // 2. Generate Student ID with collision check and retry guard (L-4)
+      const MAX_RETRIES = 50;
       const year = new Date().getFullYear();
+      let attempts = 0;
       let studentId = '';
       let isUnique = false;
       while (!isUnique) {
-        const randomDigits = Math.floor(1000 + Math.random() * 9000);
+        if (attempts++ >= MAX_RETRIES) {
+          throw new BadRequestException('Could not generate a unique student ID. Please try again.');
+        }
+        const randomDigits = randomInt(1000, 9999);  // crypto.randomInt — not Math.random
         studentId = `INFY-${year}-${randomDigits}`;
         const existingId = await tx.user.findUnique({ where: { studentId } });
         if (!existingId) isUnique = true;
       }
 
-      // 3. Generate Temporary Password
-      const tempPassword = Math.random().toString(36).slice(-8);
+      // 3. Generate Temporary Password — cryptographically secure (L-4)
+      const tempPassword = randomBytes(12).toString('base64url');
       const salt = await bcrypt.genSalt(10);
       const passwordHash = await bcrypt.hash(tempPassword, salt);
 
@@ -322,16 +329,47 @@ export class ApplicationsService {
         data: { createdUserId: newUser.id }
       });
 
-      // Return credentials (password returned ONLY ONCE here)
+      // M-6: Do NOT return tempPassword in the API response — send credentials
+      // directly to the student's email so the password never appears in a JSON body.
       return {
         id: newUser.id,
         studentId,
         name: newUser.name,
         email: newUser.email,
-        tempPassword,
         domainId: newUser.domainId,
-        specializationId: newUser.specializationId
+        specializationId: newUser.specializationId,
+        // tempPassword intentionally omitted from response
+        _tempPasswordForEmail: tempPassword,  // only used below, not in return
       };
+    }).then(async (result) => {
+      // Send credentials email to student after the transaction commits
+      const { _tempPasswordForEmail, ...safeResult } = result;
+      const apiKey = process.env.RESEND_API_KEY;
+      if (apiKey) {
+        const { Resend } = await import('resend');
+        const resend = new Resend(apiKey);
+        const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+        await resend.emails.send({
+          from: `Infynux Academy <${fromEmail}>`,
+          to: result.email,
+          subject: 'Welcome to Infynux Academy — Your Login Credentials',
+          html: `
+            <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;border:1px solid #eaeaea;border-radius:12px">
+              <h2 style="color:#800000">Welcome, ${result.name}!</h2>
+              <p>Your Infynux Academy student account has been created. Here are your login credentials:</p>
+              <div style="background:#f9fafb;padding:16px;border-radius:8px;margin:20px 0;font-size:14px">
+                <p><strong>Student ID:</strong> ${result.studentId}</p>
+                <p><strong>Password:</strong> ${_tempPasswordForEmail}</p>
+              </div>
+              <p style="color:#6b7280;font-size:13px">Please change your password after your first login.</p>
+              <p>— The Infynux Academy Team</p>
+            </div>
+          `,
+        }).catch((err: Error) => console.error('[createStudentAccount] Failed to send credentials email:', err.message));
+      } else {
+        console.warn('[createStudentAccount] RESEND_API_KEY not set — student credentials email skipped.');
+      }
+      return { ...safeResult, message: 'Student account created. Credentials sent to student email.' };
     });
   }
 }

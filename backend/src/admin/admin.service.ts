@@ -10,6 +10,19 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { CreateCourseDto } from './dto/create-course.dto';
+import { NotifyInterviewDto } from './dto/notify-interview.dto';
+
+/** Escapes user-supplied strings before embedding in HTML email bodies. */
+function escapeHtml(str: string | null | undefined): string {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/`/g, '&#x60;');
+}
 
 @Injectable()
 export class AdminService {
@@ -88,7 +101,8 @@ export class AdminService {
   async getStudents() {
     const students = await this.prisma.user.findMany({
       where: {
-        role: 'STUDENT'
+        role: 'STUDENT',
+        isActive: true,   // L-7: exclude soft-deleted students
       },
       include: {
         courses: {
@@ -114,9 +128,15 @@ export class AdminService {
     if (!student || student.role !== 'STUDENT') {
       throw new NotFoundException('Student not found');
     }
-    
-    // Everything cascades according to schema
-    return this.prisma.user.delete({ where: { id: studentId } });
+
+    // L-7: Soft-delete — deactivate instead of hard-delete so all historical
+    // data (submissions, reviews, certificates) is preserved for audit purposes.
+    // isActive=false also immediately blocks their login via AuthService.
+    return this.prisma.user.update({
+      where: { id: studentId },
+      data: { isActive: false },
+      select: { id: true, studentId: true, name: true, email: true, isActive: true },
+    });
   }
 
   async createCourse(dto: CreateCourseDto) {
@@ -213,11 +233,12 @@ export class AdminService {
     });
   }
 
-  async notifyInterview(body: any) {
-    const { applicantName, applicantEmail, scheduledAt, meetingLink, interviewId } = body ?? {};
-    if (!applicantEmail || !applicantName || !scheduledAt) {
-      throw new BadRequestException('Missing required fields: applicantEmail, applicantName, scheduledAt');
-    }
+  async notifyInterview(body: NotifyInterviewDto) {
+    const { applicantName, applicantEmail, scheduledAt, meetingLink, interviewId } = body;
+
+    // Escape all user-supplied values before HTML interpolation
+    const safeName  = escapeHtml(applicantName);
+    const safeEmail = escapeHtml(applicantEmail);
 
     const interviewDate = new Date(scheduledAt);
     const dateStr = interviewDate.toLocaleDateString('en-IN', {
@@ -233,6 +254,9 @@ export class AdminService {
       hour12: true,
     });
 
+    // meetingLink is validated as https/http URL by DTO — safe to use in href
+    // Display text is still escaped for defence in depth
+    const safeLinkDisplay = escapeHtml(meetingLink);
     const meetingSection = meetingLink
       ? `<div style="text-align:center;margin:28px 0;">
           <a href="${meetingLink}" target="_blank" rel="noopener noreferrer"
@@ -240,7 +264,7 @@ export class AdminService {
                     text-decoration:none;padding:14px 36px;border-radius:8px;letter-spacing:0.5px;">
             JOIN INTERVIEW
           </a>
-          <p style="margin:10px 0 0;font-size:12px;color:#6b7280;word-break:break-all;">${meetingLink}</p>
+          <p style="margin:10px 0 0;font-size:12px;color:#6b7280;word-break:break-all;">${safeLinkDisplay}</p>
         </div>`
       : `<p style="color:#6b7280;font-style:italic;">No meeting link has been provided yet. Please contact the Academy team.</p>`;
 
@@ -260,7 +284,7 @@ export class AdminService {
         </tr>
         <tr>
           <td style="padding:36px 40px 28px;">
-            <p style="margin:0 0 16px;font-size:16px;color:#374151;">Hello <strong>${applicantName}</strong>,</p>
+            <p style="margin:0 0 16px;font-size:16px;color:#374151;">Hello <strong>${safeName}</strong>,</p>
             <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;">
               Congratulations! Your internship application has been shortlisted and your interview has been scheduled.
               We look forward to speaking with you.
@@ -305,7 +329,7 @@ export class AdminService {
             <p style="margin:0;font-size:14px;font-weight:700;color:#374151;">Regards,</p>
             <p style="margin:4px 0 0;font-size:14px;color:#6d28d9;font-weight:700;">Infynux Academy</p>
             <p style="margin:16px 0 0;font-size:11px;color:#9ca3af;">
-              This email was sent to ${applicantEmail} because you applied for an internship at Infynux Academy.
+              This email was sent to ${safeEmail} because you applied for an internship at Infynux Academy.
             </p>
           </td>
         </tr>

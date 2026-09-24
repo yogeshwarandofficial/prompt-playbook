@@ -8,10 +8,12 @@ import {
   Res,
   HttpCode,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import type { Response, Request } from 'express';
 import {
   ApiTags,
@@ -23,23 +25,41 @@ import {
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(private authService: AuthService) {}
 
+  /**
+   * M-1: Login is rate-limited to 5 attempts per 15 minutes per IP.
+   * ThrottlerGuard uses the real IP from the configured trust-proxy setting.
+   */
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 15 * 60 * 1000 } })
   @ApiOperation({ summary: 'Login and establish session' })
   @ApiResponse({ status: 200, description: 'Successfully logged in.' })
   @ApiResponse({ status: 401, description: 'Invalid credentials.' })
+  @ApiResponse({ status: 429, description: 'Too many login attempts.' })
   async login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     const { user, access_token } = await this.authService.login(loginDto);
 
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // M-8: Log a startup warning in non-production so developers are aware
+    if (!isProduction) {
+      this.logger.warn(
+        'Cookie "secure" flag is OFF — dev mode only. Never run with NODE_ENV != production in a shared/public network.',
+      );
+    }
+
     res.cookie('Authentication', access_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
@@ -52,10 +72,11 @@ export class AuthController {
   @ApiOperation({ summary: 'Logout and clear session' })
   @ApiResponse({ status: 200, description: 'Successfully logged out.' })
   async logout(@Res({ passthrough: true }) res: Response) {
+    const isProduction = process.env.NODE_ENV === 'production';
     res.cookie('Authentication', '', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       path: '/',
       expires: new Date(0),
     });

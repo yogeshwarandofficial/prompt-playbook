@@ -16,6 +16,9 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const { user } = context.switchToHttp().getRequest();
+    // M-5: Guard against cases where JwtAuthGuard was not applied —
+    // accessing user.role on undefined would throw a 500; return false instead.
+    if (!user) return false;
     return requiredRoles.includes(user.role);
   }
 }

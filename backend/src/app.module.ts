@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
@@ -26,6 +27,16 @@ import { NewsletterModule } from './newsletter/newsletter.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+
+    // M-1: Global rate-limiter — provides ThrottlerGuard for use on individual routes
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 60_000,  // 1 minute window
+        limit: 10,    // 10 requests per minute (default for all routes)
+      },
+    ]),
+
     PrismaModule,
     AuthModule,
     HealthModule,
