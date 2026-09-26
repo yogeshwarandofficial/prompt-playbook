@@ -30,24 +30,17 @@ import {
   DOMAIN_NAME_MAP,
   type DomainKey,
 } from "@/data/content";
+import { createSeoHead, getFaqSchema } from "@/lib/seo";
+import { JsonLd } from "@/components/site/JsonLd";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Infynux Academy — Learn, Build, Get Hired" },
-      {
-        name: "description",
-        content:
-          "Free structured learning roadmaps, practical tutorials, and real remote internships in Web Dev, Cloud AWS, App Dev, AI & Automation, and Digital Marketing.",
-      },
-      { property: "og:title", content: "Infynux Academy — Learn, Build, Get Hired" },
-      {
-        property: "og:description",
-        content:
-          "Bridge the gap between learning and hiring with Infynux Academy's free structured roadmaps, tutorials, and internships.",
-      },
-    ],
-  }),
+  head: () =>
+    createSeoHead({
+      title: "Infynux Academy | Free Tech Roadmaps, Tutorials & Internships",
+      description:
+        "Master in-demand tech skills with free structured roadmaps, hands-on coding tutorials, and verifiable remote internships for college students and freshers in India.",
+      path: "/",
+    }),
   component: HomePage,
 });
 
@@ -83,6 +76,7 @@ export function DomainBadge({ domain }: { domain: DomainKey }) {
 function HomePage() {
   return (
     <div className="space-y-0">
+      <JsonLd schema={getFaqSchema(FAQS)} />
       <HeroSection />
       <FeaturesSection />
       <DomainsSection />
@@ -116,6 +110,9 @@ function HeroSection() {
             LEARN.<br />
             <span className="bg-[length:200%_auto] animate-text-shine bg-gradient-to-r from-emerald-500 via-primary to-emerald-500 bg-clip-text text-transparent">BUILD.</span><br />
             GET HIRED.
+            <span className="block text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800 mt-4 font-outfit tracking-normal">
+              Free Tech Roadmaps, Tutorials & Remote Internships
+            </span>
           </h1>
           <p className="text-lg leading-relaxed text-black font-outfit">
             Free structured roadmaps, hands-on tutorials, and real remote internships. Bridge the gap between university and industrial excellence.
@@ -164,8 +161,11 @@ function HeroSection() {
             {/* The model image using true transparent PNG */}
             <img 
               src="/female-professional-laptop.png" 
-              alt="Professional Model" 
+              alt="Infynux Academy student learning on laptop" 
               className="w-full h-auto object-contain relative z-10"
+              width="550"
+              height="550"
+              loading="eager"
             />
             
             {/* Subtle decorative elements matching theme */}
@@ -283,9 +283,12 @@ function DomainsSection() {
       {/* Top right image moved here to allow mix-blend-multiply to work against the section background */}
       <img 
         src="/path.jpg" 
-        alt="Learning Path" 
+        alt="Infynux Academy structured technical learning path" 
         className="hidden lg:block absolute right-0 lg:right-[5%] top-24 w-72 lg:w-80 xl:w-96 object-contain mix-blend-multiply opacity-90 pointer-events-none"
         aria-hidden="true"
+        width="384"
+        height="384"
+        loading="lazy"
       />
 
       <div className="container-page relative z-10">
@@ -451,8 +454,8 @@ function FeaturedRoadmapsSection() {
               </div>
               
               <div className="p-8 pt-8 mt-auto">
-                <Link to="/roadmaps" className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 transition-colors tracking-widest uppercase group-hover:text-blue-700">
-                  View Roadmap <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <Link to="/learn/$slug" params={{ slug: r.slug }} className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 transition-colors tracking-widest uppercase group-hover:text-blue-700">
+                  Explore {r.title} Roadmap <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>
@@ -463,7 +466,7 @@ function FeaturedRoadmapsSection() {
               to="/roadmaps"
               className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-8 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition-all tracking-wide"
             >
-            View All Roadmaps <ArrowRight className="h-4 w-4" />
+            Browse All Tech Roadmaps <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </div>
@@ -478,9 +481,12 @@ function FeaturedTutorialsSection() {
       {/* Decorative image blending from top right edge of screen */}
       <img 
         src="/code_ui.png" 
-        alt="" 
+        alt="Interactive coding tutorial sandbox code preview" 
         className="absolute top-0 right-0 w-72 md:w-[450px] lg:w-[600px] object-contain hidden md:block opacity-40 mix-blend-screen grayscale contrast-125 pointer-events-none [mask-image:radial-gradient(ellipse_at_top_right,black_40%,transparent_80%)] z-0"
         aria-hidden="true" 
+        width="600"
+        height="400"
+        loading="lazy"
       />
 
       <div className="container-page relative z-10">
@@ -537,7 +543,7 @@ function FeaturedTutorialsSection() {
             to="/tutorials"
             className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-8 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition-all tracking-wide"
           >
-            Browse All Tutorials <ArrowRight className="h-4 w-4" />
+            Browse All Coding Tutorials <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </div>
@@ -576,7 +582,7 @@ function InternshipHighlightsSection() {
                 to="/internships"
                 className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-bold text-black shadow-[0_4px_15px_rgba(156,255,59,0.3)] transition-all hover:bg-lime-400 hover:scale-[1.02] font-orbitron"
               >
-                Apply for Internship <ArrowRight className="h-4 w-4" />
+                Apply for Remote Tech Internship <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
             <div className="grid gap-6">
@@ -617,7 +623,14 @@ function BenefitsSection() {
       <div className="container-page">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="text-left space-y-4 relative">
-            <img src="/zerocost.png" alt="0% Cost" className="w-40 h-auto md:w-56 mb-6 object-contain mix-blend-multiply contrast-125 brightness-110" />
+            <img 
+              src="/zerocost.png" 
+              alt="100% Free Tuition at Infynux Academy" 
+              className="w-40 h-auto md:w-56 mb-6 object-contain mix-blend-multiply contrast-125 brightness-110" 
+              width="224"
+              height="100"
+              loading="lazy"
+            />
             <span className="block text-sm font-semibold uppercase tracking-widest text-primary font-display">Academy Merits</span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight font-orbitron" id="benefits-heading">
               Everything you need,<br />zero costs.
@@ -700,8 +713,11 @@ function FAQSection() {
             <div className="hidden lg:block relative w-full aspect-square rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 p-8">
               <img 
                 src="/man_asking_question.png" 
-                alt="Man asking a question"
+                alt="Frequently asked questions about Infynux Academy tech roadmaps and remote internships"
                 className="w-full h-full object-contain mix-blend-multiply opacity-80"
+                width="400"
+                height="400"
+                loading="lazy"
               />
             </div>
           </div>
@@ -772,7 +788,14 @@ function NewsletterSection() {
       <div className="container-page max-w-4xl relative">
         {/* The peering man image positioned behind the card */}
         <div className="flex justify-center -mb-[180px] md:-mb-[220px] relative z-0">
-          <img src="/peering_man_transparent.png" alt="Man holding card" className="w-[450px] md:w-[650px] object-contain drop-shadow-xl pointer-events-none opacity-90" />
+          <img 
+            src="/peering_man_transparent.png" 
+            alt="Subscribe to Infynux Academy tech roadmaps and remote internship newsletter" 
+            className="w-[450px] md:w-[650px] object-contain drop-shadow-xl pointer-events-none opacity-90" 
+            width="650"
+            height="320"
+            loading="lazy"
+          />
         </div>
         
         <div className="text-center rounded-[40px] border-4 border-[#222] bg-[#0A0A0A] p-12 md:p-20 shadow-[0_30px_80px_rgba(0,0,0,0.15)] relative overflow-hidden z-10 mt-10">

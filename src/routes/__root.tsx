@@ -13,23 +13,51 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Navbar } from "../components/site/Navbar";
 import { Footer } from "../components/site/Footer";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, BookOpen, Code2, Briefcase, Mail } from "lucide-react";
+import { getOrganizationSchema, getWebSiteSchema, SITE_URL, DEFAULT_OG_IMAGE } from "../lib/seo";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-[70vh] items-center justify-center px-4">
-      <div className="max-w-md text-center">
-        <h1 className="font-display text-7xl font-bold text-[#800000]">404</h1>
-        <h2 className="mt-4 font-display text-2xl font-semibold text-slate-800">Page not found</h2>
-        <p className="mt-2 text-sm text-slate-500 font-outfit">
-          The page you're looking for doesn't exist or has been moved.
+    <div className="flex min-h-[75vh] items-center justify-center px-4 py-16">
+      <div className="max-w-lg text-center">
+        <span className="font-orbitron text-xs font-bold uppercase tracking-widest text-[#800000]">Error 404</span>
+        <h1 className="mt-2 font-display text-7xl font-black text-slate-900 font-orbitron">404</h1>
+        <h2 className="mt-4 font-display text-2xl font-bold text-slate-800">Page not found</h2>
+        <p className="mt-2 text-sm text-slate-600 font-outfit max-w-sm mx-auto leading-relaxed">
+          The requested page doesn't exist, has been moved, or the link may be outdated. Explore our core learning sections below:
         </p>
-        <Link
-          to="/"
-          className="mt-6 inline-flex items-center justify-center rounded-xl bg-[#800000] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_15px_rgba(128,0,0,0.25)] hover:bg-[#6B0000] hover:shadow-[0_4px_20px_rgba(128,0,0,0.35)] transition-all"
-        >
-          Back to home
-        </Link>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center rounded-xl bg-[#800000] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_15px_rgba(128,0,0,0.25)] hover:bg-[#6B0000] transition-all"
+          >
+            Home
+          </Link>
+          <Link
+            to="/roadmaps"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
+          >
+            <BookOpen className="h-4 w-4" /> Roadmaps
+          </Link>
+          <Link
+            to="/tutorials"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
+          >
+            <Code2 className="h-4 w-4" /> Tutorials
+          </Link>
+          <Link
+            to="/internships"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
+          >
+            <Briefcase className="h-4 w-4" /> Internships
+          </Link>
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
+          >
+            <Mail className="h-4 w-4" /> Contact
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -81,18 +109,42 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Infynux Academy — Learn, Build, Get Hired" },
-      { name: "description", content: "Free learning roadmaps, tutorials, and remote internships in Web Dev, Cloud, App Dev, AI, and Digital Marketing." },
+      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=5" },
+      { name: "google-site-verification", content: "Ma6YRQTl3lraifErr73MP_T7VPQpllsXy9FGWbEc8Gs" },
+      { title: "Infynux Academy | Free Tech Roadmaps, Tutorials & Internships" },
+      {
+        name: "description",
+        content:
+          "Free structured learning roadmaps, practical coding tutorials, and verifiable remote internships in Web Dev, Cloud AWS, App Dev, AI & Automation, and Digital Marketing for students and freshers in India.",
+      },
       { name: "author", content: "Infynux Academy" },
-      { property: "og:title", content: "Infynux Academy — Learn, Build, Get Hired" },
-      { property: "og:description", content: "Free learning roadmaps, tutorials, and remote internships for students and freshers in India." },
-      { property: "og:type", content: "website" },
+      { name: "theme-color", content: "#0A0A0A" },
+      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
       { property: "og:site_name", content: "Infynux Academy" },
+      { property: "og:type", content: "website" },
+      { property: "og:title", content: "Infynux Academy | Free Tech Roadmaps, Tutorials & Internships" },
+      {
+        property: "og:description",
+        content:
+          "Master in-demand tech skills with free structured roadmaps, hands-on tutorials, and verified remote internships for students and freshers.",
+      },
+      { property: "og:url", content: "https://www.infynuxacademy.in/" },
+      { property: "og:image", content: DEFAULT_OG_IMAGE },
+      { property: "og:image:alt", content: "Infynux Academy — Free Tech Roadmaps, Tutorials & Internships" },
+      { property: "og:locale", content: "en_IN" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@infynux" },
+      { name: "twitter:creator", content: "@infynux" },
+      { name: "twitter:title", content: "Infynux Academy | Free Tech Roadmaps, Tutorials & Internships" },
+      {
+        name: "twitter:description",
+        content:
+          "Free tech learning roadmaps, coding tutorials, and verifiable remote internships for college students and freshers in India.",
+      },
+      { name: "twitter:image", content: DEFAULT_OG_IMAGE },
     ],
     links: [
+      { rel: "canonical", href: "https://www.infynuxacademy.in/" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
@@ -110,11 +162,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const orgSchema = getOrganizationSchema();
+  const websiteSchema = getWebSiteSchema();
+
   return (
     <html lang="en">
       <head>
+        <meta name="google-site-verification" content="Ma6YRQTl3lraifErr73MP_T7VPQpllsXy9FGWbEc8Gs" />
         <HeadContent />
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
       </head>
       <body>
         <a

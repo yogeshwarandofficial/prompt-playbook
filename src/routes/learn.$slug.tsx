@@ -15,6 +15,7 @@ import {
   Users,
   BarChart3,
   Sparkles,
+  HelpCircle,
 } from "lucide-react";
 import {
   DOMAINS,
@@ -23,9 +24,12 @@ import {
   type Roadmap,
   type RoadmapModule,
   ROADMAPS,
+  TUTORIALS,
 } from "@/data/content";
 import { PageHeader } from "./roadmaps";
 import { cn } from "@/lib/utils";
+import { createSeoHead, getCourseSchema, getBreadcrumbSchema, getFaqSchema } from "@/lib/seo";
+import { JsonLd } from "@/components/site/JsonLd";
 
 export const Route = createFileRoute("/learn/$slug")({
   loader: async ({ params }): Promise<{ roadmap: Roadmap }> => {
@@ -38,14 +42,12 @@ export const Route = createFileRoute("/learn/$slug")({
   head: ({ loaderData }) => {
     const r = loaderData?.roadmap;
     if (!r) return {};
-    return {
-      meta: [
-        { title: `Learn ${r.title} — Infynux Academy` },
-        { name: "description", content: r.description },
-        { property: "og:title", content: `Learn ${r.title} — Infynux Academy` },
-        { property: "og:description", content: r.description },
-      ],
-    };
+    return createSeoHead({
+      title: `${r.title} Roadmap | Infynux Academy`,
+      description: `Follow the structured ${r.title} learning roadmap covering ${r.prerequisites?.slice(0, 2).join(", ") || "core fundamentals"}, learning modules, real-world projects, and career paths in India.`,
+      path: `/learn/${r.slug}`,
+      image: `/ui_${r.domain}.png`,
+    });
   },
   component: LearnPage,
   notFoundComponent: () => (
@@ -217,9 +219,37 @@ function LearnPage() {
   );
   const totalTopics = roadmap.modules.reduce((acc, m) => acc + m.topics.length, 0);
 
+  const courseSchema = getCourseSchema(roadmap);
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Roadmaps", path: "/roadmaps" },
+    { name: `${roadmap.title} Roadmap`, path: `/learn/${roadmap.slug}` },
+  ]);
+  const relatedTutorials = TUTORIALS.filter((t) => t.domain === roadmap.domain);
+
+  const roadmapFaqs = [
+    {
+      question: `Is the ${roadmap.title} roadmap free to follow?`,
+      answer: `Yes, the complete ${roadmap.title} roadmap, all recommended modules, and resources at Infynux Academy are 100% free with no paywalls or locked content.`,
+    },
+    {
+      question: `How long does it take to complete the ${roadmap.title} path?`,
+      answer: `Most students and freshers complete this path in approximately ${roadmap.duration} by studying 8–10 hours per week and building the capstone projects.`,
+    },
+    {
+      question: `Can I apply for an internship after completing this roadmap?`,
+      answer: `Yes! Infynux Academy offers verified remote tech internships in ${DOMAIN_NAME_MAP[roadmap.domain]}. Completing this roadmap gives you the ideal foundation to contribute to live production applications.`,
+    },
+    {
+      question: `What prerequisites are needed before starting?`,
+      answer: `Prerequisites include: ${roadmap.prerequisites.join(", ")}. Dedication to consistent building is the primary requirement.`,
+    },
+  ];
+  const faqSchema = getFaqSchema(roadmapFaqs);
+
   return (
     <div className="min-h-screen bg-black text-slate-300 selection:bg-blue-500/30 selection:text-white pb-24 font-sans">
-      
+      <JsonLd schema={[courseSchema, breadcrumbSchema, faqSchema]} />
       {/* Hero Header Section */}
       <div className="pt-24 pb-16 px-6 sm:px-12 max-w-5xl mx-auto border-b border-white/10">
         <div className="flex items-center gap-3 mb-6">
@@ -258,24 +288,24 @@ function LearnPage() {
           <div className="min-w-0 space-y-10">
 
             {/* Overview */}
-            <section className="rounded-[1.5rem] border border-white/10 bg-[#0a0a0a] p-6 sm:p-8 relative overflow-hidden group hover:border-white/20 transition-colors">
+            <section id="overview" className="rounded-[1.5rem] border border-white/10 bg-[#0a0a0a] p-6 sm:p-8 relative overflow-hidden group hover:border-white/20 transition-colors">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
                 <SectionHeading icon={<Sparkles className="h-5 w-5" />} badge="#1 in demand">
                   Course Overview
                 </SectionHeading>
                 
-                <h3 className="text-xl font-bold text-white mb-6">
-                  Add <span className="text-blue-400">Intelligence</span> to Everything You Build.
-                </h3>
+                <h2 className="text-xl font-bold text-white mb-6">
+                  Add <span className="text-blue-400">Industry Depth</span> to Everything You Build.
+                </h2>
                 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="rounded-xl border border-white/5 bg-white/5 p-5">
-                    <h4 className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">Who This Is For</h4>
+                    <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">Who This Is For</h3>
                     <p className="text-sm leading-relaxed text-slate-300">{roadmap.audience}</p>
                   </div>
                   <div className="rounded-xl border border-white/5 bg-white/5 p-5">
-                    <h4 className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">Prerequisites</h4>
+                    <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">Prerequisites</h3>
                     <ul className="space-y-2">
                       {roadmap.prerequisites.map((p, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
@@ -351,7 +381,7 @@ function LearnPage() {
 
             {/* Career Outcomes */}
             <section id="careers" className="rounded-[1.5rem] border border-white/10 bg-[#0a0a0a] p-6 sm:p-8 hover:border-white/20 transition-colors">
-              <SectionHeading icon={<BriefcaseIcon className="h-5 w-5" />}>Career Outcomes</SectionHeading>
+              <SectionHeading icon={<BriefcaseIcon className="h-5 w-5" />}>Career Outcomes in India</SectionHeading>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {roadmap.careers.map((career) => (
                   <div
@@ -372,19 +402,71 @@ function LearnPage() {
               </div>
             </section>
 
+            {/* Topic Cluster: Related Tutorials */}
+            {relatedTutorials.length > 0 && (
+              <section id="tutorials" className="rounded-[1.5rem] border border-white/10 bg-[#0a0a0a] p-6 sm:p-8 hover:border-white/20 transition-colors">
+                <SectionHeading icon={<BookOpen className="h-5 w-5" />}>
+                  Recommended Tutorials for this Roadmap
+                </SectionHeading>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {relatedTutorials.map((tut) => (
+                    <Link
+                      key={tut.slug}
+                      to="/tutorials/$slug"
+                      params={{ slug: tut.slug }}
+                      className="group flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-6 hover:border-blue-500/50 hover:bg-white/10 transition-all"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">{tut.difficulty}</span>
+                          <span className="text-xs text-slate-500 font-mono">{tut.readMinutes} min read</span>
+                        </div>
+                        <h3 className="font-bold text-base text-white group-hover:text-blue-400 transition-colors mb-2">
+                          {tut.title}
+                        </h3>
+                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                          {tut.description}
+                        </p>
+                      </div>
+                      <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 group-hover:underline">
+                        Read Guide <ArrowRight className="h-3.5 w-3.5" />
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Roadmap FAQ */}
+            <section id="faq" className="rounded-[1.5rem] border border-white/10 bg-[#0a0a0a] p-6 sm:p-8 hover:border-white/20 transition-colors">
+              <SectionHeading icon={<HelpCircle className="h-5 w-5" />}>
+                Frequently Asked Questions
+              </SectionHeading>
+              <div className="space-y-4">
+                {roadmapFaqs.map((faq, i) => (
+                  <div key={i} className="rounded-xl border border-white/5 bg-white/5 p-5">
+                    <h3 className="font-bold text-base text-white mb-2">{faq.question}</h3>
+                    <p className="text-sm text-slate-400 leading-relaxed">{faq.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
           </div>
 
           {/* ── Right: Sticky Sidebar ──────────────────────────────────────── */}
           <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
 
             {/* Quick Enrol Card */}
-            <div className="rounded-[1.5rem] p-6 sm:p-8 border border-white/10 bg-gradient-to-b from-[#111] to-[#0a0a0a] relative overflow-hidden"
-            >
+            <div className="rounded-[1.5rem] p-6 sm:p-8 border border-white/10 bg-gradient-to-b from-[#111] to-[#0a0a0a] relative overflow-hidden">
               <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500" />
               
               <div className="mb-6">
                 <span className="inline-block rounded-full bg-white/5 border border-white/10 text-white px-3 py-1 text-xs font-semibold uppercase tracking-widest mb-4">Start Building</span>
-                <h3 className="text-2xl font-bold text-white leading-tight">Outcome based development</h3>
+                <h3 className="text-2xl font-bold text-white leading-tight">Apply for Remote Internship</h3>
+                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                  Put this roadmap into production. Join our remote internship program in {DOMAIN_NAME_MAP[roadmap.domain]}.
+                </p>
               </div>
               
               <dl className="space-y-4 text-sm pt-4 border-t border-white/10 mb-8">
@@ -392,6 +474,7 @@ function LearnPage() {
                   { label: "Modules",    val: totalTopics },
                   { label: "Lessons",    val: totalLessons },
                   { label: "Duration",   val: roadmap.duration },
+                  { label: "Cost",       val: "100% Free" },
                 ].map(({ label, val }) => (
                   <div key={label} className="flex justify-between items-center">
                     <dt className="text-slate-400">{label}</dt>
@@ -404,7 +487,7 @@ function LearnPage() {
                 to="/internships"
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 hover:bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition-colors"
               >
-                Apply for Internship <ArrowRight className="h-4 w-4" />
+                Apply for Remote Internship <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
 
@@ -417,6 +500,8 @@ function LearnPage() {
                   { label: "Full Curriculum", href: "#curriculum" },
                   { label: "Projects",        href: "#projects"  },
                   { label: "Career Outcomes", href: "#careers"   },
+                  { label: "Related Tutorials", href: "#tutorials" },
+                  { label: "Frequently Asked Questions", href: "#faq" },
                 ].map((item) => (
                   <a
                     key={item.href}

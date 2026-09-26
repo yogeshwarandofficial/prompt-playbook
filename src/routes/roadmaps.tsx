@@ -1,22 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { X, ExternalLink, ArrowRight, ChevronRight } from "lucide-react";
+import { X, ExternalLink, ArrowRight, ChevronRight, BookOpen, Sparkles } from "lucide-react";
 import { DOMAINS, DOMAIN_COLORS, type Roadmap, ROADMAPS } from "@/data/content";
 import { cn } from "@/lib/utils";
-
+import { createSeoHead, getBreadcrumbSchema } from "@/lib/seo";
+import { JsonLd } from "@/components/site/JsonLd";
 
 export const Route = createFileRoute("/roadmaps")({
   loader: async () => {
     return { roadmaps: ROADMAPS };
   },
-  head: () => ({
-    meta: [
-      { title: "Learning Roadmaps — Infynux Academy" },
-      { name: "description", content: "Structured roadmaps for Full Stack Web Dev, Cloud AWS, App Dev, AI & Automation, and Digital Marketing." },
-      { property: "og:title", content: "Learning Roadmaps — Infynux Academy" },
-      { property: "og:description", content: "Beginner-to-advanced learning paths across five in-demand domains." },
-    ],
-  }),
+  head: () =>
+    createSeoHead({
+      title: "Tech Career Roadmaps | Web, AWS, AI & App Development | Infynux Academy",
+      description:
+        "Follow structured, free developer roadmaps for Full Stack Web Dev, Cloud AWS, App Dev, AI & Automation, and Digital Marketing for students and freshers in India.",
+      path: "/roadmaps",
+    }),
   component: RoadmapsPage,
 });
 
@@ -25,13 +25,18 @@ type Tab = (typeof TABS)[number];
 
 function RoadmapsPage() {
   const { roadmaps } = Route.useLoaderData();
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Roadmaps", path: "/roadmaps" },
+  ]);
 
   return (
     <>
+      <JsonLd schema={breadcrumbSchema} />
       <PageHeader
         crumbs={[{ label: "Home", to: "/" }, { label: "Roadmaps" }]}
-        title="Learning Roadmaps"
-        subtitle="Structured paths from beginner to job-ready — pick a domain and start today."
+        title="Developer Career Roadmaps"
+        subtitle="Follow structured, beginner-to-advanced learning tracks built for software engineering careers in India."
       />
       <section className="pb-24 pt-8">
         <div className="container-page grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -44,13 +49,16 @@ function RoadmapsPage() {
                 >
                   <img 
                     src={`/ui_${d.key}.png`} 
-                    alt={r.title} 
+                    alt={`${r.title} developer learning roadmap`} 
                     className="absolute inset-0 w-full h-full object-cover scale-[1.35] transition-transform duration-500 group-hover:scale-[1.45]" 
+                    width="400"
+                    height="225"
+                    loading="lazy"
                   />
                 </div>
                 <div className="flex flex-col flex-1 p-5 sm:p-6">
                 <h2 className="mt-2 text-xl font-bold text-slate-800 transition-colors">{r.title}</h2>
-                <p className="mt-3 text-sm text-slate-500 leading-relaxed line-clamp-2">{d.desc}</p>
+                <p className="mt-3 text-sm text-slate-500 leading-relaxed line-clamp-2">{d.description || r.description}</p>
                 
                 <div className="mt-4">
                   <div className="flex items-center gap-2 mb-2">
@@ -58,7 +66,7 @@ function RoadmapsPage() {
                     <div className="h-px bg-slate-100 flex-1"></div>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
-                  {d.skills.slice(0, 3).map((s) => (
+                  {d.skills.slice(0, 4).map((s) => (
                     <span key={s} className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{s}</span>
                   ))}
                   </div>
@@ -69,7 +77,7 @@ function RoadmapsPage() {
                     params={{ slug: r.slug }}
                     className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 transition-all"
                   >
-                    Start Learning <ArrowRight className="h-4 w-4" />
+                    Start Learning {r.title} <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>
                 </div>

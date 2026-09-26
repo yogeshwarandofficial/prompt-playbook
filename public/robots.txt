@@ -1,2 +1,16 @@
+# robots.txt for https://www.infynuxacademy.in/
 User-agent: *
 Allow: /
+
+# Disallow private dashboards, authentication, student portals, verification queries, and internal API routes
+Disallow: /admin
+Disallow: /admin/
+Disallow: /login
+Disallow: /intern-portal
+Disallow: /intern-portal/
+Disallow: /verify/
+Disallow: /api/
+
+# Host directive and XML Sitemap
+Host: https://www.infynuxacademy.in
+Sitemap: https://www.infynuxacademy.in/sitemap.xml

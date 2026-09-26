@@ -5,16 +5,17 @@ import { FAQS } from "@/data/content";
 import { PageHeader } from "./roadmaps";
 import { Accordion } from "@/components/site/Accordion";
 import { cn } from "@/lib/utils";
+import { createSeoHead, getBreadcrumbSchema, getFaqSchema, SITE_URL } from "@/lib/seo";
+import { JsonLd } from "@/components/site/JsonLd";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact Infynux Academy" },
-      { name: "description", content: "Reach out to Infynux Academy for internship queries, collaborations, or support." },
-      { property: "og:title", content: "Contact Infynux Academy" },
-      { property: "og:description", content: "We typically respond within 24 hours on business days." },
-    ],
-  }),
+  head: () =>
+    createSeoHead({
+      title: "Contact Infynux Academy | Student Support & Enquiries",
+      description:
+        "Get in touch with the Infynux Academy team for internship queries, student support, course assistance, or collaboration opportunities.",
+      path: "/contact",
+    }),
   component: ContactPage,
 });
 
@@ -67,12 +68,42 @@ function ContactPage() {
     }
   };
 
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Contact", path: "/contact" },
+  ]);
+
+  const contactPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: "Contact Infynux Academy",
+    url: `${SITE_URL}/contact`,
+    description: "Get in touch with Infynux Academy for remote internship queries, student support, and educational partnerships.",
+    mainEntity: {
+      "@type": "EducationalOrganization",
+      name: "Infynux Academy",
+      email: "support@infynuxsolutions.in",
+      telephone: "+91-7010850923",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Thiruvarur",
+        addressRegion: "Tamil Nadu",
+        addressCountry: "IN",
+      },
+    },
+  };
+
+  const faqSchema = getFaqSchema(FAQS.slice(0, 6));
+
   return (
     <>
+      <JsonLd schema={breadcrumbSchema} />
+      <JsonLd schema={contactPageSchema} />
+      <JsonLd schema={faqSchema} />
       <PageHeader
         crumbs={[{ label: "Home", to: "/" }, { label: "Contact" }]}
-        title="Let's talk"
-        subtitle="Questions, collaborations, or feedback — we'd love to hear from you."
+        title="Contact Infynux Academy"
+        subtitle="Questions about internships, course roadmaps, or collaborations — we'd love to hear from you."
       />
 
       <section className="container-page py-16 text-left">

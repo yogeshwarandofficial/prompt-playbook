@@ -34,6 +34,12 @@ export const Route = createFileRoute('/verify_/$token')({
       return { certificates: [], error: 'Connection Error', message: 'Failed to verify. Please try again later.' };
     }
   },
+  head: () => ({
+    meta: [
+      { title: 'Certificate Verification Result | Infynux Academy' },
+      { name: 'robots', content: 'noindex, nofollow' },
+    ],
+  }),
   component: VerifyResultPage,
 });
 

@@ -32,8 +32,8 @@ const NAV_SECTIONS = [
     title: "Company",
     links: [
       { label: "Contact", to: "/contact" },
-      { label: "Privacy Policy", to: "/contact" },
-      { label: "Terms of Service", to: "/contact" },
+      { label: "Privacy Policy", to: "/privacy-policy" },
+      { label: "Terms of Service", to: "/terms-of-service" },
     ],
   },
 ];

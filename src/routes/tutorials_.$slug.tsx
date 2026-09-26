@@ -15,9 +15,18 @@ import {
   Bookmark,
   BookmarkCheck,
 } from "lucide-react";
-import { TUTORIALS, DOMAIN_COLORS, DOMAIN_NAME_MAP, type Tutorial, type DomainKey } from "@/data/content";
+import {
+  TUTORIALS,
+  ROADMAPS,
+  DOMAIN_COLORS,
+  DOMAIN_NAME_MAP,
+  type Tutorial,
+  type DomainKey,
+} from "@/data/content";
 import { PageHeader } from "./roadmaps";
 import { DomainBadge } from "./index";
+import { createSeoHead, getArticleSchema, getBreadcrumbSchema } from "@/lib/seo";
+import { JsonLd } from "@/components/site/JsonLd";
 
 export const Route = createFileRoute("/tutorials_/$slug")({
   loader: ({ params }): { tutorial: Tutorial } => {
@@ -28,15 +37,13 @@ export const Route = createFileRoute("/tutorials_/$slug")({
   head: ({ loaderData }) => {
     const t = loaderData?.tutorial;
     if (!t) return {};
-    return {
-      meta: [
-        { title: `${t.title} — Infynux Academy` },
-        { name: "description", content: t.description },
-        { property: "og:title", content: t.title },
-        { property: "og:description", content: t.description },
-        { property: "og:type", content: "article" },
-      ],
-    };
+    return createSeoHead({
+      title: `${t.title} | Infynux Academy Tutorial`,
+      description: t.description,
+      path: `/tutorials/${t.slug}`,
+      type: "article",
+      image: `/ui_${t.domain}.png`,
+    });
   },
   component: TutorialPage,
   notFoundComponent: () => (
@@ -109,12 +116,22 @@ const DOMAIN_TEXT_COLORS: Record<DomainKey, string> = {
 function TutorialPage() {
   const { tutorial } = Route.useLoaderData() as { tutorial: Tutorial };
   const related = TUTORIALS.filter((t) => t.domain === tutorial.domain && t.slug !== tutorial.slug).slice(0, 3);
+  const relatedRoadmap = ROADMAPS.find((r) => r.domain === tutorial.domain);
   const domainColor = DOMAIN_TEXT_COLORS[tutorial.domain];
   const domainName = DOMAIN_NAME_MAP[tutorial.domain];
   const { saved, toggle } = useSavedCourse(tutorial.slug);
 
+  const articleSchema = getArticleSchema(tutorial);
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Tutorials", path: "/tutorials" },
+    { name: tutorial.title, path: `/tutorials/${tutorial.slug}` },
+  ]);
+
   return (
     <>
+      <JsonLd schema={articleSchema} />
+      <JsonLd schema={breadcrumbSchema} />
       {/* ── Seamless Dark Header ─────────────────────────────────────────── */}
       <section className="bg-black pt-32 pb-12 border-b border-white/10 relative z-10">
         <div className="container-page max-w-4xl text-left">
@@ -306,6 +323,19 @@ function TutorialPage() {
               >
                 Apply for Internship <ArrowRight className="h-4 w-4" />
               </Link>
+
+              {relatedRoadmap && (
+                <div className="pt-3 border-t border-white/10 text-left">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Career Roadmap</p>
+                  <Link
+                    to="/learn/$slug"
+                    params={{ slug: relatedRoadmap.slug }}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    {relatedRoadmap.title} <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Table of Contents */}

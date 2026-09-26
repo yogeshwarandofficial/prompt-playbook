@@ -2,8 +2,17 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Search, ShieldCheck } from 'lucide-react';
 import { PageHeader } from './roadmaps';
+import { createSeoHead, getBreadcrumbSchema } from '@/lib/seo';
+import { JsonLd } from '@/components/site/JsonLd';
 
 export const Route = createFileRoute('/verify')({
+  head: () =>
+    createSeoHead({
+      title: 'Verify Certificate & Student Credentials | Infynux Academy',
+      description:
+        'Verify the authenticity of digital certificates and internship credentials issued by Infynux Academy using our online credential verification tool.',
+      path: '/verify',
+    }),
   component: VerifyPage,
 });
 
@@ -23,8 +32,14 @@ function VerifyPage() {
     });
   };
 
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: 'Home', path: '/' },
+    { name: 'Verify Certificate', path: '/verify' },
+  ]);
+
   return (
     <>
+      <JsonLd schema={breadcrumbSchema} />
       <PageHeader
         crumbs={[{ label: 'Home', to: '/' }, { label: 'Verify Certificate' }]}
         title="Verify a Certificate"

@@ -5,6 +5,8 @@ import { TUTORIALS, DOMAINS, DOMAIN_COLORS, type DomainKey } from "@/data/conten
 import { cn } from "@/lib/utils";
 import { PageHeader } from "./roadmaps";
 import { DomainBadge } from "./index";
+import { createSeoHead, getBreadcrumbSchema } from "@/lib/seo";
+import { JsonLd } from "@/components/site/JsonLd";
 
 type TutorialsSearch = {
   filter?: Filter;
@@ -16,14 +18,13 @@ export const Route = createFileRoute("/tutorials")({
       filter: (search.filter as Filter) || undefined,
     };
   },
-  head: () => ({
-    meta: [
-      { title: "Free Tutorials — Infynux Academy" },
-      { name: "description", content: "Step-by-step tutorials across Web Development, Cloud Computing, App Development, AI & Automation." },
-      { property: "og:title", content: "Free Tutorials — Infynux Academy" },
-      { property: "og:description", content: "Practical guides to help you learn by doing." },
-    ],
-  }),
+  head: () =>
+    createSeoHead({
+      title: "Free Coding & Technology Tutorials | Infynux Academy",
+      description:
+        "Browse free, step-by-step programming and technology tutorials covering React, TypeScript, AWS, Flutter, Kotlin, LangChain, Python, and SEO.",
+      path: "/tutorials",
+    }),
   component: TutorialsPage,
 });
 
@@ -61,8 +62,14 @@ function TutorialsPage() {
     });
   }, [filter, query]);
 
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Tutorials", path: "/tutorials" },
+  ]);
+
   return (
     <>
+      <JsonLd schema={breadcrumbSchema} />
       {/* ── Seamless White Header ─────────────────────────────────────────── */}
       <section className="bg-white pt-32 pb-12 border-b border-slate-100 shadow-sm relative z-10">
         <div className="container-page text-left">
@@ -78,10 +85,10 @@ function TutorialsPage() {
           </nav>
           
           <h1 className="text-4xl font-bold text-slate-900 sm:text-5xl lg:text-6xl tracking-tight leading-tight">
-            Tutorials & Guides
+            Free Coding & Technology Tutorials
           </h1>
           <p className="mt-5 max-w-2xl text-slate-600 text-lg leading-relaxed">
-            Step-by-step technical guides, from setting up your environment to deploying your first app.
+            Step-by-step practical guides, from setting up your development environment to deploying production applications.
           </p>
         </div>
       </section>
@@ -142,8 +149,11 @@ function TutorialsPage() {
                 >
                   <img 
                     src={`/ui_${t.domain}.png`} 
-                    alt={t.title} 
+                    alt={`${t.title} tutorial guide`} 
                     className="absolute inset-0 w-full h-full object-cover scale-[1.35] transition-transform duration-500 group-hover:scale-[1.45]" 
+                    width="400"
+                    height="225"
+                    loading="lazy"
                   />
                 </div>
                 {/* Card Content Wrapper */}

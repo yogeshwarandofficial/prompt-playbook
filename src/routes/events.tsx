@@ -1,20 +1,28 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Calendar, ExternalLink } from "lucide-react";
+import { Calendar, ExternalLink, ChevronRight } from "lucide-react";
+import { createSeoHead, getBreadcrumbSchema } from "@/lib/seo";
+import { JsonLd } from "@/components/site/JsonLd";
 
 export const Route = createFileRoute("/events")({
-  head: () => ({
-    meta: [
-      { title: "Events — Infynux Academy" },
-      { name: "description", content: "Discover upcoming events, tech talks, and workshops at Infynux Academy." },
-    ],
-  }),
+  head: () =>
+    createSeoHead({
+      title: "Tech Workshops, Webinars & Events | Infynux Academy",
+      description:
+        "Join free tech webinars, hands-on workshops, and developer events hosted by Infynux Academy. Learn full-stack development, AWS, AI, and career skills.",
+      path: "/events",
+    }),
   component: EventsPage,
 });
 
 function EventsPage() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Events", path: "/events" },
+  ]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -36,9 +44,20 @@ function EventsPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#0A0A0A] font-sans selection:bg-indigo-500/30">
-      
+      <JsonLd schema={breadcrumbSchema} />
       <main className="flex-grow pt-32 pb-16">
         <div className="mx-auto max-w-6xl px-6">
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6">
+            <ol className="flex flex-wrap items-center gap-1.5">
+              <li>
+                <Link to="/" className="hover:text-white transition-colors">Home</Link>
+              </li>
+              <ChevronRight className="h-3 w-3 text-slate-600" />
+              <li className="text-slate-300">Events</li>
+            </ol>
+          </nav>
+
           <div className="mb-12 text-center md:text-left">
             <h1 className="text-4xl font-bold font-display text-white sm:text-5xl lg:text-6xl tracking-tight mb-4">
               Academy <span className="bg-[length:200%_auto] animate-text-shine bg-gradient-to-r from-emerald-400 via-primary to-emerald-400 bg-clip-text text-transparent">Events</span>
