@@ -31,15 +31,18 @@ import {
   type DomainKey,
 } from "@/data/content";
 import { createSeoHead, getFaqSchema } from "@/lib/seo";
+import { EDUTECH_MASTER_KEYWORDS } from "@/lib/seo-keywords";
 import { JsonLd } from "@/components/site/JsonLd";
 
 export const Route = createFileRoute("/")({
   head: () =>
     createSeoHead({
-      title: "Infynux Academy | Free Tech Roadmaps, Tutorials & Internships",
+      title: "Infynux Academy | Free Tech Roadmaps, Programming Tutorials & Remote Internships",
       description:
-        "Master in-demand tech skills with free structured roadmaps, hands-on coding tutorials, and verifiable remote internships for college students and freshers in India.",
+        "India's premier free EdTech platform for college students and freshers. Master Full Stack Web Dev, Cloud AWS, Flutter, and AI with structured roadmaps, tutorials, and verifiable remote internships.",
       path: "/",
+      keywords: EDUTECH_MASTER_KEYWORDS,
+      category: "EdTech & Software Engineering Education",
     }),
   component: HomePage,
 });
@@ -708,7 +711,6 @@ function FAQSection() {
               subtitle="Everything you need to know to get started."
               id="faq-heading"
               theme="light"
-              align="left"
             />
             <div className="hidden lg:block relative w-full aspect-square rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 p-8">
               <img 

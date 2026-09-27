@@ -4,16 +4,19 @@ import { Award, MapPin, Briefcase, ArrowRight, HelpCircle, ChevronDown, BookOpen
 import { PageHeader } from "./roadmaps";
 import { ApplicationModal } from "@/components/site/ApplicationModal";
 import { createSeoHead, getBreadcrumbSchema, getInternshipProgramSchema, getFaqSchema } from "@/lib/seo";
+import { INTERNSHIPS_PAGE_KEYWORDS } from "@/lib/seo-keywords";
 import { JsonLd } from "@/components/site/JsonLd";
 import { type DomainKey } from "@/data/content";
 
 export const Route = createFileRoute("/internships")({
   head: () =>
     createSeoHead({
-      title: "Remote Tech Internships for Students & Freshers | Infynux Academy",
+      title: "Remote Tech Internships for Students & Freshers 2026 | Infynux Academy",
       description:
-        "Apply for remote tech internships in Web Development, Cloud AWS, App Development, AI & Automation, and Digital Marketing. Build portfolio projects with mentorship and verifiable certificates.",
+        "Apply for free remote tech internships in India. Work on live commercial projects in Web Development, AWS Cloud, Flutter Mobile Apps, and AI with 1-on-1 mentorship, GitHub code reviews, and verifiable certificates.",
       path: "/internships",
+      keywords: INTERNSHIPS_PAGE_KEYWORDS,
+      category: "Tech Internships & Career Experience",
     }),
   component: InternshipsPage,
 });
@@ -83,20 +86,34 @@ const DEFAULT_INTERNSHIPS = [
 
 const INTERNSHIP_FAQS = [
   {
-    q: "Who is eligible to apply for Infynux Academy internships?",
-    a: "College students, fresh graduates, and self-taught developers across India and worldwide seeking structured practical experience and project mentorship are welcome to apply.",
+    question: "Who is eligible to apply for Infynux Academy remote tech internships?",
+    answer: "College students (B.Tech, BE, BCA, MCA, BSc CS), fresh graduates, and self-taught developers across India seeking structured hands-on experience, project mentorship, and portfolio building are welcome to apply.",
+    q: "Who is eligible to apply for Infynux Academy remote tech internships?",
+    a: "College students (B.Tech, BE, BCA, MCA, BSc CS), fresh graduates, and self-taught developers across India seeking structured hands-on experience, project mentorship, and portfolio building are welcome to apply.",
   },
   {
-    q: "Are the internships completely remote?",
-    a: "Yes, all internships at Infynux Academy are 100% remote. Tasks, milestones, and feedback are managed online, allowing learners to participate flexibly alongside their college schedule.",
+    question: "Are the internships completely remote and flexible for college students?",
+    answer: "Yes, all internships at Infynux Academy are 100% remote. Tasks, milestones, code reviews, and mentor guidance are coordinated online, allowing students to participate smoothly alongside their regular college semester schedules.",
+    q: "Are the internships completely remote and flexible for college students?",
+    a: "Yes, all internships at Infynux Academy are 100% remote. Tasks, milestones, code reviews, and mentor guidance are coordinated online, allowing students to participate smoothly alongside their regular college semester schedules.",
   },
   {
-    q: "Will I receive a completion certificate?",
-    a: "Yes. Upon completing your assigned milestones and submitting your final project review, you will receive a verifiable digital certificate with a unique certificate ID.",
+    question: "Will I receive a verifiable certificate and letter of recommendation?",
+    answer: "Yes. Upon completing your assigned milestones and passing your final project review, you receive a tamper-proof verifiable digital certificate with a unique certificate ID and an official experience letter for your resume and LinkedIn.",
+    q: "Will I receive a verifiable certificate and letter of recommendation?",
+    a: "Yes. Upon completing your assigned milestones and passing your final project review, you receive a tamper-proof verifiable digital certificate with a unique certificate ID and an official experience letter for your resume and LinkedIn.",
   },
   {
-    q: "Is there any registration or participation fee?",
-    a: "No. Infynux Academy provides open educational resources and project opportunities to support student learning and career growth.",
+    question: "Is there any registration fee or hidden cost for the internship?",
+    answer: "No. Infynux Academy provides 100% free tuition and open project opportunities to support student learning and career transitions into software engineering.",
+    q: "Is there any registration fee or hidden cost for the internship?",
+    a: "No. Infynux Academy provides 100% free tuition and open project opportunities to support student learning and career transitions into software engineering.",
+  },
+  {
+    question: "Can I add the internship project code to my personal GitHub repository?",
+    answer: "Yes! Every intern works on real commercial and open-source style modules. You are encouraged to push your code to your GitHub portfolio to demonstrate practical expertise to future employers.",
+    q: "Can I add the internship project code to my personal GitHub repository?",
+    a: "Yes! Every intern works on real commercial and open-source style modules. You are encouraged to push your code to your GitHub portfolio to demonstrate practical expertise to future employers.",
   },
 ];
 
@@ -321,7 +338,7 @@ function InternshipsPage() {
         </div>
       </section>
 
-      <ApplicationModal open={open} onClose={() => setOpen(false)} defaultDomain={defaultDomain} />
+      <ApplicationModal open={open} onClose={() => setOpen(false)} domain={defaultDomain} />
     </>
   );
 }

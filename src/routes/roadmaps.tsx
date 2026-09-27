@@ -4,6 +4,7 @@ import { X, ExternalLink, ArrowRight, ChevronRight, BookOpen, Sparkles } from "l
 import { DOMAINS, DOMAIN_COLORS, type Roadmap, ROADMAPS } from "@/data/content";
 import { cn } from "@/lib/utils";
 import { createSeoHead, getBreadcrumbSchema } from "@/lib/seo";
+import { ROADMAPS_PAGE_KEYWORDS } from "@/lib/seo-keywords";
 import { JsonLd } from "@/components/site/JsonLd";
 
 export const Route = createFileRoute("/roadmaps")({
@@ -12,10 +13,12 @@ export const Route = createFileRoute("/roadmaps")({
   },
   head: () =>
     createSeoHead({
-      title: "Tech Career Roadmaps | Web, AWS, AI & App Development | Infynux Academy",
+      title: "Tech Career Roadmaps 2026 | Web, Cloud AWS, Flutter & AI | Infynux Academy",
       description:
-        "Follow structured, free developer roadmaps for Full Stack Web Dev, Cloud AWS, App Dev, AI & Automation, and Digital Marketing for students and freshers in India.",
+        "Master high-demand tech skills with free structured developer career roadmaps. Step-by-step curricula in Full Stack Web Dev, Cloud AWS, Flutter, Kotlin, AI & Automation for college students and freshers in India.",
       path: "/roadmaps",
+      keywords: ROADMAPS_PAGE_KEYWORDS,
+      category: "Software Engineering Career Roadmaps",
     }),
   component: RoadmapsPage,
 });

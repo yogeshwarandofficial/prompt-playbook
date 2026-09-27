@@ -6,15 +6,18 @@ import { PageHeader } from "./roadmaps";
 import { Accordion } from "@/components/site/Accordion";
 import { cn } from "@/lib/utils";
 import { createSeoHead, getBreadcrumbSchema, getFaqSchema, SITE_URL } from "@/lib/seo";
+import { CONTACT_PAGE_KEYWORDS } from "@/lib/seo-keywords";
 import { JsonLd } from "@/components/site/JsonLd";
 
 export const Route = createFileRoute("/contact")({
   head: () =>
     createSeoHead({
-      title: "Contact Infynux Academy | Student Support & Enquiries",
+      title: "Contact Infynux Academy | Student Support & Academic Enquiries",
       description:
-        "Get in touch with the Infynux Academy team for internship queries, student support, course assistance, or collaboration opportunities.",
+        "Get in touch with the Infynux Academy team for remote internship queries, student support, course assistance, campus hiring, or college collaboration.",
       path: "/contact",
+      keywords: CONTACT_PAGE_KEYWORDS,
+      category: "Student Support & Academic Collaboration",
     }),
   component: ContactPage,
 });

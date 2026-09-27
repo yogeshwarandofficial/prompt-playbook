@@ -2,15 +2,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Calendar, ExternalLink, ChevronRight } from "lucide-react";
 import { createSeoHead, getBreadcrumbSchema } from "@/lib/seo";
+import { EVENTS_PAGE_KEYWORDS } from "@/lib/seo-keywords";
 import { JsonLd } from "@/components/site/JsonLd";
 
 export const Route = createFileRoute("/events")({
   head: () =>
     createSeoHead({
-      title: "Tech Workshops, Webinars & Events | Infynux Academy",
+      title: "Tech Workshops, Webinars & Developer Events 2026 | Infynux Academy",
       description:
-        "Join free tech webinars, hands-on workshops, and developer events hosted by Infynux Academy. Learn full-stack development, AWS, AI, and career skills.",
+        "Join free interactive tech webinars, live coding workshops, and developer bootcamps hosted by Infynux Academy mentors. Master full stack web development, AWS cloud, and AI engineering.",
       path: "/events",
+      keywords: EVENTS_PAGE_KEYWORDS,
+      category: "Tech Webinars & Student Workshops",
     }),
   component: EventsPage,
 });

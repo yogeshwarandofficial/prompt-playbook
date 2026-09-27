@@ -29,6 +29,7 @@ import {
 import { PageHeader } from "./roadmaps";
 import { cn } from "@/lib/utils";
 import { createSeoHead, getCourseSchema, getBreadcrumbSchema, getFaqSchema } from "@/lib/seo";
+import { DOMAIN_KEYWORDS } from "@/lib/seo-keywords";
 import { JsonLd } from "@/components/site/JsonLd";
 
 export const Route = createFileRoute("/learn/$slug")({
@@ -42,11 +43,19 @@ export const Route = createFileRoute("/learn/$slug")({
   head: ({ loaderData }) => {
     const r = loaderData?.roadmap;
     if (!r) return {};
+    const domainKws = DOMAIN_KEYWORDS[r.domain] || [];
     return createSeoHead({
-      title: `${r.title} Roadmap | Infynux Academy`,
-      description: `Follow the structured ${r.title} learning roadmap covering ${r.prerequisites?.slice(0, 2).join(", ") || "core fundamentals"}, learning modules, real-world projects, and career paths in India.`,
+      title: `${r.title} Roadmap 2026 | Free Syllabus & Projects | Infynux Academy`,
+      description: `Master ${r.title} with Infynux Academy's free structured curriculum. Learn ${r.prerequisites?.slice(0, 2).join(", ") || "core fundamentals"}, hands-on project milestones, and career salary guidance in India.`,
       path: `/learn/${r.slug}`,
       image: `/ui_${r.domain}.png`,
+      keywords: [
+        `${r.title.toLowerCase()} roadmap`,
+        `${r.title.toLowerCase()} course free`,
+        `${r.title.toLowerCase()} syllabus 2026`,
+        ...domainKws,
+      ],
+      category: `${DOMAIN_NAME_MAP[r.domain]} Learning Path`,
     });
   },
   component: LearnPage,

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { PageHeader } from "./roadmaps";
 import { DomainBadge } from "./index";
 import { createSeoHead, getBreadcrumbSchema } from "@/lib/seo";
+import { TUTORIALS_PAGE_KEYWORDS } from "@/lib/seo-keywords";
 import { JsonLd } from "@/components/site/JsonLd";
 
 type TutorialsSearch = {
@@ -20,10 +21,12 @@ export const Route = createFileRoute("/tutorials")({
   },
   head: () =>
     createSeoHead({
-      title: "Free Coding & Technology Tutorials | Infynux Academy",
+      title: "Free Coding Tutorials & Developer Guides 2026 | Infynux Academy",
       description:
-        "Browse free, step-by-step programming and technology tutorials covering React, TypeScript, AWS, Flutter, Kotlin, LangChain, Python, and SEO.",
+        "Browse free step-by-step programming tutorials with real-world code snippets and production deployment guides across React, TypeScript, AWS, Flutter, Kotlin, Python, and SEO.",
       path: "/tutorials",
+      keywords: TUTORIALS_PAGE_KEYWORDS,
+      category: "Software Engineering Tutorials & Guides",
     }),
   component: TutorialsPage,
 });

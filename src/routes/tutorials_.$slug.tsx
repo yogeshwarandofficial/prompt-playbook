@@ -26,6 +26,7 @@ import {
 import { PageHeader } from "./roadmaps";
 import { DomainBadge } from "./index";
 import { createSeoHead, getArticleSchema, getBreadcrumbSchema } from "@/lib/seo";
+import { DOMAIN_KEYWORDS } from "@/lib/seo-keywords";
 import { JsonLd } from "@/components/site/JsonLd";
 
 export const Route = createFileRoute("/tutorials_/$slug")({
@@ -43,6 +44,11 @@ export const Route = createFileRoute("/tutorials_/$slug")({
       path: `/tutorials/${t.slug}`,
       type: "article",
       image: `/ui_${t.domain}.png`,
+      keywords: [...(t.tags || []), ...(DOMAIN_KEYWORDS[t.domain] || [])],
+      category: `${DOMAIN_NAME_MAP[t.domain]} Development`,
+      tags: t.tags,
+      publishedTime: "2025-01-15T00:00:00+05:30",
+      modifiedTime: "2026-03-26T00:00:00+05:30",
     });
   },
   component: TutorialPage,
@@ -110,6 +116,7 @@ const DOMAIN_TEXT_COLORS: Record<DomainKey, string> = {
   app:       "#059669",
   ai:        "#7C3AED",
   marketing: "#E11D48",
+  video:     "#EC4899",
 };
 
 // ── Main page ─────────────────────────────────────────────────────────────────
