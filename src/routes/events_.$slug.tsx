@@ -108,16 +108,7 @@ function EventDetailsPage() {
           {/* Left: Typography & CTAs */}
           <div className="lg:col-span-7 space-y-8 animate-fade-up" style={{ animationDelay: '100ms' }}>
             
-            {/* Status Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-400/10 border border-emerald-400/20 text-emerald-400 text-xs font-bold uppercase tracking-widest">
-              {!countdown.hasStarted && (
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
-                </span>
-              )}
-              {countdown.hasStarted ? "Event Live / Ended" : "Registrations Open"}
-            </div>
+          
 
             {/* Headline */}
             <div className="space-y-4">
@@ -149,7 +140,7 @@ function EventDetailsPage() {
               </div>
               
               <div className="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300">
+                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300">
                   <Clock className="text-xl w-5 h-5" />
                 </div>
                 <div>

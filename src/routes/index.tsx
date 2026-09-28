@@ -169,7 +169,7 @@ function HeroSection() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-32 pb-48 lg:pb-64 min-h-screen flex items-center bg-[#f8fafc] z-10" aria-label="Hero">
+    <section className="relative overflow-hidden pt-32 pb-24 md:pb-32 lg:pb-64 min-h-screen flex flex-col justify-center bg-[#f8fafc] z-10" aria-label="Hero">
       
       <style>{`
         @keyframes float {
@@ -291,9 +291,9 @@ function HeroSection() {
           </div>
       </div>
 
-      {/* Floating Stats Glass Bar (Anchored to bottom) */}
-      <div className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 w-[95%] lg:w-[90%] max-w-5xl animate-fade-up z-20" style={{ animationDelay: '800ms', animationFillMode: 'both' }}>
-          <div className="bg-white/70 backdrop-blur-md rounded-[2rem] p-6 lg:p-8 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 shadow-[0_8px_32px_0_rgba(156,255,59,0.15)] border border-white relative overflow-hidden">
+      {/* Floating Stats Glass Bar */}
+      <div className="relative lg:absolute mt-16 lg:mt-0 bottom-auto lg:bottom-10 left-1/2 -translate-x-1/2 w-[95%] lg:w-[90%] max-w-5xl animate-fade-up z-20" style={{ animationDelay: '800ms', animationFillMode: 'both' }}>
+          <div className="bg-white/70 backdrop-blur-md rounded-[2rem] p-6 lg:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 md:gap-6 shadow-[0_8px_32px_0_rgba(156,255,59,0.15)] border border-white relative overflow-hidden">
               {/* Shimmer effect */}
               <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/50 to-transparent skew-x-12 -translate-x-[200%] animate-[shimmer_3s_infinite_ease-in-out]" />
               
