@@ -20,7 +20,7 @@ import {
   Mail,
   Video,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ROADMAPS,
   TUTORIALS,
@@ -97,106 +97,245 @@ function HomePage() {
 
 // ─── HERO ─────────────────────────────────────────────────────────────────────
 function HeroSection() {
+  const parallaxContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // 1. Number Counter Animation for Stats
+    const speed = 150;
+    const timer = setTimeout(() => {
+      const counters = document.querySelectorAll('.counter-val');
+      counters.forEach(counter => {
+        const updateCount = () => {
+          const target = +(counter.getAttribute('data-target') || 0);
+          const count = +counter.innerHTML;
+          const inc = target / speed;
+          if (count < target) {
+            counter.innerHTML = Math.ceil(count + inc).toString();
+            setTimeout(updateCount, 20);
+          } else {
+            counter.innerHTML = target.toString();
+          }
+        };
+        updateCount();
+      });
+    }, 1200);
+
+    // 2. Smooth Mouse Parallax Effect on Image Collage
+    const container = parallaxContainerRef.current;
+    if (!container) return;
+
+    let animationFrameId: number;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!window.matchMedia("(pointer: fine)").matches) return;
+      
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(() => {
+        const x = e.clientX - window.innerWidth / 2;
+        const y = e.clientY - window.innerHeight / 2;
+        
+        const layers = container.querySelectorAll('.parallax-layer');
+        layers.forEach(layer => {
+          const s = parseFloat(layer.getAttribute('data-speed') || '1');
+          const xOff = (x * s) / 80;
+          const yOff = (y * s) / 80;
+          (layer as HTMLElement).style.transform = `translate3d(${xOff}px, ${yOff}px, 0)`;
+        });
+      });
+    };
+
+    const handleMouseLeave = () => {
+      if (!window.matchMedia("(pointer: fine)").matches) return;
+      
+      cancelAnimationFrame(animationFrameId);
+      const layers = container.querySelectorAll('.parallax-layer');
+      layers.forEach(layer => {
+        const el = layer as HTMLElement;
+        el.style.transform = `translate3d(0px, 0px, 0px)`;
+        el.style.transition = 'transform 0.5s ease-out';
+        setTimeout(() => { el.style.transition = ''; }, 500);
+      });
+    };
+
+    container.addEventListener('mousemove', handleMouseMove);
+    container.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      clearTimeout(timer);
+      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
   return (
-    <section
-      className="relative overflow-hidden pb-32 pt-32 md:pb-40 md:pt-48  bg-white rounded-b-[40px] md:rounded-b-[80px] shadow-2xl z-10"
-      aria-label="Hero"
-    >
-      {/* Decorative maroon gradient orb */}
-      <div className="pointer-events-none absolute right-0 top-0 h-[700px] w-[700px] -translate-y-1/4 translate-x-1/4 rounded-full bg-primary/10 blur-[120px]" />
+    <section className="relative overflow-hidden pt-32 pb-48 lg:pb-64 min-h-screen flex items-center bg-[#f8fafc] z-10" aria-label="Hero">
+      
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-15px); }
+        }
+        @keyframes shimmer {
+          0% { transform: translateX(-200%) skewX(12deg); }
+          100% { transform: translateX(200%) skewX(12deg); }
+        }
+        @keyframes text-shimmer {
+          0% { background-position: 0% 50%; }
+          100% { background-position: 100% 50%; }
+        }
+        .parallax-layer {
+          will-change: transform;
+        }
+      `}</style>
 
-      <div className="container-page grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-        {/* Text column */}
-        <div className="max-w-xl animate-fade-up text-left space-y-7 relative z-10">
+      {/* Fluid Mesh Gradient Background */}
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_15%_50%,_rgba(220,252,231,0.5),_transparent_25%),radial-gradient(circle_at_85%_30%,_rgba(240,253,244,0.8),_transparent_25%)] blur-[60px] pointer-events-none" />
+      
+      {/* Animated Blobs */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-100 rounded-full mix-blend-multiply blur-3xl opacity-70 animate-[pulse_10s_infinite] pointer-events-none" />
+      <div className="absolute top-40 left-20 w-72 h-72 bg-emerald-50 rounded-full mix-blend-multiply blur-3xl opacity-70 animate-[pulse_10s_infinite_2s] pointer-events-none" />
 
-          <h1 className="font-display text-5xl font-black leading-[1.05] text-black sm:text-6xl lg:text-7xl xl:text-8xl tracking-tight">
-            LEARN.<br />
-            <span className="bg-[length:200%_auto] animate-text-shine bg-gradient-to-r from-emerald-500 via-primary to-emerald-500 bg-clip-text text-transparent">BUILD.</span><br />
-            GET HIRED.
-            <span className="block text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800 mt-4 font-outfit tracking-normal">
-              Free Tech Roadmaps, Tutorials & Remote Internships
-            </span>
-          </h1>
-          <p className="text-lg leading-relaxed text-black font-outfit">
-            Free structured roadmaps, hands-on tutorials, and real remote internships. Bridge the gap between university and industrial excellence.
-          </p>
-          <div className="flex flex-wrap gap-4 pt-1">
-            <Link
-              to="/roadmaps"
-              className="inline-flex items-center gap-2 rounded-full bg-primary text-black px-8 py-4 text-base font-black shadow-[0_4px_20px_rgba(156,255,59,0.25)] transition-all hover:bg-secondary hover:shadow-[0_4px_28px_rgba(156,255,59,0.35)] hover:scale-[1.02] active:scale-[0.98] font-orbitron"
-            >
-              Explore Roadmaps <ArrowRight className="h-5 w-5" aria-hidden="true" />
-            </Link>
-            <Link
-              to="/internships"
-              className="inline-flex items-center gap-2 rounded-full border-2 border-black bg-transparent px-8 py-4 text-base font-black text-black shadow-sm transition-all hover:bg-black hover:text-white hover:scale-[1.02] font-orbitron"
-            >
-              Apply for Internship
-            </Link>
-          </div>
-
-          {/* Trust bar */}
-          <div className="flex flex-wrap items-center gap-8 border-t border-black pt-8">
-            {[
-              { icon: Users, value: "100+", label: "Students Trained" },
-              { icon: BookOpen, value: "5", label: "Specializations" },
-              { icon: Award, value: "100%", label: "Free Tuition" },
-            ].map(({ icon: Icon, value, label }) => (
-              <div key={label} className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 border border-primary/20 text-black">
-                  <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
-                </div>
-                <div>
-                  <span className="block text-sm font-black text-black font-orbitron">{value}</span>
-                  <span className="block text-xs text-black/70 font-outfit">{label}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Hero illustration card - Natural integration */}
-        <div className="flex relative items-center justify-center h-full w-full mt-8 lg:mt-0">
-          {/* Atmospheric Glow Behind Model */}
-          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-[120px] mix-blend-normal" />
+      <div className="container-page relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center max-w-7xl mx-auto w-full">
           
-          <div className="relative w-full max-w-[550px] -translate-y-20">
-            {/* The model image using true transparent PNG */}
-            <img 
-              src="/female-professional-laptop.png" 
-              alt="Infynux Academy student learning on laptop" 
-              className="w-full h-auto object-contain relative z-10"
-              width="550"
-              height="550"
-              loading="eager"
-            />
-            
-            {/* Subtle decorative elements matching theme */}
-            <div className="absolute top-12 -left-6 text-primary animate-pulse z-0">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" strokeDasharray="4 4" />
-                <path d="M12 6v12M6 12h12" />
-              </svg>
-            </div>
-            
-            {/* Floating 10 Years Experience Badge */}
-            <div className="absolute right-4 md:right-0 bottom-10 md:bottom-24 md:translate-x-8 rounded-2xl border border-slate-200 bg-white/90 backdrop-blur-md px-5 py-4 shadow-lg animate-float z-20">
-              <div className="flex items-center gap-1 mb-1 justify-end">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-primary text-primary" />
-                ))}
+          <div className="relative z-10 space-y-8 max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
+              
+             
+
+              {/* Massive Typography with Animated Gradient */}
+              <h1 className="text-5xl sm:text-6xl lg:text-[5rem] font-black leading-[1.05] tracking-tight text-slate-900 animate-fade-up font-display" style={{ animationDelay: '300ms', animationFillMode: 'both' }}>
+                  LEARN.<br />
+                  <span className="bg-gradient-to-r from-emerald-600 via-primary to-emerald-500 bg-[length:300%_auto] bg-clip-text text-transparent animate-[text-shimmer_3s_ease-out_infinite_alternate] inline-block transform hover:scale-105 hover:rotate-1 transition-all duration-300 cursor-default">BUILD.</span><br />
+                  GET HIRED.
+              </h1>
+
+              {/* Subheading with decorative accents */}
+              <div className="animate-fade-up space-y-5 relative" style={{ animationDelay: '400ms', animationFillMode: 'both' }}>
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800 flex flex-wrap items-center justify-center lg:justify-start gap-2 font-outfit">
+                      Free Tech Roadmaps
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      Tutorials
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      Internships
+                  </h2>
+                  <p className="text-base sm:text-lg text-slate-500 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 font-outfit">
+                      Access structured roadmaps, hands-on tutorials, and real remote internships. Bridge the gap between university theory and industrial excellence.
+                  </p>
               </div>
-              <div className="text-right">
-                <p className="text-xl font-black text-black font-orbitron">2+ Years</p>
-                <span className="block text-xs text-black/70 font-outfit">Experience</span>
+
+              {/* Action Buttons */}
+              <div className="animate-fade-up flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4" style={{ animationDelay: '500ms', animationFillMode: 'both' }}>
+                  <Link to="/roadmaps" className="w-full sm:w-auto px-8 py-4 bg-primary text-black text-base font-bold rounded-full hover:bg-secondary hover:shadow-[0_0_40px_-10px_rgba(156,255,59,0.5)] transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group font-orbitron">
+                      Explore Roadmaps
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                  <Link to="/internships" className="w-full sm:w-auto px-8 py-4 bg-white text-slate-800 text-base font-bold rounded-full border border-slate-200 hover:border-primary hover:text-black shadow-sm hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 font-orbitron">
+                      <Briefcase className="w-5 h-5" />
+                      Apply for Internship
+                  </Link>
               </div>
-            </div>
           </div>
-        </div>
+
+          {/* Right Visual Column (3 Photo Collage) */}
+          <div 
+            ref={parallaxContainerRef}
+            className="relative w-full h-[450px] lg:h-[600px] flex items-center justify-center animate-fade-up mt-10 lg:mt-0 [perspective:1000px]" 
+            style={{ animationDelay: '600ms', animationFillMode: 'both' }}
+          >
+              {/* Background decoration for the cluster */}
+              <div className="absolute w-[80%] h-[80%] bg-gradient-to-tr from-emerald-100 to-white rounded-full blur-3xl opacity-50 parallax-layer" data-speed="1" />
+
+              {/* Image 1: Top Right */}
+              <div className="absolute top-[5%] right-[5%] w-[45%] aspect-[4/3] z-10 parallax-layer" data-speed="-2">
+                  <div className="w-full h-full animate-[float_8s_ease-in-out_1s_infinite]">
+                      <img 
+                          src="/heroimage3.avif" 
+                          alt="Team collaboration" 
+                          className="w-full h-full object-cover rounded-3xl border-[6px] border-white/90 shadow-[0_20px_40px_-10px_rgba(156,255,59,0.15)] transform rotate-6 hover:rotate-0 transition-transform duration-500"
+                      />
+                  </div>
+              </div>
+
+              {/* Image 2: Main Center */}
+              <div className="relative z-20 w-[55%] aspect-[3/4] parallax-layer" data-speed="1.5">
+                  <div className="w-full h-full animate-[float_6s_ease-in-out_infinite]">
+                      <img 
+                          src="/model.png" 
+                          alt="Professional student with laptop" 
+                          className="w-full h-full object-cover rounded-3xl border-[6px] border-white/90 shadow-[0_20px_40px_-10px_rgba(156,255,59,0.15)] transform -rotate-2 hover:rotate-0 transition-transform duration-500"
+                      />
+                      
+                      {/* Floating Glass Badge on main image */}
+                      <div className="absolute -bottom-6 -right-10 md:-right-16 bg-white/70 backdrop-blur-md px-5 py-3 rounded-2xl shadow-[0_8px_32px_0_rgba(156,255,59,0.15)] border border-white/50">
+                          <div className="flex items-center gap-1 mb-1">
+                              {[...Array(5)].map((_, i) => (
+                                  <Star key={i} className="fill-amber-400 text-amber-400 w-4 h-4" />
+                              ))}
+                          </div>
+                          <p className="text-lg font-black text-slate-900 tracking-tight leading-none font-orbitron">2+ Years</p>
+                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-1 font-outfit">Experience</p>
+                      </div>
+                  </div>
+              </div>
+
+              {/* Image 3: Bottom Left */}
+              <div className="absolute bottom-[5%] left-[5%] w-[40%] aspect-square z-30 parallax-layer" data-speed="-1.5">
+                  <div className="w-full h-full animate-[float_7s_ease-in-out_2.5s_infinite]">
+                      <img 
+                          src="/hero4.avif" 
+                          alt="Focused coding session" 
+                          className="w-full h-full object-cover rounded-[2rem] border-[6px] border-white/90 shadow-[0_20px_40px_-10px_rgba(156,255,59,0.15)] transform -rotate-6 hover:rotate-0 transition-transform duration-500"
+                      />
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      {/* Floating Stats Glass Bar (Anchored to bottom) */}
+      <div className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 w-[95%] lg:w-[90%] max-w-5xl animate-fade-up z-20" style={{ animationDelay: '800ms', animationFillMode: 'both' }}>
+          <div className="bg-white/70 backdrop-blur-md rounded-[2rem] p-6 lg:p-8 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 shadow-[0_8px_32px_0_rgba(156,255,59,0.15)] border border-white relative overflow-hidden">
+              {/* Shimmer effect */}
+              <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/50 to-transparent skew-x-12 -translate-x-[200%] animate-[shimmer_3s_infinite_ease-in-out]" />
+              
+              <div className="flex items-center gap-5 w-full md:w-auto group">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-primary flex-shrink-0 group-hover:scale-110 group-hover:bg-primary group-hover:text-black transition-all duration-300">
+                      <Users className="w-8 h-8" />
+                  </div>
+                  <div>
+                      <p className="text-3xl font-black text-slate-900 tracking-tight font-orbitron"><span className="counter-val" data-target="100">0</span>+</p>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider font-outfit">Students Trained</p>
+                  </div>
+              </div>
+
+              <div className="hidden md:block w-px h-16 bg-slate-200/60" />
+
+              <div className="flex items-center gap-5 w-full md:w-auto group">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-primary flex-shrink-0 group-hover:scale-110 group-hover:bg-primary group-hover:text-black transition-all duration-300">
+                      <BookOpen className="w-8 h-8" />
+                  </div>
+                  <div>
+                      <p className="text-3xl font-black text-slate-900 tracking-tight font-orbitron"><span className="counter-val" data-target="5">0</span></p>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider font-outfit">Specializations</p>
+                  </div>
+              </div>
+
+              <div className="hidden md:block w-px h-16 bg-slate-200/60" />
+
+              <div className="flex items-center gap-5 w-full md:w-auto group">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-primary flex-shrink-0 group-hover:scale-110 group-hover:bg-primary group-hover:text-black transition-all duration-300">
+                      <Award className="w-8 h-8" />
+                  </div>
+                  <div>
+                      <p className="text-3xl font-black text-slate-900 tracking-tight font-orbitron"><span className="counter-val" data-target="100">0</span>%</p>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider font-outfit">Free Tuition</p>
+                  </div>
+              </div>
+          </div>
       </div>
     </section>
   );
 }
+
 
 // ─── FEATURES ─────────────────────────────────────────────────────────────────
 const FEATURES = [

@@ -27,6 +27,7 @@ import { Route as VerifyTokenRouteImport } from './routes/verify_.$token'
 import { Route as TutorialsSlugRouteImport } from './routes/tutorials_.$slug'
 import { Route as RoadmapsSlugRouteImport } from './routes/roadmaps_.$slug'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
+import { Route as EventsSlugRouteImport } from './routes/events_.$slug'
 import { Route as ApiContactRouteImport } from './routes/api/contact'
 import { Route as ApiNewsletterSubscribeRouteImport } from './routes/api/newsletter/subscribe'
 import { Route as ApiInternshipsApplyRouteImport } from './routes/api/internships/apply'
@@ -122,6 +123,11 @@ const LearnSlugRoute = LearnSlugRouteImport.update({
   path: '/learn/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsSlugRoute = EventsSlugRouteImport.update({
+  id: '/events_/$slug',
+  path: '/events/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiContactRoute = ApiContactRouteImport.update({
   id: '/api/contact',
   path: '/api/contact',
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/tutorials': typeof TutorialsRoute
   '/verify': typeof VerifyRoute
   '/api/contact': typeof ApiContactRoute
+  '/events/$slug': typeof EventsSlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/roadmaps/$slug': typeof RoadmapsSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/tutorials': typeof TutorialsRoute
   '/verify': typeof VerifyRoute
   '/api/contact': typeof ApiContactRoute
+  '/events/$slug': typeof EventsSlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/roadmaps/$slug': typeof RoadmapsSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   '/tutorials': typeof TutorialsRoute
   '/verify': typeof VerifyRoute
   '/api/contact': typeof ApiContactRoute
+  '/events_/$slug': typeof EventsSlugRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/roadmaps_/$slug': typeof RoadmapsSlugRoute
   '/tutorials_/$slug': typeof TutorialsSlugRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/tutorials'
     | '/verify'
     | '/api/contact'
+    | '/events/$slug'
     | '/learn/$slug'
     | '/roadmaps/$slug'
     | '/tutorials/$slug'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/tutorials'
     | '/verify'
     | '/api/contact'
+    | '/events/$slug'
     | '/learn/$slug'
     | '/roadmaps/$slug'
     | '/tutorials/$slug'
@@ -272,6 +283,7 @@ export interface FileRouteTypes {
     | '/tutorials'
     | '/verify'
     | '/api/contact'
+    | '/events_/$slug'
     | '/learn/$slug'
     | '/roadmaps_/$slug'
     | '/tutorials_/$slug'
@@ -296,6 +308,7 @@ export interface RootRouteChildren {
   TutorialsRoute: typeof TutorialsRoute
   VerifyRoute: typeof VerifyRoute
   ApiContactRoute: typeof ApiContactRoute
+  EventsSlugRoute: typeof EventsSlugRoute
   LearnSlugRoute: typeof LearnSlugRoute
   RoadmapsSlugRoute: typeof RoadmapsSlugRoute
   TutorialsSlugRoute: typeof TutorialsSlugRoute
@@ -432,6 +445,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events_/$slug': {
+      id: '/events_/$slug'
+      path: '/events/$slug'
+      fullPath: '/events/$slug'
+      preLoaderRoute: typeof EventsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/contact': {
       id: '/api/contact'
       path: '/api/contact'
@@ -472,6 +492,7 @@ const rootRouteChildren: RootRouteChildren = {
   TutorialsRoute: TutorialsRoute,
   VerifyRoute: VerifyRoute,
   ApiContactRoute: ApiContactRoute,
+  EventsSlugRoute: EventsSlugRoute,
   LearnSlugRoute: LearnSlugRoute,
   RoadmapsSlugRoute: RoadmapsSlugRoute,
   TutorialsSlugRoute: TutorialsSlugRoute,

@@ -10,6 +10,10 @@ export class CreateEventDto {
   description: string;
 
   @IsString()
+  @IsNotEmpty()
+  slug: string;
+
+  @IsString()
   @IsOptional()
   imageUrl?: string;
 

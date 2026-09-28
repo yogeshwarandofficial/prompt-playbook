@@ -110,7 +110,14 @@ function EventsPage() {
                     <p className="text-slate-400 text-sm mb-6 flex-grow line-clamp-3 leading-relaxed">
                       {event.description}
                     </p>
-                    {event.link && (
+                    {event.slug ? (
+                      <Link 
+                        to={`/events/${event.slug}`}
+                        className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium transition-colors text-sm"
+                      >
+                        View Details <ExternalLink className="w-4 h-4" />
+                      </Link>
+                    ) : event.link && (
                       <a 
                         href={event.link}
                         target="_blank"

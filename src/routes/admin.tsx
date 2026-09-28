@@ -1228,6 +1228,7 @@ export function EventsView() {
   const [loading, setLoading] = useState(true);
   
   const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [link, setLink] = useState("");
@@ -1271,6 +1272,7 @@ export function EventsView() {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const payload = {
         title,
+        slug,
         description,
         imageUrl: imageUrl || undefined,
         link: link || undefined,
@@ -1293,6 +1295,7 @@ export function EventsView() {
       
       setFormSuccess("Event created successfully!");
       setTitle("");
+      setSlug("");
       setDescription("");
       setImageUrl("");
       setLink("");
@@ -1353,7 +1356,15 @@ export function EventsView() {
             
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
-              <input type="text" required value={title} onChange={e => setTitle(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" placeholder="Tech Talk 2024" />
+              <input type="text" required value={title} onChange={e => {
+                setTitle(e.target.value);
+                if(!slug) setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
+              }} className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" placeholder="Tech Talk 2024" />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Slug (URL)</label>
+              <input type="text" required value={slug} onChange={e => setSlug(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" placeholder="tech-talk-2024" />
             </div>
             
             <div>

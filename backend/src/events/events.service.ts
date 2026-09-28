@@ -29,6 +29,16 @@ export class EventsService {
     return event;
   }
 
+  async findBySlug(slug: string) {
+    const event = await this.prisma.event.findUnique({
+      where: { slug },
+    });
+    if (!event) {
+      throw new NotFoundException(`Event with slug ${slug} not found`);
+    }
+    return event;
+  }
+
   update(id: string, updateEventDto: UpdateEventDto) {
     return this.prisma.event.update({
       where: { id },
