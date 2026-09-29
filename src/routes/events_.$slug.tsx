@@ -2,6 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Calendar, Clock, Globe, Users, Trophy, FileText, MonitorPlay, Hourglass, Ticket, ArrowLeft } from "lucide-react";
 import { createSeoHead } from "@/lib/seo";
+import { DEFAULT_EVENTS } from "./events";
 
 export const Route = createFileRoute("/events_/$slug")({
   component: EventDetailsPage,
@@ -9,7 +10,8 @@ export const Route = createFileRoute("/events_/$slug")({
 
 function EventDetailsPage() {
   const { slug } = useParams({ from: "/events_/$slug" });
-  const [event, setEvent] = useState<any>(null);
+  const defaultEvent = DEFAULT_EVENTS.find(e => e.slug === slug);
+  const [event, setEvent] = useState<any>(defaultEvent || null);
   const [loading, setLoading] = useState(true);
 
   // Time calculations
@@ -66,7 +68,7 @@ function EventDetailsPage() {
     return () => clearInterval(interval);
   }, [event]);
 
-  if (loading) {
+  if (loading && !event) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="w-16 h-16 border-4 border-brand-green border-t-transparent rounded-full animate-spin"></div>

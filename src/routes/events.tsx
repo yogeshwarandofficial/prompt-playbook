@@ -18,8 +18,38 @@ export const Route = createFileRoute("/events")({
   component: EventsPage,
 });
 
+export const DEFAULT_EVENTS = [
+  {
+    id: "tech-webinar-1",
+    title: "Mastering Full Stack Web Development",
+    description: "Join our interactive webinar to explore the modern tech stack including React, Node.js, and MongoDB. Learn how to build scalable applications from scratch.",
+    date: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    imageUrl: "/ui_web.png",
+    link: "https://infynux.com",
+    slug: "mastering-full-stack-web-development"
+  },
+  {
+    id: "cloud-workshop-1",
+    title: "AWS Cloud Infrastructure Workshop",
+    description: "A hands-on workshop covering AWS core services, serverless architecture, and deployment strategies. Perfect for beginners and intermediate developers.",
+    date: new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+    imageUrl: "/ui_cloud.png",
+    link: "https://infynux.com",
+    slug: "aws-cloud-infrastructure-workshop"
+  },
+  {
+    id: "ai-talk-1",
+    title: "The Future of AI & Automation",
+    description: "Discover how AI is shaping the future of tech. We'll discuss LLMs, prompt engineering, and building intelligent automated workflows.",
+    date: new Date(new Date().getTime() + 21 * 24 * 60 * 60 * 1000).toISOString(),
+    imageUrl: "/ui_ai.png",
+    link: "https://infynux.com",
+    slug: "future-of-ai-and-automation"
+  }
+];
+
 function EventsPage() {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<any[]>(DEFAULT_EVENTS);
   const [loading, setLoading] = useState(true);
 
   const breadcrumbSchema = getBreadcrumbSchema([
@@ -34,7 +64,9 @@ function EventsPage() {
         const res = await fetch(`${API_URL}/api/events`);
         if (res.ok) {
           const data = await res.json();
-          setEvents(data);
+          if (Array.isArray(data) && data.length > 0) {
+            setEvents(data);
+          }
         }
       } catch (e) {
         console.error("Failed to fetch events", e);
@@ -70,13 +102,7 @@ function EventsPage() {
             </p>
           </div>
 
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((n) => (
-                <div key={n} className="h-80 rounded-3xl bg-slate-800/50 animate-pulse border border-slate-700/50" />
-              ))}
-            </div>
-          ) : events.length === 0 ? (
+          {events.length === 0 && !loading ? (
             <div className="flex flex-col items-center justify-center py-20 bg-slate-900/30 rounded-3xl border border-slate-800">
               <Calendar className="w-16 h-16 text-slate-600 mb-4" />
               <h3 className="text-xl font-bold text-white mb-2">No upcoming events</h3>
@@ -112,7 +138,8 @@ function EventsPage() {
                     </p>
                     {event.slug ? (
                       <Link 
-                        to={`/events/${event.slug}`}
+                        to="/events/$slug"
+                        params={{ slug: event.slug }}
                         className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium transition-colors text-sm"
                       >
                         View Details <ExternalLink className="w-4 h-4" />
