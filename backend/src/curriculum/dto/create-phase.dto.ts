@@ -1,4 +1,10 @@
-import { IsString, IsNumber, IsOptional, IsEnum, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsEnum,
+  IsBoolean,
+} from 'class-validator';
 import { CurriculumPhaseType } from '@prisma/client';
 
 export class CreateCurriculumPhaseDto {
@@ -42,7 +48,7 @@ export class CreateCurriculumPhaseDto {
   @IsString()
   @IsOptional()
   projectId?: string;
-  
+
   @IsBoolean()
   @IsOptional()
   isPublished?: boolean;

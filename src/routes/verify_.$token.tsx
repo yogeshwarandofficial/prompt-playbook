@@ -3,6 +3,8 @@ import { PageHeader } from './roadmaps';
 import { ShieldCheck, XCircle, Calendar, Award, User, Hash } from 'lucide-react';
 import { format } from 'date-fns';
 
+import { createSeoHead } from '@/lib/seo';
+
 export const Route = createFileRoute('/verify_/$token')({
   loader: async ({ params }) => {
     const query = params.token;
@@ -34,12 +36,14 @@ export const Route = createFileRoute('/verify_/$token')({
       return { certificates: [], error: 'Connection Error', message: 'Failed to verify. Please try again later.' };
     }
   },
-  head: () => ({
-    meta: [
-      { title: 'Certificate Verification Result | Infynux Academy' },
-      { name: 'robots', content: 'noindex, nofollow' },
-    ],
-  }),
+  head: ({ loaderData }) => {
+    return createSeoHead({
+      title: "Certificate Verification Result | Infynux Academy",
+      description: "Verify the authenticity of Infynux Academy internship and course certificates.",
+      path: "/verify",
+      noindex: true,
+    });
+  },
   component: VerifyResultPage,
 });
 

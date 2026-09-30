@@ -5,7 +5,10 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { IssueCertificateDto, RevokeCertificateDto } from './dto/certificate.dto';
+import {
+  IssueCertificateDto,
+  RevokeCertificateDto,
+} from './dto/certificate.dto';
 import { randomUUID } from 'crypto';
 import * as path from 'path';
 import * as QRCode from 'qrcode';
@@ -17,20 +20,21 @@ const PImage = require('pureimage');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const jimp = require('jimp');
 
-
-
 @Injectable()
 export class CertificatesService {
   constructor(private prisma: PrismaService) {}
 
-  async generateDynamicCertificate(studentCourseId: string, studentId: string): Promise<Buffer> {
+  async generateDynamicCertificate(
+    studentCourseId: string,
+    studentId: string,
+  ): Promise<Buffer> {
     const sc = await this.prisma.studentCourse.findUnique({
       where: { id: studentCourseId },
       include: {
         student: true,
         course: true,
-        certificate: true
-      }
+        certificate: true,
+      },
     });
 
     if (!sc || sc.studentId !== studentId) {
@@ -42,36 +46,68 @@ export class CertificatesService {
     }
 
     // Attempt to read the blank template
-    const templatePath = path.join(process.cwd(), 'public', 'template_blank.png');
+    const templatePath = path.join(
+      process.cwd(),
+      'public',
+      'template_blank.png',
+    );
     let image;
     try {
       image = await jimp.Jimp.read(templatePath);
     } catch (e) {
-      throw new BadRequestException('Certificate template error: ' + (e as Error).message + ' Path: ' + templatePath);
+      throw new BadRequestException(
+        'Certificate template error: ' +
+          (e as Error).message +
+          ' Path: ' +
+          templatePath,
+      );
     }
 
     // Load standard black fonts for a white certificate
-    const fontPath64 = path.join(require.resolve('@jimp/plugin-print'), '../../fonts/open-sans/open-sans-64-black/open-sans-64-black.fnt');
-    const fontPath32 = path.join(require.resolve('@jimp/plugin-print'), '../../fonts/open-sans/open-sans-32-black/open-sans-32-black.fnt');
+    const fontPath64 = path.join(
+      require.resolve('@jimp/plugin-print'),
+      '../../fonts/open-sans/open-sans-64-black/open-sans-64-black.fnt',
+    );
+    const fontPath32 = path.join(
+      require.resolve('@jimp/plugin-print'),
+      '../../fonts/open-sans/open-sans-32-black/open-sans-32-black.fnt',
+    );
     const font64 = await jimp.loadFont(fontPath64);
     const font32 = await jimp.loadFont(fontPath32);
 
-    const printColorized = (img: any, font: any, x: number, y: number, textObj: any, maxWidth?: number, scale: number = 1, color?: [number, number, number]) => {
+    const printColorized = (
+      img: any,
+      font: any,
+      x: number,
+      y: number,
+      textObj: any,
+      maxWidth?: number,
+      scale: number = 1,
+      color?: [number, number, number],
+    ) => {
       // Create a temporary image for the text
-      const boxWidth = maxWidth ? Math.ceil(maxWidth / scale) : img.bitmap.width;
+      const boxWidth = maxWidth
+        ? Math.ceil(maxWidth / scale)
+        : img.bitmap.width;
       const textImg = new jimp.Jimp({ width: boxWidth, height: 300 });
-      
+
       const printArgs: any = { font, x: 0, y: 0, text: textObj };
       if (maxWidth) printArgs.maxWidth = Math.ceil(maxWidth / scale);
       textImg.print(printArgs);
-      
-      textImg.scan(0, 0, textImg.bitmap.width, textImg.bitmap.height, function(px: number, py: number, idx: number) {
-        if (this.bitmap.data[idx + 3] > 0) {
-          this.bitmap.data[idx + 0] = color ? color[0] : 12; // R
-          this.bitmap.data[idx + 1] = color ? color[1] : 31; // G
-          this.bitmap.data[idx + 2] = color ? color[2] : 56; // B
-        }
-      });
+
+      textImg.scan(
+        0,
+        0,
+        textImg.bitmap.width,
+        textImg.bitmap.height,
+        function (px: number, py: number, idx: number) {
+          if (this.bitmap.data[idx + 3] > 0) {
+            this.bitmap.data[idx + 0] = color ? color[0] : 12; // R
+            this.bitmap.data[idx + 1] = color ? color[1] : 31; // G
+            this.bitmap.data[idx + 2] = color ? color[2] : 56; // B
+          }
+        },
+      );
 
       if (scale !== 1) {
         textImg.scale(scale);
@@ -82,9 +118,12 @@ export class CertificatesService {
       img.composite(textImg, finalX, y);
     };
 
-
     // Render the student name using pureimage to support custom TTF fonts
-    const fontPathPinyon = path.join(process.cwd(), 'public', 'PinyonScript-Regular.ttf');
+    const fontPathPinyon = path.join(
+      process.cwd(),
+      'public',
+      'PinyonScript-Regular.ttf',
+    );
     const customFont = PImage.registerFont(fontPathPinyon, 'PinyonScript');
     customFont.loadSync();
 
@@ -93,7 +132,7 @@ export class CertificatesService {
     ctx.clearRect(0, 0, image.bitmap.width, 200); // Clear default black background to transparent
     ctx.fillStyle = 'rgba(12, 31, 56, 1)'; // Navy blue
     ctx.font = "96pt 'PinyonScript'"; // Larger cursive font size
-    
+
     const textWidth = ctx.measureText(sc.student.name).width;
     const nameX = (image.bitmap.width - textWidth) / 2;
     // pureimage draws from the baseline
@@ -101,7 +140,7 @@ export class CertificatesService {
 
     const passThrough = new PassThrough();
     const chunks: Buffer[] = [];
-    passThrough.on('data', chunk => chunks.push(Buffer.from(chunk)));
+    passThrough.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
     await PImage.encodePNGToStream(nameCanvas, passThrough);
     const nameBuffer = Buffer.concat(chunks);
     const nameJimpImage = await jimp.Jimp.read(nameBuffer);
@@ -109,28 +148,50 @@ export class CertificatesService {
     // Composite the name onto the main image (y=410 so the baseline sits on the golden line)
     image.composite(nameJimpImage, 0, 410);
 
-    const startDate = sc.createdAt ? new Date(sc.createdAt).toLocaleDateString() : 'N/A';
-    const endDate = sc.certificate.issuedAt ? new Date(sc.certificate.issuedAt).toLocaleDateString() : new Date().toLocaleDateString();
-    
+    const startDate = sc.createdAt
+      ? new Date(sc.createdAt).toLocaleDateString()
+      : 'N/A';
+    const endDate = sc.certificate.issuedAt
+      ? new Date(sc.certificate.issuedAt).toLocaleDateString()
+      : new Date().toLocaleDateString();
+
     // First paragraph (Dynamic)
     const paragraph1 = `This certificate is proudly presented for successfully completing the ${sc.course.name} Internship at Infynux Solutions from ${startDate} to ${endDate}.`;
-    
+
     // Second paragraph (Static replacement)
     const paragraph2 = `During the internship, hands-on experience was gained through practical training, technical assignments, and real-world projects, demonstrating dedication and commitment to learning. We appreciate the efforts and wish continued growth and success in the professional journey.`;
 
     // Render both paragraphs with a larger font size (scale 0.85) to fill the box
-    printColorized(image, font32, image.bitmap.width * 0.075, 580, {
-      text: paragraph1,
-      alignmentX: jimp.HorizontalAlign.CENTER,
-      alignmentY: jimp.VerticalAlign.TOP,
-    }, image.bitmap.width * 0.85, 0.85, [60, 60, 60]);
+    printColorized(
+      image,
+      font32,
+      image.bitmap.width * 0.075,
+      580,
+      {
+        text: paragraph1,
+        alignmentX: jimp.HorizontalAlign.CENTER,
+        alignmentY: jimp.VerticalAlign.TOP,
+      },
+      image.bitmap.width * 0.85,
+      0.85,
+      [60, 60, 60],
+    );
 
     // Give some spacing between paragraphs (approx 110px based on rendered height)
-    printColorized(image, font32, image.bitmap.width * 0.075, 690, {
-      text: paragraph2,
-      alignmentX: jimp.HorizontalAlign.CENTER,
-      alignmentY: jimp.VerticalAlign.TOP,
-    }, image.bitmap.width * 0.85, 0.85, [60, 60, 60]);
+    printColorized(
+      image,
+      font32,
+      image.bitmap.width * 0.075,
+      690,
+      {
+        text: paragraph2,
+        alignmentX: jimp.HorizontalAlign.CENTER,
+        alignmentY: jimp.VerticalAlign.TOP,
+      },
+      image.bitmap.width * 0.85,
+      0.85,
+      [60, 60, 60],
+    );
 
     // Print Date (only dynamic part, template already has 'Date : ')
     const dateStr = new Date().toLocaleDateString();
@@ -141,7 +202,10 @@ export class CertificatesService {
     printColorized(image, font32, 505, 936, certCode, undefined, 0.75);
 
     // Generate QR code for verification (using Student ID as requested)
-    let frontendUrl = process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://infynuxsolutions.in';
+    let frontendUrl =
+      process.env.FRONTEND_URL ||
+      process.env.CORS_ORIGIN ||
+      'https://infynuxsolutions.in';
     if (frontendUrl.includes(',')) {
       frontendUrl = frontendUrl.split(',')[0].trim();
     }
@@ -151,16 +215,16 @@ export class CertificatesService {
       width: 120, // slightly smaller to fit nicely in the center box
       color: {
         dark: '#000000',
-        light: '#ffffff'
-      }
+        light: '#ffffff',
+      },
     });
     const qrImage = await jimp.Jimp.read(qrBuffer);
 
     // Composite QR code in the bottom center
-    const xPos = (image.bitmap.width / 2) - (qrImage.bitmap.width / 2);
+    const xPos = image.bitmap.width / 2 - qrImage.bitmap.width / 2;
     // Lowered slightly to center it better
     const yPos = image.bitmap.height - 180;
-    
+
     image.composite(qrImage, xPos > 0 ? xPos : 0, yPos > 0 ? yPos : 0);
 
     return await image.getBuffer(jimp.JimpMime.png);
@@ -177,7 +241,9 @@ export class CertificatesService {
     const sc = await this.prisma.studentCourse.findUnique({
       where: { id: studentCourseId },
       include: {
-        student: { select: { id: true, name: true, email: true, studentId: true } },
+        student: {
+          select: { id: true, name: true, email: true, studentId: true },
+        },
         course: { select: { id: true, name: true } },
         certificate: true,
       },
@@ -193,7 +259,9 @@ export class CertificatesService {
     const eligibleCourses = await this.prisma.studentCourse.findMany({
       where: { certificate: null },
       include: {
-        student: { select: { id: true, name: true, email: true, studentId: true } },
+        student: {
+          select: { id: true, name: true, email: true, studentId: true },
+        },
         course: { select: { id: true, name: true } },
       },
       orderBy: { createdAt: 'desc' },
@@ -207,7 +275,9 @@ export class CertificatesService {
       include: {
         studentCourse: {
           include: {
-            student: { select: { id: true, name: true, email: true, studentId: true } },
+            student: {
+              select: { id: true, name: true, email: true, studentId: true },
+            },
             course: { select: { id: true, name: true } },
           },
         },
@@ -222,7 +292,9 @@ export class CertificatesService {
       include: {
         studentCourse: {
           include: {
-            student: { select: { id: true, name: true, email: true, studentId: true } },
+            student: {
+              select: { id: true, name: true, email: true, studentId: true },
+            },
             course: { select: { id: true, name: true } },
           },
         },
@@ -235,12 +307,9 @@ export class CertificatesService {
   async issue(dto: IssueCertificateDto) {
     const student = await this.prisma.user.findFirst({
       where: {
-        OR: [
-          { id: dto.studentId },
-          { studentId: dto.studentId }
-        ],
-        role: 'STUDENT'
-      }
+        OR: [{ id: dto.studentId }, { studentId: dto.studentId }],
+        role: 'STUDENT',
+      },
     });
 
     if (!student) {
@@ -251,9 +320,9 @@ export class CertificatesService {
       where: {
         studentId: student.id,
         ...(dto.courseId ? { courseId: dto.courseId } : {}),
-        certificate: null
+        certificate: null,
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     if (!sc) {
@@ -261,32 +330,41 @@ export class CertificatesService {
       const unassignedCourse = await this.prisma.course.findFirst({
         where: {
           students: {
-            none: { studentId: student.id }
-          }
-        }
+            none: { studentId: student.id },
+          },
+        },
       });
 
       if (!unassignedCourse) {
-        throw new BadRequestException('This student has already received certificates for all available courses.');
+        throw new BadRequestException(
+          'This student has already received certificates for all available courses.',
+        );
       }
       sc = await this.prisma.studentCourse.create({
         data: {
           studentId: student.id,
           courseId: unassignedCourse.id,
-        }
+        },
       });
     }
 
     // Re-verify eligibility on the backend
-    const { eligible, reason, studentCourse } = await this.checkEligibility(sc.id);
-    if (!eligible) throw new BadRequestException(reason ?? 'Student is not eligible for a certificate');
+    const { eligible, reason, studentCourse } = await this.checkEligibility(
+      sc.id,
+    );
+    if (!eligible)
+      throw new BadRequestException(
+        reason ?? 'Student is not eligible for a certificate',
+      );
 
     // Check for duplicate
     if (studentCourse.certificate) {
-      throw new ConflictException('A certificate has already been issued for this course');
+      throw new ConflictException(
+        'A certificate has already been issued for this course',
+      );
     }
 
-    let certNo = await this.generateCertNo();
+    const certNo = await this.generateCertNo();
 
     const verificationToken = randomUUID();
 
@@ -309,7 +387,7 @@ export class CertificatesService {
   private async generateCertNo(): Promise<string> {
     const certs = await this.prisma.certificate.findMany({
       where: { certificateNo: { startsWith: 'IS-IN-' } },
-      select: { certificateNo: true }
+      select: { certificateNo: true },
     });
 
     let maxNum = -1;
@@ -327,12 +405,11 @@ export class CertificatesService {
     return `IS-IN-${String(nextNum).padStart(3, '0')}`;
   }
 
-
-
   async revoke(id: string, dto: RevokeCertificateDto) {
     const cert = await this.prisma.certificate.findUnique({ where: { id } });
     if (!cert) throw new NotFoundException('Certificate not found');
-    if (cert.status === 'REVOKED') throw new BadRequestException('Certificate is already revoked');
+    if (cert.status === 'REVOKED')
+      throw new BadRequestException('Certificate is already revoked');
 
     return this.prisma.certificate.update({
       where: { id },
@@ -349,17 +426,17 @@ export class CertificatesService {
       where: {
         OR: [
           { verificationToken: tokenOrCertNo },
-          { certificateNo: tokenOrCertNo }
-        ]
+          { certificateNo: tokenOrCertNo },
+        ],
       },
       include: {
         student: { select: { name: true, studentId: true } },
         studentCourse: {
           include: {
-            course: { select: { name: true, id: true } }
-          }
-        }
-      }
+            course: { select: { name: true, id: true } },
+          },
+        },
+      },
     });
 
     if (!cert) {
@@ -367,7 +444,9 @@ export class CertificatesService {
     }
 
     if (cert.status !== 'ACTIVE') {
-      throw new BadRequestException(`This certificate is ${cert.status}. Reason: ${cert.revokeReason || 'Unknown'}`);
+      throw new BadRequestException(
+        `This certificate is ${cert.status}. Reason: ${cert.revokeReason || 'Unknown'}`,
+      );
     }
 
     return cert;
@@ -377,25 +456,27 @@ export class CertificatesService {
     const certs = await this.prisma.certificate.findMany({
       where: {
         student: {
-          studentId
+          studentId,
         },
-        status: 'ACTIVE'
+        status: 'ACTIVE',
       },
       include: {
         student: { select: { name: true, studentId: true } },
         studentCourse: {
           include: {
-            course: { select: { name: true, id: true } }
-          }
-        }
+            course: { select: { name: true, id: true } },
+          },
+        },
       },
       orderBy: {
-        issuedAt: 'desc'
-      }
+        issuedAt: 'desc',
+      },
     });
 
     if (!certs.length) {
-      throw new NotFoundException('No active certificates found for this student ID.');
+      throw new NotFoundException(
+        'No active certificates found for this student ID.',
+      );
     }
 
     return certs;

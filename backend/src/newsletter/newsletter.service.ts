@@ -11,7 +11,11 @@ export class NewsletterService {
     private email: EmailService,
   ) {}
 
-  async subscribe(rawEmail: string): Promise<{ success: boolean; message: string; alreadySubscribed?: boolean }> {
+  async subscribe(rawEmail: string): Promise<{
+    success: boolean;
+    message: string;
+    alreadySubscribed?: boolean;
+  }> {
     const email = rawEmail.toLowerCase().trim();
 
     // Check for existing subscription
@@ -20,7 +24,11 @@ export class NewsletterService {
     });
 
     if (existing) {
-      return { success: true, message: "You're already subscribed! 🎉", alreadySubscribed: true };
+      return {
+        success: true,
+        message: "You're already subscribed! 🎉",
+        alreadySubscribed: true,
+      };
     }
 
     // Persist new subscriber
@@ -33,7 +41,9 @@ export class NewsletterService {
     // Send welcome email fire-and-forget
     this.email
       .sendNewsletterWelcome(email)
-      .catch((err) => this.logger.error('Failed to send newsletter welcome email', err));
+      .catch((err) =>
+        this.logger.error('Failed to send newsletter welcome email', err),
+      );
 
     return { success: true, message: "You're subscribed! 🎉" };
   }

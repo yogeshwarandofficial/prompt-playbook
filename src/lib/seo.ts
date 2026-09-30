@@ -1,6 +1,6 @@
 export const SITE_URL = "https://www.infynuxacademy.in";
 export const SITE_NAME = "Infynux Academy";
-export const DEFAULT_OG_IMAGE = `${SITE_URL}/logo-transparent.png`;
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.jpg`;
 export const ACADEMY_LOGO_URL = `${SITE_URL}/INfynux-Logo 1.png`;
 export const GOOGLE_SITE_VERIFICATION = "Ma6YRQTl3lraifErr73MP_T7VPQpllsXy9FGWbEc8Gs";
 
@@ -78,6 +78,8 @@ export function createSeoHead({
     { property: "og:type", content: type },
     { property: "og:url", content: canonical },
     { property: "og:image", content: absoluteImage },
+    { property: "og:image:width", content: "1200" },
+    { property: "og:image:height", content: "630" },
     { property: "og:image:alt", content: title },
     { property: "og:locale", content: "en_IN" },
     { property: "og:keywords", content: formattedKeywords },

@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Param, Patch, UseGuards, Query, Req, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  UseGuards,
+  Query,
+  Req,
+  BadRequestException,
+} from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { ReviewApplicationDto } from './dto/review-application.dto';
@@ -23,8 +34,13 @@ export class ApplicationsController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   findAll(@Query('status') status?: string) {
     // M-3: Validate status against the enum before hitting Prisma — prevents internal error leaks
-    if (status && !Object.values(ApplicationStatus).includes(status as ApplicationStatus)) {
-      throw new BadRequestException(`Invalid status. Allowed: ${Object.values(ApplicationStatus).join(', ')}`);
+    if (
+      status &&
+      !Object.values(ApplicationStatus).includes(status as ApplicationStatus)
+    ) {
+      throw new BadRequestException(
+        `Invalid status. Allowed: ${Object.values(ApplicationStatus).join(', ')}`,
+      );
     }
     return this.applicationsService.findAll(status);
   }
@@ -42,9 +58,13 @@ export class ApplicationsController {
   review(
     @Param('id') id: string,
     @Body() reviewDto: ReviewApplicationDto,
-    @Req() req: any
+    @Req() req: any,
   ) {
-    return this.applicationsService.reviewApplication(id, req.user.id, reviewDto);
+    return this.applicationsService.reviewApplication(
+      id,
+      req.user.id,
+      reviewDto,
+    );
   }
 
   @Post('admin/:id/create-student')

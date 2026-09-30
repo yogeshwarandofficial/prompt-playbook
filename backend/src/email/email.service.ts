@@ -12,12 +12,16 @@ export class EmailService {
     if (apiKey) {
       this.resend = new Resend(apiKey);
     } else {
-      this.logger.warn('RESEND_API_KEY not configured — emails will be skipped.');
+      this.logger.warn(
+        'RESEND_API_KEY not configured — emails will be skipped.',
+      );
     }
   }
 
   private get fromEmail(): string {
-    return this.config.get<string>('RESEND_FROM_EMAIL') ?? 'onboarding@resend.dev';
+    return (
+      this.config.get<string>('RESEND_FROM_EMAIL') ?? 'onboarding@resend.dev'
+    );
   }
 
   /** Send an email. Returns true on success, false on failure (never throws). */
@@ -28,7 +32,9 @@ export class EmailService {
     from?: string;
   }): Promise<boolean> {
     if (!this.resend) {
-      this.logger.warn(`Email skipped (no API key): ${opts.subject} → ${opts.to}`);
+      this.logger.warn(
+        `Email skipped (no API key): ${opts.subject} → ${opts.to}`,
+      );
       return false;
     }
     try {
@@ -39,7 +45,9 @@ export class EmailService {
         html: opts.html,
       });
       if (error) {
-        this.logger.error(`Resend error for "${opts.subject}": ${JSON.stringify(error)}`);
+        this.logger.error(
+          `Resend error for "${opts.subject}": ${JSON.stringify(error)}`,
+        );
         return false;
       }
       this.logger.log(`Email sent: "${opts.subject}" → ${opts.to}`);
@@ -180,7 +188,11 @@ export class EmailService {
         <hr style="border:0;border-top:1px solid #eaeaea;margin:24px 0" />
         <p style="font-size:14px;font-weight:600;color:#374151">— The Infynux Academy Team</p>
       </div>`;
-    return this.send({ to: opts.email, subject: 'We received your message — Infynux Academy', html });
+    return this.send({
+      to: opts.email,
+      subject: 'We received your message — Infynux Academy',
+      html,
+    });
   }
 
   async sendContactAdminNotification(opts: {
@@ -223,6 +235,10 @@ export class EmailService {
         <p style="font-size:14px;color:#6b7280">If you have any questions, feel free to reply to this email.</p>
         <p style="font-size:14px;font-weight:600;color:#374151;margin-top:8px">— The Infynux Academy Team</p>
       </div>`;
-    return this.send({ to: email, subject: 'Welcome to Infynux Academy! 🚀', html });
+    return this.send({
+      to: email,
+      subject: 'Welcome to Infynux Academy! 🚀',
+      html,
+    });
   }
 }

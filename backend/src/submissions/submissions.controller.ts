@@ -1,4 +1,14 @@
-import { Controller, Post, Get, Body, Param, UseGuards, Req, Query, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Param,
+  UseGuards,
+  Req,
+  Query,
+  BadRequestException,
+} from '@nestjs/common';
 import { SubmissionsService } from './submissions.service';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -50,8 +60,13 @@ export class SubmissionsController {
   @Roles('ADMIN', 'SUPER_ADMIN', 'MENTOR')
   getAdminSubmissions(@Query('status') status?: string) {
     // M-3: Guard against invalid status values to prevent Prisma internal error exposure
-    if (status && !Object.values(SubmissionStatus).includes(status as SubmissionStatus)) {
-      throw new BadRequestException(`Invalid status. Allowed: ${Object.values(SubmissionStatus).join(', ')}`);
+    if (
+      status &&
+      !Object.values(SubmissionStatus).includes(status as SubmissionStatus)
+    ) {
+      throw new BadRequestException(
+        `Invalid status. Allowed: ${Object.values(SubmissionStatus).join(', ')}`,
+      );
     }
     return this.submissionsService.getAdminSubmissions(status);
   }
@@ -68,7 +83,11 @@ export class SubmissionsController {
   @Post('admin/submissions/:id/review')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN', 'MENTOR')
-  review(@Req() req: any, @Param('id') id: string, @Body() dto: CreateReviewDto) {
+  review(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: CreateReviewDto,
+  ) {
     return this.submissionsService.reviewSubmission(req.user.id, id, dto);
   }
 }

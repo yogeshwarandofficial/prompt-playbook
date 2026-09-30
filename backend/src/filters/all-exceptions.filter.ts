@@ -61,7 +61,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
       timestamp: new Date().toISOString(),
       path: request.url,
       // Stack trace ONLY in development — never in production
-      ...(this.isProd ? {} : { stack: exception instanceof Error ? exception.stack : undefined }),
+      ...(this.isProd
+        ? {}
+        : { stack: exception instanceof Error ? exception.stack : undefined }),
     });
   }
 }

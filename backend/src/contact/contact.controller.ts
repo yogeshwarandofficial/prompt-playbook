@@ -1,4 +1,12 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, BadRequestException, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  BadRequestException,
+  Req,
+} from '@nestjs/common';
 import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { validate } from 'class-validator';
@@ -11,14 +19,13 @@ export class ContactController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async submit(
-    @Body() body: CreateContactDto,
-    @Req() req: Request,
-  ) {
+  async submit(@Body() body: CreateContactDto, @Req() req: Request) {
     const dto = plainToInstance(CreateContactDto, body);
     const errors = await validate(dto);
     if (errors.length > 0) {
-      throw new BadRequestException(errors.map(e => Object.values(e.constraints ?? {})).flat());
+      throw new BadRequestException(
+        errors.map((e) => Object.values(e.constraints ?? {})).flat(),
+      );
     }
 
     // M-2: Use req.ip which respects the Express 'trust proxy' setting configured in main.ts.

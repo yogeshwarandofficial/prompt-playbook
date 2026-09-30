@@ -24,13 +24,14 @@ import {
   Plus, Edit, ListChecks, UserCheck, ChevronUp, ChevronDown, Trash2, Eye, ArrowLeft, ExternalLink, MessageSquare, Check, XCircle,
   Target, Map
 } from "lucide-react";
+import { createSeoHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({
-    meta: [
-      { title: "Admin Dashboard — Infynux Academy" },
-      { name: "robots", content: "noindex,nofollow" },
-    ],
+  head: () => createSeoHead({
+    title: "Admin Dashboard — Infynux Academy",
+    description: "Infynux Academy administrator portal.",
+    path: "/admin",
+    noindex: true,
   }),
   component: AdminDashboard,
 });

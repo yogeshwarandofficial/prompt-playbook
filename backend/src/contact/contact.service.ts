@@ -12,7 +12,10 @@ export class ContactService {
     private email: EmailService,
   ) {}
 
-  async submit(dto: CreateContactDto, ip: string): Promise<{ success: boolean; message: string }> {
+  async submit(
+    dto: CreateContactDto,
+    ip: string,
+  ): Promise<{ success: boolean; message: string }> {
     // Rate-limit: max 5 submissions per IP in the last hour
     const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const recentCount = await this.prisma.contactSubmission.count({
@@ -23,7 +26,10 @@ export class ContactService {
     });
 
     if (recentCount >= 5) {
-      return { success: false, message: 'Too many requests. Please try again later.' };
+      return {
+        success: false,
+        message: 'Too many requests. Please try again later.',
+      };
     }
 
     // Persist to database
@@ -47,7 +53,9 @@ export class ContactService {
         subject: dto.subject,
         message: dto.message,
       })
-      .catch((err) => this.logger.error('Failed to send contact confirmation email', err));
+      .catch((err) =>
+        this.logger.error('Failed to send contact confirmation email', err),
+      );
 
     this.email
       .sendContactAdminNotification({
@@ -57,7 +65,9 @@ export class ContactService {
         message: dto.message,
         ip,
       })
-      .catch((err) => this.logger.error('Failed to send admin notification email', err));
+      .catch((err) =>
+        this.logger.error('Failed to send admin notification email', err),
+      );
 
     return { success: true, message: 'Message sent successfully!' };
   }

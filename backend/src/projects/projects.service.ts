@@ -18,7 +18,9 @@ export class ProjectsService {
 
   async createProject(dto: CreateProjectDto) {
     if (dto.courseId) {
-      const course = await this.prisma.course.findUnique({ where: { id: dto.courseId } });
+      const course = await this.prisma.course.findUnique({
+        where: { id: dto.courseId },
+      });
       if (!course) throw new NotFoundException('Course not found');
     }
     return this.prisma.project.create({
@@ -28,7 +30,10 @@ export class ProjectsService {
         courseId: dto.courseId ?? null,
         status: dto.status ?? 'DRAFT',
       },
-      include: { course: { select: { id: true, name: true } }, phases: { orderBy: { phaseOrder: 'asc' } } },
+      include: {
+        course: { select: { id: true, name: true } },
+        phases: { orderBy: { phaseOrder: 'asc' } },
+      },
     });
   }
 
@@ -48,9 +53,9 @@ export class ProjectsService {
       where: { id },
       include: {
         course: { select: { id: true, name: true } },
-        phases: { 
+        phases: {
           orderBy: { phaseOrder: 'asc' },
-          include: { topics: { orderBy: { order: 'asc' } } }
+          include: { topics: { orderBy: { order: 'asc' } } },
         },
         _count: { select: { assignments: true } },
       },
@@ -63,13 +68,18 @@ export class ProjectsService {
     const project = await this.prisma.project.findUnique({ where: { id } });
     if (!project) throw new NotFoundException('Project not found');
     if (dto.courseId) {
-      const course = await this.prisma.course.findUnique({ where: { id: dto.courseId } });
+      const course = await this.prisma.course.findUnique({
+        where: { id: dto.courseId },
+      });
       if (!course) throw new NotFoundException('Course not found');
     }
     return this.prisma.project.update({
       where: { id },
       data: dto,
-      include: { course: { select: { id: true, name: true } }, phases: { orderBy: { phaseOrder: 'asc' } } },
+      include: {
+        course: { select: { id: true, name: true } },
+        phases: { orderBy: { phaseOrder: 'asc' } },
+      },
     });
   }
 
@@ -87,9 +97,10 @@ export class ProjectsService {
     if (!project) throw new NotFoundException('Project not found');
 
     // Auto-assign phaseOrder as max existing + 1 if not provided
-    const nextOrder = project.phases.length > 0
-      ? Math.max(...project.phases.map(p => p.phaseOrder)) + 1
-      : 1;
+    const nextOrder =
+      project.phases.length > 0
+        ? Math.max(...project.phases.map((p) => p.phaseOrder)) + 1
+        : 1;
 
     const newPhase = await this.prisma.projectPhase.create({
       data: {
@@ -111,7 +122,10 @@ export class ProjectsService {
       const spPhasesData = existingAssignments.map((assignment) => ({
         studentProjectId: assignment.id,
         phaseId: newPhase.id,
-        status: assignment.phases.length === 0 ? 'AVAILABLE' as const : 'LOCKED' as const,
+        status:
+          assignment.phases.length === 0
+            ? ('AVAILABLE' as const)
+            : ('LOCKED' as const),
       }));
       await this.prisma.studentProjectPhase.createMany({ data: spPhasesData });
     }
@@ -119,10 +133,19 @@ export class ProjectsService {
     return newPhase;
   }
 
-  async updatePhase(projectId: string, phaseId: string, dto: Partial<CreatePhaseDto>) {
-    const phase = await this.prisma.projectPhase.findFirst({ where: { id: phaseId, projectId } });
+  async updatePhase(
+    projectId: string,
+    phaseId: string,
+    dto: Partial<CreatePhaseDto>,
+  ) {
+    const phase = await this.prisma.projectPhase.findFirst({
+      where: { id: phaseId, projectId },
+    });
     if (!phase) throw new NotFoundException('Phase not found');
-    return this.prisma.projectPhase.update({ where: { id: phaseId }, data: dto });
+    return this.prisma.projectPhase.update({
+      where: { id: phaseId },
+      data: dto,
+    });
   }
 
   async reorderPhases(projectId: string, dto: ReorderPhasesDto) {
@@ -132,14 +155,18 @@ export class ProjectsService {
     });
     if (!project) throw new NotFoundException('Project not found');
 
-    const existingIds = project.phases.map(p => p.id);
+    const existingIds = project.phases.map((p) => p.id);
     for (const id of dto.phaseIds) {
       if (!existingIds.includes(id)) {
-        throw new BadRequestException(`Phase ${id} does not belong to this project`);
+        throw new BadRequestException(
+          `Phase ${id} does not belong to this project`,
+        );
       }
     }
     if (dto.phaseIds.length !== existingIds.length) {
-      throw new BadRequestException('All phase IDs must be provided for reordering');
+      throw new BadRequestException(
+        'All phase IDs must be provided for reordering',
+      );
     }
 
     // Update phaseOrder for each phase in a transaction
@@ -154,18 +181,24 @@ export class ProjectsService {
   }
 
   async deletePhase(projectId: string, phaseId: string) {
-    const phase = await this.prisma.projectPhase.findFirst({ where: { id: phaseId, projectId } });
+    const phase = await this.prisma.projectPhase.findFirst({
+      where: { id: phaseId, projectId },
+    });
     if (!phase) throw new NotFoundException('Phase not found');
     return this.prisma.projectPhase.delete({ where: { id: phaseId } });
   }
 
   async addTopic(projectId: string, phaseId: string, dto: CreateTopicDto) {
-    const phase = await this.prisma.projectPhase.findFirst({ where: { id: phaseId, projectId }, include: { topics: true } });
+    const phase = await this.prisma.projectPhase.findFirst({
+      where: { id: phaseId, projectId },
+      include: { topics: true },
+    });
     if (!phase) throw new NotFoundException('Phase not found');
 
-    const nextOrder = phase.topics.length > 0
-      ? Math.max(...phase.topics.map(t => t.order)) + 1
-      : 1;
+    const nextOrder =
+      phase.topics.length > 0
+        ? Math.max(...phase.topics.map((t) => t.order)) + 1
+        : 1;
 
     return this.prisma.projectPhaseTopic.create({
       data: {
@@ -178,28 +211,51 @@ export class ProjectsService {
     });
   }
 
-  async updateTopic(projectId: string, phaseId: string, topicId: string, dto: UpdateTopicDto) {
-    const phase = await this.prisma.projectPhase.findFirst({ where: { id: phaseId, projectId } });
+  async updateTopic(
+    projectId: string,
+    phaseId: string,
+    topicId: string,
+    dto: UpdateTopicDto,
+  ) {
+    const phase = await this.prisma.projectPhase.findFirst({
+      where: { id: phaseId, projectId },
+    });
     if (!phase) throw new NotFoundException('Phase not found');
-    
-    const topic = await this.prisma.projectPhaseTopic.findFirst({ where: { id: topicId, projectPhaseId: phaseId } });
+
+    const topic = await this.prisma.projectPhaseTopic.findFirst({
+      where: { id: topicId, projectPhaseId: phaseId },
+    });
     if (!topic) throw new NotFoundException('Topic not found');
 
-    return this.prisma.projectPhaseTopic.update({ where: { id: topicId }, data: dto });
+    return this.prisma.projectPhaseTopic.update({
+      where: { id: topicId },
+      data: dto,
+    });
   }
 
-  async reorderTopics(projectId: string, phaseId: string, dto: ReorderTopicsDto) {
-    const phase = await this.prisma.projectPhase.findFirst({ where: { id: phaseId, projectId }, include: { topics: true } });
+  async reorderTopics(
+    projectId: string,
+    phaseId: string,
+    dto: ReorderTopicsDto,
+  ) {
+    const phase = await this.prisma.projectPhase.findFirst({
+      where: { id: phaseId, projectId },
+      include: { topics: true },
+    });
     if (!phase) throw new NotFoundException('Phase not found');
 
-    const existingIds = phase.topics.map(t => t.id);
+    const existingIds = phase.topics.map((t) => t.id);
     for (const id of dto.topicIds) {
       if (!existingIds.includes(id)) {
-        throw new BadRequestException(`Topic ${id} does not belong to this phase`);
+        throw new BadRequestException(
+          `Topic ${id} does not belong to this phase`,
+        );
       }
     }
     if (dto.topicIds.length !== existingIds.length) {
-      throw new BadRequestException('All topic IDs must be provided for reordering');
+      throw new BadRequestException(
+        'All topic IDs must be provided for reordering',
+      );
     }
 
     return this.prisma.$transaction(
@@ -213,10 +269,14 @@ export class ProjectsService {
   }
 
   async deleteTopic(projectId: string, phaseId: string, topicId: string) {
-    const phase = await this.prisma.projectPhase.findFirst({ where: { id: phaseId, projectId } });
+    const phase = await this.prisma.projectPhase.findFirst({
+      where: { id: phaseId, projectId },
+    });
     if (!phase) throw new NotFoundException('Phase not found');
-    
-    const topic = await this.prisma.projectPhaseTopic.findFirst({ where: { id: topicId, projectPhaseId: phaseId } });
+
+    const topic = await this.prisma.projectPhaseTopic.findFirst({
+      where: { id: topicId, projectPhaseId: phaseId },
+    });
     if (!topic) throw new NotFoundException('Topic not found');
 
     return this.prisma.projectPhaseTopic.delete({ where: { id: topicId } });

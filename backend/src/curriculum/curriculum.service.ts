@@ -24,8 +24,8 @@ export class CurriculumService {
         domain: true,
         specialization: true,
         versions: {
-          select: { id: true, version: true, status: true }
-        }
+          select: { id: true, version: true, status: true },
+        },
       },
     });
   }
@@ -39,10 +39,10 @@ export class CurriculumService {
         versions: {
           include: {
             phases: {
-              orderBy: { phaseNumber: 'asc' }
-            }
-          }
-        }
+              orderBy: { phaseNumber: 'asc' },
+            },
+          },
+        },
       },
     });
     if (!curriculum) {
@@ -63,32 +63,32 @@ export class CurriculumService {
       where: { id },
     });
   }
-  
+
   createVersion(dto: CreateCurriculumVersionDto) {
     return this.prisma.curriculumVersion.create({
-      data: dto
+      data: dto,
     });
   }
-  
+
   createPhase(versionId: string, dto: CreateCurriculumPhaseDto) {
     const data: any = { ...dto, curriculumVersionId: versionId };
     if (data.sheetVisibleFrom) {
       data.sheetVisibleFrom = new Date(data.sheetVisibleFrom);
     }
     return this.prisma.curriculumPhase.create({
-      data
+      data,
     });
   }
 
   createResource(phaseId: string, dto: CreateCurriculumResourceDto) {
     return this.prisma.phaseResource.create({
-      data: { ...dto, curriculumPhaseId: phaseId }
+      data: { ...dto, curriculumPhaseId: phaseId },
     });
   }
 
   createTask(phaseId: string, dto: CreateCurriculumTaskDto) {
     return this.prisma.phaseTask.create({
-      data: { ...dto, curriculumPhaseId: phaseId }
+      data: { ...dto, curriculumPhaseId: phaseId },
     });
   }
 }

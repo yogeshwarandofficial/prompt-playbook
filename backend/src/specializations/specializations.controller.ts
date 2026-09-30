@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { SpecializationsService } from './specializations.service';
 import { CreateSpecializationDto } from './dto/create-specialization.dto';
 import { UpdateSpecializationDto } from './dto/update-specialization.dto';
@@ -10,7 +19,9 @@ import { Roles } from '../auth/decorators/roles.decorator';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'SUPER_ADMIN')
 export class SpecializationsController {
-  constructor(private readonly specializationsService: SpecializationsService) {}
+  constructor(
+    private readonly specializationsService: SpecializationsService,
+  ) {}
 
   @Post()
   create(@Body() createSpecializationDto: CreateSpecializationDto) {
@@ -28,7 +39,10 @@ export class SpecializationsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSpecializationDto: UpdateSpecializationDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateSpecializationDto: UpdateSpecializationDto,
+  ) {
     return this.specializationsService.update(id, updateSpecializationDto);
   }
 

@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  BadRequestException,
+} from '@nestjs/common';
 import { InterviewsService } from './interviews.service';
 import { ScheduleInterviewDto } from './dto/schedule-interview.dto';
 import { RecordInterviewResultDto } from './dto/record-result.dto';
@@ -22,8 +32,13 @@ export class InterviewsController {
   @Get()
   findAll(@Query('status') status?: string) {
     // M-3: Validate status to prevent Prisma validation error leaking internal details
-    if (status && !Object.values(InterviewStatus).includes(status as InterviewStatus)) {
-      throw new BadRequestException(`Invalid status. Allowed: ${Object.values(InterviewStatus).join(', ')}`);
+    if (
+      status &&
+      !Object.values(InterviewStatus).includes(status as InterviewStatus)
+    ) {
+      throw new BadRequestException(
+        `Invalid status. Allowed: ${Object.values(InterviewStatus).join(', ')}`,
+      );
     }
     return this.interviewsService.findAll(status);
   }

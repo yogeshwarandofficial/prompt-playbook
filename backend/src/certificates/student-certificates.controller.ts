@@ -17,8 +17,15 @@ export class StudentCertificatesController {
   }
 
   @Get('download/:studentProjectId')
-  async downloadCertificate(@Req() req: any, @Param('studentProjectId') studentProjectId: string, @Res() res: any) {
-    const buffer = await this.certificatesService.generateDynamicCertificate(studentProjectId, req.user.id);
+  async downloadCertificate(
+    @Req() req: any,
+    @Param('studentProjectId') studentProjectId: string,
+    @Res() res: any,
+  ) {
+    const buffer = await this.certificatesService.generateDynamicCertificate(
+      studentProjectId,
+      req.user.id,
+    );
     res.set({
       'Content-Type': 'image/png',
       'Content-Disposition': 'attachment; filename="certificate.png"',

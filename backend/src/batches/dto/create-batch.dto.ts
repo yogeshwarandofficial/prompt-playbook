@@ -1,4 +1,11 @@
-import { IsString, IsOptional, IsBoolean, IsDateString, IsNumber, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsDateString,
+  IsNumber,
+  IsEnum,
+} from 'class-validator';
 import { BatchStatus } from '@prisma/client';
 
 export class CreateBatchDto {
@@ -15,7 +22,7 @@ export class CreateBatchDto {
   @IsString()
   @IsOptional()
   curriculumVersionId?: string;
-  
+
   @IsEnum(BatchStatus)
   status: BatchStatus;
 

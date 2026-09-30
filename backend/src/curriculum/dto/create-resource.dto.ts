@@ -1,4 +1,10 @@
-import { IsString, IsNumber, IsOptional, IsEnum, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsEnum,
+  IsBoolean,
+} from 'class-validator';
 import { ResourceType } from '@prisma/client';
 
 export class CreateCurriculumResourceDto {

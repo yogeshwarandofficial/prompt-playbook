@@ -37,15 +37,22 @@ export class AutomatedReviewService {
 
       // Run mock analysis asynchronously (no await from caller)
       this.runMockAnalysis(autoReview.id, submissionId).catch((err) =>
-        this.logger.error(`Automated review failed for submission ${submissionId}: ${err.message}`)
+        this.logger.error(
+          `Automated review failed for submission ${submissionId}: ${err.message}`,
+        ),
       );
     } catch (err) {
       // Advisory system — log and continue; do NOT throw
-      this.logger.error(`Failed to create AutomatedReview record: ${err.message}`);
+      this.logger.error(
+        `Failed to create AutomatedReview record: ${err.message}`,
+      );
     }
   }
 
-  private async runMockAnalysis(autoReviewId: string, submissionId: string): Promise<void> {
+  private async runMockAnalysis(
+    autoReviewId: string,
+    submissionId: string,
+  ): Promise<void> {
     // Simulate a short processing delay
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
@@ -73,28 +80,38 @@ export class AutomatedReviewService {
     let score = 70; // baseline advisory score
 
     if (content.length < 50) {
-      issues.push('Submission description is very short — consider adding more detail.');
+      issues.push(
+        'Submission description is very short — consider adding more detail.',
+      );
       score -= 15;
     }
     if (!submission.repoUrl) {
       issues.push('No repository URL provided.');
       suggestions.push('Add a public GitHub repository link.');
       score -= 10;
-    } else if (!submission.repoUrl.includes('github.com') && !submission.repoUrl.includes('gitlab.com')) {
-      suggestions.push('Ensure the repository is publicly accessible on GitHub or GitLab.');
+    } else if (
+      !submission.repoUrl.includes('github.com') &&
+      !submission.repoUrl.includes('gitlab.com')
+    ) {
+      suggestions.push(
+        'Ensure the repository is publicly accessible on GitHub or GitLab.',
+      );
     }
     if (!submission.liveUrl) {
       suggestions.push('Consider deploying and sharing a live demo URL.');
     }
     if (content.includes('TODO') || content.includes('WIP')) {
-      issues.push('Submission mentions TODO/WIP — ensure work is complete before submitting.');
+      issues.push(
+        'Submission mentions TODO/WIP — ensure work is complete before submitting.',
+      );
       score -= 10;
     }
 
     const phase = submission.studentProjectPhase?.phase?.title ?? 'this phase';
-    const summary = issues.length === 0
-      ? `Automated check for "${phase}" passed basic validation. ${score}/100 advisory score. Human review required for final decision.`
-      : `Automated check for "${phase}" flagged ${issues.length} item(s) for human reviewer attention. ${score}/100 advisory score. This is advisory only — human review is authoritative.`;
+    const summary =
+      issues.length === 0
+        ? `Automated check for "${phase}" passed basic validation. ${score}/100 advisory score. Human review required for final decision.`
+        : `Automated check for "${phase}" flagged ${issues.length} item(s) for human reviewer attention. ${score}/100 advisory score. This is advisory only — human review is authoritative.`;
 
     await this.prisma.automatedReview.update({
       where: { id: autoReviewId },

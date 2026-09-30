@@ -18,6 +18,6 @@ export class StudentService {
       },
     });
 
-    return studentCourses.map(sc => sc.course);
+    return studentCourses.map((sc) => sc.course);
   }
 }

@@ -1,11 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { X, ExternalLink, ArrowRight, ChevronRight, BookOpen, Sparkles } from "lucide-react";
-import { DOMAINS, DOMAIN_COLORS, type Roadmap, ROADMAPS } from "@/data/content";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight, ChevronRight, Code2, Cloud, Smartphone, Cpu, TrendingUp } from "lucide-react";
+import { DOMAINS, ROADMAPS } from "@/data/content";
 import { cn } from "@/lib/utils";
 import { createSeoHead, getBreadcrumbSchema } from "@/lib/seo";
 import { ROADMAPS_PAGE_KEYWORDS } from "@/lib/seo-keywords";
 import { JsonLd } from "@/components/site/JsonLd";
+
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/roadmaps")({
   loader: async () => {
@@ -23,9 +24,6 @@ export const Route = createFileRoute("/roadmaps")({
   component: RoadmapsPage,
 });
 
-const TABS = ["Overview", "Curriculum", "Projects", "Resources", "Careers"] as const;
-type Tab = (typeof TABS)[number];
-
 function RoadmapsPage() {
   const { roadmaps } = Route.useLoaderData();
   const breadcrumbSchema = getBreadcrumbSchema([
@@ -34,187 +32,184 @@ function RoadmapsPage() {
   ]);
 
   return (
-    <>
+    <div className="bg-slate-50 min-h-screen">
       <JsonLd schema={breadcrumbSchema} />
-      <PageHeader
-        crumbs={[{ label: "Home", to: "/" }, { label: "Roadmaps" }]}
-        title="Developer Career Roadmaps"
-        subtitle="Follow structured, beginner-to-advanced learning tracks built for software engineering careers in India."
-      />
-      <section className="pb-24 pt-8">
-        <div className="container-page grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {roadmaps.map((r) => {
-            const d = DOMAINS.find((x) => x.key === r.domain)!;
-            return (
-              <article key={r.slug} className="flex flex-col rounded-2xl border border-slate-100 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 ease-out text-left group overflow-hidden">
-                <div
-                  className="relative aspect-video w-full overflow-hidden bg-slate-100"
-                >
-                  <img 
-                    src={`/ui_${d.key}.png`} 
-                    alt={`${r.title} developer learning roadmap`} 
-                    className="absolute inset-0 w-full h-full object-cover scale-[1.35] transition-transform duration-500 group-hover:scale-[1.45]" 
-                    width="400"
-                    height="225"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="flex flex-col flex-1 p-5 sm:p-6">
-                <h2 className="mt-2 text-xl font-bold text-slate-800 transition-colors">{r.title}</h2>
-                <p className="mt-3 text-sm text-slate-500 leading-relaxed line-clamp-2">{d.description || r.description}</p>
-                
-                <div className="mt-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-orbitron">Technologies</span>
-                    <div className="h-px bg-slate-100 flex-1"></div>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                  {d.skills.slice(0, 4).map((s) => (
-                    <span key={s} className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{s}</span>
-                  ))}
-                  </div>
-                </div>
-                <div className="mt-6 flex gap-2">
-                  <Link
-                    to="/learn/$slug"
-                    params={{ slug: r.slug }}
-                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 transition-all"
-                  >
-                    Start Learning {r.title} <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-    </>
-  );
-}
+      
+      {/* Ambient Background Effects */}
+      <div className="fixed inset-0 bg-[radial-gradient(rgba(100,116,139,0.1)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none z-0"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-green-400/10 rounded-full blur-[120px] pointer-events-none z-0 animate-float"></div>
 
-
-function RoadmapModal({ roadmap, onClose }: { roadmap: Roadmap; onClose: () => void }) {
-  const [tab, setTab] = useState<Tab>("Overview");
-  return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in" role="dialog" aria-modal="true">
-      <button aria-label="Close" className="absolute inset-0 bg-foreground/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full sm:max-w-3xl rounded-t-2xl sm:rounded-2xl bg-surface shadow-xl max-h-[92vh] overflow-y-auto">
-        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-border bg-surface px-6 py-4">
-          <div>
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">Roadmap</p>
-            <h2 className="font-display text-xl font-bold">{roadmap.title}</h2>
+      {/* Hero Section */}
+      <header className="relative pt-40 pb-20 lg:pt-48 lg:pb-24 px-6 max-w-[1000px] mx-auto w-full z-10 text-center flex flex-col items-center">
+          
+          {/* Breadcrumb */}
+          <div className="reveal flex items-center gap-2 text-xs font-semibold text-slate-400 mb-8 uppercase tracking-widest animate-fade-up">
+              <Link to="/" className="hover:text-slate-900 transition-colors">Home</Link>
+              <ChevronRight className="w-4 h-4 text-slate-300" />
+              <span className="text-[#22c55e]">Roadmaps</span>
           </div>
-          <button onClick={onClose} aria-label="Close" className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground">
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-        <div role="tablist" className="flex gap-1 overflow-x-auto border-b border-border px-4">
-          {TABS.map((t) => (
-            <button
-              key={t}
-              role="tab"
-              aria-selected={tab === t}
-              onClick={() => setTab(t)}
-              className={cn(
-                "whitespace-nowrap px-3 py-3 text-sm font-medium border-b-2 -mb-px transition-colors",
-                tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-        <div className="px-6 py-6">
-          {tab === "Overview" && (
-            <div className="space-y-5 text-sm">
-              <p className="text-foreground/85">{roadmap.description}</p>
-              <Block title="Who this is for">{roadmap.audience}</Block>
-              <Block title="Prerequisites">
-                <ul className="list-disc space-y-1 pl-5">{roadmap.prerequisites.map((p) => <li key={p}>{p}</li>)}</ul>
-              </Block>
-              <div className="flex flex-wrap gap-2 text-xs">
-                <span className="rounded-full bg-muted px-2.5 py-1 font-medium">{roadmap.difficulty}</span>
-                <span className="rounded-full bg-muted px-2.5 py-1 font-medium">{roadmap.duration}</span>
-              </div>
-            </div>
-          )}
-          {tab === "Curriculum" && (
-            <div className="space-y-6">
-              {roadmap.tracks.map((tr) => (
-                <div key={tr.name}>
-                  <h3 className="font-display text-base font-semibold">{tr.name}</h3>
-                  <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-                    {tr.topics.map((t) => (
-                      <li key={t} className="flex items-start gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm">
-                        <ChevronRight className="mt-0.5 h-4 w-4 text-primary" />{t}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          )}
-          {tab === "Projects" && (
-            <ul className="grid gap-3 sm:grid-cols-2">
-              {roadmap.projects.map((p) => (
-                <li key={p.title} className="rounded-xl border border-border bg-muted/40 p-4">
-                  <p className="font-display font-semibold">{p.title}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{p.description}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-          {tab === "Resources" && (
-            <ul className="space-y-2">
-              {roadmap.resources.map((r) => (
-                <li key={r.url}>
-                  <a
-                    href={r.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center justify-between rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm hover:bg-muted"
-                  >
-                    {r.label} <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
-          {tab === "Careers" && (
-            <ul className="grid gap-3 sm:grid-cols-2">
-              {roadmap.careers.map((c) => (
-                <li key={c.role} className="rounded-xl border border-border bg-muted/40 p-4">
-                  <p className="font-display font-semibold">{c.role}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Avg. {c.salary}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        <div className="border-t border-border bg-muted/40 px-6 py-5 text-center">
-          <p className="text-sm text-muted-foreground">Ready to put this into practice?</p>
-          <Link
-            to="/internships"
-            onClick={onClose}
-            className="mt-3 inline-flex items-center justify-center gap-2 rounded-md gradient-hero px-5 py-2.5 text-sm font-semibold text-white shadow-brand"
-          >
-            Apply for Internship <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </div>
+
+          <h1 className="reveal text-5xl sm:text-6xl md:text-7xl font-black text-slate-900 tracking-tight leading-[1.05] mb-8 animate-fade-up" style={{ animationDelay: '100ms' }}>
+              Developer Career <br/>
+              <span className="text-[#22c55e]">Roadmaps.</span>
+          </h1>
+
+          <p className="reveal text-lg sm:text-xl text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: '200ms' }}>
+              Follow structured, rigorous learning tracks from absolute fundamentals to architect-level engineering. Built for the modern tech industry in India.
+          </p>
+
+      </header>
+
+      {/* Roadmaps Grid */}
+      <section className="relative z-10 w-full px-6 pb-32 max-w-[1400px] mx-auto">
+          
+          {/* FEATURED ROADMAP: Full Stack Web Dev (Spans full width) */}
+          {(() => {
+            const featuredRoadmap = roadmaps.find(r => DOMAINS.find(x => x.key === r.domain)?.key === 'web');
+            if (!featuredRoadmap) return null;
+            const domain = DOMAINS.find(x => x.key === featuredRoadmap.domain)!;
+            
+            return (
+              <Link 
+                to="/learn/$slug"
+                params={{ slug: featuredRoadmap.slug }} 
+                className="reveal group relative w-full bg-white rounded-[2rem] border border-slate-200 overflow-hidden flex flex-col lg:flex-row hover:border-[#22c55e]/50 transition-all duration-500 hover:-translate-y-1 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-10px_rgba(34,197,94,0.12)] mb-8"
+              >
+                  {/* Image Area */}
+                  <div className="w-full lg:w-[45%] aspect-video lg:aspect-auto relative overflow-hidden bg-slate-100 flex-shrink-0">
+                      <img 
+                          src="/fullstack-image.avif" 
+                          alt="Web Development Workspace" 
+                          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-[1.5s] ease-out"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10"></div>
+                      
+                      {/* Floating Badge */}
+                      <div className="absolute top-6 left-6 px-4 py-2 bg-white/90 backdrop-blur-md rounded-xl border border-white/20 shadow-sm flex items-center gap-2">
+                          <span className="relative flex h-2.5 w-2.5">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#22c55e]"></span>
+                          </span>
+                          <span className="text-xs font-bold text-slate-800 uppercase tracking-widest">Featured Track</span>
+                      </div>
+                  </div>
+
+                  {/* Content Area */}
+                  <div className="w-full lg:w-[55%] p-8 sm:p-12 lg:p-16 flex flex-col justify-center">
+                      <div className="flex items-center gap-3 mb-6">
+                          <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center text-[#16a34a] border border-green-100">
+                              <Code2 className="w-6 h-6" />
+                          </div>
+                      </div>
+
+                      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight mb-4 group-hover:text-[#16a34a] transition-colors duration-300">
+                          {featuredRoadmap.title}
+                      </h2>
+                      
+                      <p className="text-slate-500 text-base lg:text-lg font-medium leading-relaxed mb-10 max-w-xl">
+                          {domain.description || featuredRoadmap.description}
+                      </p>
+
+                      {/* Tech Stack Pills */}
+                      <div className="mb-10">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Core Technologies</p>
+                          <div className="flex flex-wrap gap-2.5">
+                              {domain.skills.slice(0, 5).map(skill => (
+                                <span key={skill} className="px-3.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-600">
+                                  {skill}
+                                </span>
+                              ))}
+                          </div>
+                      </div>
+
+                      {/* Action Button */}
+                      <div className="mt-auto inline-flex items-center gap-2 text-sm font-bold text-[#16a34a] uppercase tracking-widest">
+                          Start Learning Path
+                          <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center transform group-hover:translate-x-2 transition-all duration-300">
+                              <ArrowRight className="w-4 h-4" />
+                          </div>
+                      </div>
+                  </div>
+              </Link>
+            )
+          })()}
+
+          {/* SECONDARY ROADMAPS: 2x2 Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {roadmaps.filter(r => DOMAINS.find(x => x.key === r.domain)?.key !== 'web').map((r, idx) => {
+              const d = DOMAINS.find((x) => x.key === r.domain)!;
+              
+              const imageMap: Record<string, string> = {
+                "cloud": "/cloud-image.jpg",
+                "app": "/app-image.avif",
+                "ai": "/ai-image.avif",
+                "marketing": "/digital marketing-image.avif"
+              };
+              
+              const themeMap: Record<string, any> = {
+                "cloud": { bg: "bg-blue-50", text: "text-blue-600", border: "border-blue-100", hoverText: "group-hover:text-blue-600", icon: <Cloud className="w-5 h-5" /> },
+                "app": { bg: "bg-purple-50", text: "text-purple-600", border: "border-purple-100", hoverText: "group-hover:text-purple-600", icon: <Smartphone className="w-5 h-5" /> },
+                "ai": { bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-100", hoverText: "group-hover:text-emerald-600", icon: <Cpu className="w-5 h-5" /> },
+                "marketing": { bg: "bg-rose-50", text: "text-rose-600", border: "border-rose-100", hoverText: "group-hover:text-rose-600", icon: <TrendingUp className="w-5 h-5" /> }
+              };
+              
+              const theme = themeMap[d.key] || themeMap["cloud"];
+
+              return (
+                <Link 
+                  key={r.slug}
+                  to="/learn/$slug"
+                  params={{ slug: r.slug }}
+                  className="reveal group relative bg-white rounded-[2rem] border border-slate-200 overflow-hidden flex flex-col hover:border-[#22c55e]/50 transition-all duration-500 hover:-translate-y-1 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-10px_rgba(34,197,94,0.12)]" 
+                  style={{ transitionDelay: `${(idx + 1) * 100}ms` }}
+                >
+                  <div className="w-full aspect-[16/9] relative overflow-hidden bg-slate-100">
+                      <img 
+                          src={imageMap[d.key] || imageMap["cloud"]} 
+                          alt={`${r.title} Architecture`} 
+                          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-[1.5s] ease-out"
+                      />
+                  </div>
+
+                  <div className="p-8 sm:p-10 flex flex-col flex-1">
+                      <div className="flex items-center gap-3 mb-5">
+                          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center border", theme.bg, theme.text, theme.border)}>
+                              {theme.icon}
+                          </div>
+                          <h3 className={cn("text-2xl font-black text-slate-900 tracking-tight transition-colors", theme.hoverText)}>
+                              {r.title}
+                          </h3>
+                      </div>
+                      
+                      <p className="text-slate-500 text-sm font-medium leading-relaxed mb-8 flex-1">
+                          {d.description || r.description}
+                      </p>
+
+                      <div className="mb-8">
+                          <div className="flex flex-wrap gap-2">
+                              {d.skills.slice(0, 5).map(skill => (
+                                <span key={skill} className="px-2.5 py-1 rounded-md bg-slate-50 border border-slate-200 text-[11px] font-semibold text-slate-600">
+                                  {skill}
+                                </span>
+                              ))}
+                          </div>
+                      </div>
+
+                      <div className={cn("inline-flex items-center gap-2 text-xs font-bold text-slate-900 uppercase tracking-widest transition-colors", theme.hoverText)}>
+                          View Roadmap
+                          <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-300" />
+                      </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+      </section>
     </div>
   );
 }
 
-function Block({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{title}</h3>
-      <div className="mt-2">{children}</div>
-    </div>
-  );
-}
+
 
 export function PageHeader({
   crumbs, title, subtitle, theme = "dark", rightElement

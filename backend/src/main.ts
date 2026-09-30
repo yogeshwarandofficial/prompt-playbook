@@ -60,11 +60,15 @@ async function bootstrap() {
       .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);
-    logger.warn('Swagger UI is ENABLED — development mode only. Disabled in production.');
+    logger.warn(
+      'Swagger UI is ENABLED — development mode only. Disabled in production.',
+    );
   }
 
   const port = process.env.PORT || 3001;
   await app.listen(port, '0.0.0.0');
-  logger.log(`Application running on port ${port} [NODE_ENV=${process.env.NODE_ENV ?? 'development'}]`);
+  logger.log(
+    `Application running on port ${port} [NODE_ENV=${process.env.NODE_ENV ?? 'development'}]`,
+  );
 }
 bootstrap();

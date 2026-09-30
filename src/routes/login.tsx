@@ -1,14 +1,14 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { signIn, getSession } from "@/lib/auth";
+import { createSeoHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({
-    meta: [
-      { title: "Portal Login — Infynux Academy" },
-      { name: "description", content: "Sign in to the Infynux Academy portal." },
-      { name: "robots", content: "noindex,nofollow" },
-    ],
+  head: () => createSeoHead({
+    title: "Portal Login — Infynux Academy",
+    description: "Sign in to the Infynux Academy portal.",
+    path: "/login",
+    noindex: true,
   }),
   component: LoginPage,
 });

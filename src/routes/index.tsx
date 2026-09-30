@@ -19,6 +19,11 @@ import {
   Globe,
   Mail,
   Video,
+  Compass,
+  Rocket,
+  ArrowLeftRight,
+  TrendingUp,
+  Clock,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import {
@@ -87,7 +92,6 @@ function HomePage() {
       <FeaturedRoadmapsSection />
       <FeaturedTutorialsSection />
       <InternshipHighlightsSection />
-      <BenefitsSection />
       <TestimonialsSection />
       <FAQSection />
       <NewsletterSection />
@@ -348,51 +352,127 @@ const FEATURES = [
 ];
 
 function FeaturesSection() {
+  const [lineActive, setLineActive] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setTimeout(() => setLineActive(true), 500);
+        observer.disconnect();
+      }
+    }, { threshold: 0.15 });
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="relative overflow-hidden py-24 md:py-32 bg-[#0A0A0A]" aria-labelledby="features-heading">
-      {/* Background glow and dust could go here, but using subtle radial gradient */}
-      <div className="pointer-events-none absolute left-1/2 top-0 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[120px]" />
+    <section className="relative w-full py-24 lg:py-32 px-6 overflow-hidden bg-[#050505] text-white" aria-labelledby="features-heading">
       
-      {/* Peeking man blending from top right edge of screen */}
-      <img 
-        src="/peeking_man.png" 
-        alt="" 
-        className="absolute top-0 right-0 w-64 md:w-96 lg:w-[500px] object-contain hidden md:block opacity-60 mix-blend-screen pointer-events-none [mask-image:radial-gradient(ellipse_at_top_right,black_40%,transparent_70%)] z-0"
-        aria-hidden="true" 
+      {/* Subtle Ambient Glows & Grid */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-0 opacity-30"
+        style={{
+            backgroundSize: '40px 40px',
+            backgroundImage: 'linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)',
+            maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)'
+        }}
       />
+      <div className="absolute top-1/4 left-1/2 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen z-0 -translate-x-1/2" />
       
-      <div className="container-page relative z-10">
-        <div className="mb-14 relative">
-          <div className="flex items-center gap-2.5 mb-6 text-primary text-sm font-bold uppercase tracking-[0.2em] font-display">
-            <div className="h-[3px] w-[32px] bg-primary"></div>
-            Why Infynux
-          </div>
-          <h2 id="features-heading" className="font-display font-black text-4xl md:text-5xl lg:text-7xl leading-[1.05] text-white max-w-3xl mb-6 tracking-tight">
-            Everything you need, <span className="text-primary">floating in one place.</span>
-          </h2>
-          <p className="text-[#C7CBCE] text-xl font-bold leading-relaxed max-w-xl font-outfit">
-            A premium learning ecosystem built to transfer you from raw skills to corporate hires.
-          </p>
+      {/* Floating Data Nodes */}
+      <div className="absolute top-[30%] right-[20%] w-2 h-2 bg-primary rounded-full shadow-[0_0_15px_rgba(156,255,59,0.8)] opacity-40 animate-[float_6s_ease-in-out_infinite] pointer-events-none" />
+      <div className="absolute bottom-[40%] left-[10%] w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_10px_rgba(156,255,59,0.8)] opacity-30 animate-[float_6s_ease-in-out_infinite_2s] pointer-events-none" />
+
+      <div className="container-page relative z-10 max-w-[1280px] mx-auto">
+        
+        {/* Top Half: Text & Image Split */}
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20 mb-24 lg:mb-32 relative">
+            
+            {/* Left: Typography & Messaging */}
+            <div className="w-full lg:w-1/2 flex flex-col items-start text-left z-20 relative animate-fade-up">
+                
+                {/* Decorative subtle grid behind text */}
+                <div className="absolute -top-10 -left-10 w-40 h-40 bg-[radial-gradient(circle,rgba(156,255,59,0.15)_1px,transparent_1px)] bg-[length:8px_8px] opacity-50 pointer-events-none rounded-full" style={{ maskImage: 'radial-gradient(black,transparent)' }} />
+
+                {/* Overline Badge */}
+                <div className="flex items-center gap-4 mb-8">
+                    <div className="w-8 h-[2px] bg-primary"></div>
+                    <span className="text-xs font-bold uppercase tracking-[0.25em] text-primary font-display">Why Infynux</span>
+                </div>
+
+                {/* Main Headline */}
+                <h2 id="features-heading" className="font-display text-4xl md:text-5xl lg:text-[4rem] font-black tracking-tighter leading-[1.05] text-white mb-6 lg:mb-8">
+                    Everything you need, <br className="hidden md:block" />
+                    <span className="text-primary drop-shadow-[0_0_25px_rgba(156,255,59,0.2)] block mt-2">floating in one place.</span>
+                </h2>
+
+                {/* Supporting Text */}
+                <p className="text-lg text-[#C7CBCE] font-bold leading-relaxed max-w-md font-outfit">
+                    A premium learning ecosystem built to transfer you from raw skills to corporate hires.
+                </p>
+            </div>
+
+            {/* Right: Immersive Visual */}
+            <div className="w-full lg:w-1/2 relative animate-fade-up" style={{ animationDelay: '200ms' }}>
+                <div className="relative w-full aspect-square md:aspect-[4/3] lg:aspect-square max-w-[500px] mx-auto lg:ml-auto flex items-center justify-end overflow-hidden rounded-3xl">
+                    <img 
+                        src="/whyinfyimg.avif" 
+                        alt="Professional Developer Ecosystem" 
+                        className="w-full h-full object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-1000 ease-out object-right"
+                        style={{ maskImage: 'linear-gradient(to left, black 40%, transparent 100%), linear-gradient(to top, black 60%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to left, black 40%, transparent 100%), linear-gradient(to top, black 60%, transparent 100%)' }}
+                    />
+                    {/* Overlay gradient to ensure perfect blend into background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/50 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent pointer-events-none" />
+                </div>
+            </div>
         </div>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map(({ icon: Icon, title, desc }, idx) => (
-            <div
-              key={title}
-              className="group relative bg-[#0A0A0A] border-2 border-[#333] rounded-[24px] p-10 pb-9 transition-all duration-300 hover:border-primary hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(156,255,59,0.15)]"
-              style={{ animationDelay: `${idx * 150}ms` }}
-            >
-              <div className="h-14 w-14 rounded-2xl bg-primary flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(156,255,59,0.3)]">
-                <Icon className="h-7 w-7 text-black" aria-hidden="true" />
-              </div>
-              <h3 className="font-display text-2xl font-black text-white mb-3 tracking-tight">{title}</h3>
-              <p className="text-base font-bold leading-[1.7] text-[#C7CBCE] font-outfit">{desc}</p>
-              
-              {/* Hover shadow pulse */}
-              <div className="absolute left-1/2 bottom-[-20px] h-[24px] w-[80%] -translate-x-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100" 
-                   style={{ background: 'radial-gradient(ellipse, rgba(156,255,59,0.4) 0%, rgba(156,255,59,0) 72%)' }} />
+        {/* Bottom Half: The Learning Ecosystem */}
+        <div className="relative z-20" id="ecosystem-container" ref={containerRef}>
+            
+            {/* Desktop Connection Line (Creates the "Ecosystem" journey for top row) */}
+            <div className="hidden lg:block absolute top-[68px] left-[15%] right-[15%] h-[1px] border-t border-dashed border-gray-800 z-0" />
+            <div 
+              className="hidden lg:block absolute top-[68px] left-[15%] h-[1px] bg-primary shadow-[0_0_10px_rgba(156,255,59,0.8)] z-0 transition-all duration-[2s] ease-out" 
+              style={{ width: lineActive ? '70%' : '0%' }} 
+            />
+
+            {/* Grid Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 relative z-10">
+                {FEATURES.map(({ icon: Icon, title, desc }, idx) => (
+                  <div 
+                    key={title}
+                    className={`group relative p-8 lg:p-10 rounded-[24px] bg-[#0a0a0c] border border-[#1f1f22] hover:border-primary/30 hover:bg-[#0c0d10] transition-all duration-500 flex flex-col h-full hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(156,255,59,0.08)] overflow-hidden animate-fade-up`}
+                    style={{ animationDelay: `${300 + (idx * 100)}ms` }}
+                  >
+                    {/* Internal Hover Glow */}
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(156,255,59,0.05),transparent_50%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                    
+                    {/* Number Indicator */}
+                    <div className="absolute top-6 right-8 text-4xl font-black text-white/[0.03] group-hover:text-white/[0.08] transition-colors duration-500 font-orbitron pointer-events-none">
+                      {String(idx + 1).padStart(2, '0')}
+                    </div>
+
+                    <div className="relative z-10">
+                        {/* Icon Container */}
+                        <div className="w-16 h-16 rounded-2xl bg-[#121316] border border-white/5 flex items-center justify-center text-primary mb-10 group-hover:bg-primary group-hover:text-black transition-all duration-500 shadow-[0_0_20px_rgba(156,255,59,0.05)] group-hover:shadow-[0_0_30px_rgba(156,255,59,0.3)]">
+                            <Icon className="h-8 w-8" strokeWidth={2} />
+                        </div>
+                        
+                        <h3 className="font-display text-2xl font-bold text-white mb-4 tracking-tight">{title}</h3>
+                        <p className="text-[#C7CBCE] leading-[1.7] font-medium text-sm md:text-base pr-4 font-outfit">
+                            {desc}
+                        </p>
+                    </div>
+                  </div>
+                ))}
             </div>
-          ))}
         </div>
       </div>
     </section>
@@ -415,80 +495,147 @@ function DomainsSection() {
     return acc;
   }, {});
 
+  const cardMargins = ["", "lg:mt-6", "lg:-mt-4", "lg:mt-8", "lg:-mt-2"];
+
   return (
-    <section className="relative overflow-hidden py-24 md:py-32 bg-[#F9FAF5]" aria-labelledby="domains-heading">
-      {/* Animated Mesh Blobs */}
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] mix-blend-multiply opacity-70 animate-pulse" />
-      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-cyan-400/20 rounded-full blur-[120px] mix-blend-multiply opacity-70" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-emerald-300/20 rounded-full blur-[120px] mix-blend-multiply opacity-50" />
+    <section className="relative overflow-hidden py-24 lg:py-32 bg-[#fbfcfd] text-[#0a0f1c]" aria-labelledby="domains-heading">
       
-      {/* Top right image moved here to allow mix-blend-multiply to work against the section background */}
-      <img 
-        src="/path.jpg" 
-        alt="Infynux Academy structured technical learning path" 
-        className="hidden lg:block absolute right-0 lg:right-[5%] top-24 w-72 lg:w-80 xl:w-96 object-contain mix-blend-multiply opacity-90 pointer-events-none"
-        aria-hidden="true"
-        width="384"
-        height="384"
-        loading="lazy"
+      <style>{`
+        @keyframes dashFlow {
+          to { stroke-dashoffset: -1000; }
+        }
+        .animate-flow {
+          animation: dashFlow 20s linear infinite;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
+
+      {/* Ambient Lighting & Background Details */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-0 opacity-40" 
+        style={{ backgroundImage: 'radial-gradient(rgba(10, 15, 28, 0.05) 1px, transparent 1px)', backgroundSize: '24px 24px' }}
       />
+      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#fbfcfd] to-transparent pointer-events-none z-0" />
+      
+      {/* Soft Glowing Orbs */}
+      <div className="absolute top-[20%] left-[10%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px] pointer-events-none animate-[pulse_4s_ease-in-out_infinite_alternate] z-0" />
+      <div className="absolute bottom-[20%] right-[5%] w-[500px] h-[500px] bg-cyan-400/5 rounded-full blur-[120px] pointer-events-none animate-[pulse_4s_ease-in-out_infinite_alternate] z-0" style={{ animationDelay: '2s' }} />
 
-      <div className="container-page relative z-10">
-        <div className="flex justify-between items-start">
-          <SectionHeader
-            eyebrow="Popular Domains"
-            title="Choose your learning path"
-            subtitle="Explore five in-demand disciplines with structured roadmaps tuned for immediate application."
-            id="domains-heading"
-            theme="light"
-          />
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-16 lg:mb-24 px-4 lg:px-12 relative z-20">
+            
+            {/* Typography block */}
+            <div className="max-w-2xl animate-fade-up">
+                <div className="inline-flex items-center gap-3 mb-6 px-4 py-2 rounded-full bg-primary/5 border border-primary/10">
+                    <span className="w-6 h-[2px] bg-primary rounded-full"></span>
+                    <span className="text-sm font-bold uppercase tracking-wider text-[#0a0f1c] font-outfit">Popular Domains</span>
+                </div>
+                
+                <h2 id="domains-heading" className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#0a0f1c] mb-6 leading-[1.1] font-display">
+                    Choose your <br className="hidden sm:block" />
+                    <span className="relative inline-block">
+                        learning path
+                        {/* Subtle underline accent */}
+                        <svg className="absolute w-full h-3 -bottom-1 left-0 text-primary/30" viewBox="0 0 200 9" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.00034 7.00004C48.5 2.50001 138 -2.49998 198.5 7.00004" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/></svg>
+                    </span>
+                </h2>
+                
+                <p className="text-lg text-slate-600 font-medium leading-relaxed max-w-lg font-outfit">
+                    Explore five in-demand disciplines with structured roadmaps tuned for immediate industrial application.
+                </p>
+            </div>
+
+            {/* Large Learning/Career Navigation Illustration */}
+            <div className="hidden md:flex relative w-[300px] lg:w-[450px] h-[250px] lg:h-[300px] animate-fade-up items-center justify-end" style={{ animationDelay: '200ms' }}>
+                {/* Ambient glow */}
+                <div className="absolute inset-0 bg-primary/15 blur-[60px] rounded-full animate-[pulse_4s_ease-in-out_infinite_alternate] z-0" />
+                
+                {/* Main Image */}
+                <div className="relative w-full max-w-[380px] h-full rounded-[2rem] overflow-hidden shadow-2xl border border-white/60 animate-[float_6s_ease-in-out_infinite] z-10">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800" alt="Students collaborating and learning" className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-1000" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-[#0a0f1c]/30 via-transparent to-transparent" />
+                </div>
+
+                {/* Floating Compass Badge (Bottom Left) */}
+                <div className="absolute -bottom-4 lg:-bottom-6 -left-4 lg:left-0 bg-white/95 backdrop-blur-xl border border-slate-100 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] p-4 rounded-2xl flex items-center gap-3 animate-[float_6s_ease-in-out_infinite] z-20" style={{ animationDelay: '1.2s' }}>
+                    <div className="w-12 h-12 bg-[#f0fdf4] text-primary rounded-[14px] flex items-center justify-center border border-[#dcfce7]">
+                        <Compass className="w-6 h-6" />
+                    </div>
+                    <div className="pr-2">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 font-outfit">Navigate</p>
+                        <p className="text-sm font-black text-slate-800 leading-none font-display">Career Path</p>
+                    </div>
+                </div>
+                
+                {/* Floating Accent Node (Top Right) */}
+                <div className="absolute top-8 -right-4 lg:right-6 w-12 h-12 bg-white rounded-full shadow-lg border border-slate-100 flex items-center justify-center animate-[float_6s_ease-in-out_infinite] z-20" style={{ animationDelay: '0.6s' }}>
+                    <Rocket className="text-primary w-5 h-5" />
+                </div>
+            </div>
         </div>
-        <div className="mt-16 relative">
-          {/* The "Real Rope" connecting the cards (only visible on large screens) */}
-          <div className="absolute top-[75px] left-[-20px] right-[-20px] hidden lg:flex items-center pointer-events-none z-0">
-             {/* Left stick and loop */}
-             <div className="relative shrink-0 flex items-center justify-center -mr-2 z-10">
-                <div className="w-5 h-16 bg-gradient-to-b from-[#8b5a2b] via-[#5c3a21] to-[#3e2723] rounded-sm border-2 border-[#2b1810] shadow-[3px_3px_5px_rgba(0,0,0,0.4)] z-20" />
-                <div className="absolute left-2 w-10 h-10 border-[6px] rounded-full z-10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]" style={{ borderColor: '#d4a373 #8b5a2b #5c3a21 #faedcd' }} />
-             </div>
 
-             {/* Rope body */}
-             <div className="flex-1 h-6 shadow-[0_6px_10px_rgba(0,0,0,0.15)] z-0"
-                  style={{
-                    backgroundImage: 'repeating-linear-gradient(-45deg, #d4a373 0px, #d4a373 6px, #8b5a2b 6px, #8b5a2b 10px, #faedcd 10px, #faedcd 14px, #5c3a21 14px, #5c3a21 18px)',
-                    borderTop: '2px solid #2b1810',
-                    borderBottom: '2px solid #2b1810',
-                  }}
-             />
+        {/* Learning Path Carousel/Grid Container */}
+        <div className="relative w-full">
+            
+            {/* The Continuous Pathway (Desktop Only) */}
+            <div className="hidden lg:block absolute top-[45%] left-10 right-10 h-0.5 z-0 pointer-events-none">
+                {/* Static dashed background line */}
+                <svg width="100%" height="100%" className="absolute inset-0 overflow-visible" preserveAspectRatio="none">
+                    <path d="M 0,0 C 200,40 400,-40 600,0 S 1000,-40 1200,0 L 2000,0" fill="none" stroke="#e2e8f0" strokeWidth="2" strokeDasharray="8 8" vectorEffect="non-scaling-stroke"></path>
+                </svg>
+                {/* Animated flowing line on top */}
+                <svg width="100%" height="100%" className="absolute inset-0 overflow-visible opacity-50" preserveAspectRatio="none">
+                    <path d="M 0,0 C 200,40 400,-40 600,0 S 1000,-40 1200,0 L 2000,0" fill="none" stroke="#4ade80" strokeWidth="2" strokeDasharray="10 20" className="animate-flow" vectorEffect="non-scaling-stroke"></path>
+                </svg>
+            </div>
 
-             {/* Right stick and loop */}
-             <div className="relative shrink-0 flex items-center justify-center -ml-2 z-10">
-                <div className="absolute right-2 w-10 h-10 border-[6px] rounded-full z-10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]" style={{ borderColor: '#5c3a21 #faedcd #d4a373 #8b5a2b' }} />
-                <div className="w-5 h-16 bg-gradient-to-b from-[#8b5a2b] via-[#5c3a21] to-[#3e2723] rounded-sm border-2 border-[#2b1810] shadow-[3px_3px_5px_rgba(0,0,0,0.4)] z-20" />
-             </div>
-          </div>
+            {/* Cards Wrapper (Horizontal scroll on mobile, Grid on desktop) */}
+            <div className="flex lg:grid lg:grid-cols-5 gap-4 sm:gap-6 overflow-x-auto lg:overflow-visible snap-x snap-mandatory no-scrollbar pb-12 pt-4 px-4 lg:px-0 relative z-10">
+                
+                {DOMAINS.filter(d => d.key !== 'video').map((domain, idx) => (
+                  <Link 
+                    key={domain.key}
+                    to="/roadmaps" 
+                    className={`animate-fade-up group relative flex-shrink-0 w-[260px] lg:w-auto snap-center bg-white rounded-[24px] p-8 border border-slate-200 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-15px_rgba(156,255,59,0.2)] hover:-translate-y-1.5 hover:border-primary/40 transition-all duration-500 ease-out flex flex-col items-center text-center overflow-hidden ${cardMargins[idx] || ""}`} 
+                    style={{ animationDelay: `${(idx + 1) * 100}ms` }}
+                  >
+                      {/* Hover Glow Overlay */}
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(156,255,59,0.05),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                      
+                      <div className="w-16 h-16 rounded-[18px] bg-[#f0fdf4] border border-[#dcfce7] text-primary flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-[#0a0f1c] transition-all duration-500 shadow-sm relative z-10">
+                          <div className="scale-150">{DOMAIN_ICONS[domain.key]}</div>
+                      </div>
+                      
+                      <span className="text-sm font-extrabold text-slate-800 mb-2 relative z-10 font-orbitron">100+</span>
+                      <h3 className="text-xl font-black text-[#0a0f1c] mb-5 leading-tight tracking-tight relative z-10 group-hover:text-primary transition-colors font-display">
+                          {domain.name.split(' ').map((word, wIdx) => (
+                              <span key={wIdx}>
+                                  {word}
+                                  {wIdx === 0 && <br/>}
+                                  {wIdx > 0 && wIdx < domain.name.split(' ').length - 1 && ' '}
+                              </span>
+                          ))}
+                      </h3>
+                      
+                      <div className="mt-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-100 text-[10px] font-bold text-slate-500 tracking-[0.1em] uppercase relative z-10 font-outfit">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-primary transition-colors"></span>
+                          {tutorialCounts[domain.key] || 0} Tutorials
+                      </div>
+                  </Link>
+                ))}
 
-          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5 relative z-10">
-            {DOMAINS.filter(d => d.key !== 'video').map((domain) => (
-              <Link
-                key={domain.key}
-                to="/roadmaps"
-                className="flex flex-col items-center gap-4 rounded-3xl border-2 border-black bg-[#F4F7EB]/70 backdrop-blur-xl p-6 md:p-10 text-center hover:bg-[#F4F7EB]/90 hover:scale-[1.05] hover:shadow-[0_20px_50px_rgba(143,204,30,0.2)] hover:border-black transition-all duration-300 ease-out group relative"
-              >
-                <div
-                  className="grid h-20 w-20 place-items-center rounded-2xl shadow-sm transition-transform duration-300 group-hover:-translate-y-2 bg-primary border-2 border-black text-black relative z-10"
-                  aria-hidden="true"
-                >
-                  <div className="scale-150">{DOMAIN_ICONS[domain.key]}</div>
+            </div>
+            
+            {/* Mobile Swipe Hint */}
+            <div className="lg:hidden flex justify-center mt-2 pb-6 animate-fade-up" style={{ animationDelay: '600ms' }}>
+                <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full border border-slate-200">
+                    <ArrowLeftRight className="w-3 h-3" /> Swipe to explore
                 </div>
-                <div className="space-y-2 mt-4 relative z-10">
-                  <p className="text-xl font-black text-black font-orbitron leading-none">100+</p>
-                  <p className="text-2xl font-black text-black font-orbitron tracking-tight">{domain.name}</p>
-                  <p className="text-sm font-bold text-black font-outfit uppercase tracking-widest">{tutorialCounts[domain.key] || 0} tutorials</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+            </div>
+
         </div>
       </div>
     </section>
@@ -497,120 +644,349 @@ function DomainsSection() {
 
 // ─── PROCESS ──────────────────────────────────────────────────────────────────
 const STEPS = [
-  { n: "01", title: "Choose Domain", desc: "Select a core engineering discipline matching your career vision." },
-  { n: "02", title: "Study Roadmap", desc: "Navigate the step-by-step structured knowledge paths." },
-  { n: "03", title: "Build Projects", desc: "Acquire real-world logic patterns via sandbox tutorials." },
-  { n: "04", title: "Intern & Certify", desc: "Secure a remote internship and land verified credentials." },
+  { n: "01", icon: Compass, title: "Choose Domain", desc: "Select a core engineering discipline matching your career vision." },
+  { n: "02", icon: BookOpen, title: "Study Roadmap", desc: "Navigate the step-by-step structured knowledge paths." },
+  { n: "03", icon: Code2, title: "Build Projects", desc: "Acquire real-world logic patterns via sandbox tutorials." },
+  { n: "04", icon: Briefcase, title: "Intern & Certify", desc: "Secure a remote internship and land verified credentials." },
 ];
 
 function ProcessSection() {
-  return (
-    <section className="py-24 md:py-32 bg-black relative overflow-hidden" aria-labelledby="process-heading">
-      {/* Heavy maximalist glow behind the section */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[500px] bg-primary/5 rounded-[100%] blur-[120px] pointer-events-none" />
-      
-      <div className="container-page relative z-10">
-        <SectionHeader
-          eyebrow="The Pipeline"
-          title="How it works"
-          subtitle="Your four-stage pathway from basic syntax to verified engineering credentials."
-          id="process-heading"
-        />
-        <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 relative">
-          {/* Jumping character animation (only visible on large screens where steps are in a row) */}
-          <div className="animate-jump-process hidden lg:flex items-center justify-center text-4xl" aria-hidden="true">
-             <img src="/running_man_transparent.png" alt="running man" className="w-16 h-16 object-contain drop-shadow-[0_0_15px_rgba(198,255,61,0.8)] pointer-events-none" />
-          </div>
+  const [activeStep, setActiveStep] = useState(0);
 
-          {STEPS.map(({ n, title, desc }, i) => (
-            <div key={n} className="relative group">
-              {i < STEPS.length - 1 && (
-                <div
-                  className="absolute left-[80%] top-16 z-0 hidden h-[2px] w-full -translate-y-px lg:block bg-gradient-to-r from-primary/50 to-transparent shadow-[0_0_10px_rgba(156,255,59,0.5)]"
-                  aria-hidden="true"
-                />
-              )}
-              <div className="relative z-10 border border-[#232323] bg-[#0A0A0A] rounded-[32px] p-8 hover:border-primary hover:shadow-[0_0_30px_rgba(156,255,59,0.15)] hover:-translate-y-2 transition-all duration-500">
-                <span className="block font-display text-6xl lg:text-7xl font-black bg-gradient-to-b from-primary to-primary/20 bg-clip-text text-transparent font-orbitron mb-6 drop-shadow-[0_0_15px_rgba(156,255,59,0.3)]">
-                  {n}
-                </span>
-                <h3 className="font-display text-xl font-bold text-white font-orbitron">{title}</h3>
-                <p className="mt-3 text-sm text-[#C7CBCE] leading-relaxed font-outfit">{desc}</p>
-              </div>
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % 4);
+    }, 1200);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <section className="py-24 md:py-32 lg:py-40 bg-[#050505] relative overflow-hidden" aria-labelledby="process-heading">
+      {/* Subtle radial green glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-primary/5 rounded-[100%] blur-[120px] pointer-events-none" />
+      
+      {/* Minimal ambient dots */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[length:40px_40px] pointer-events-none" />
+
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 relative z-10">
+        
+        {/* Section Heading */}
+        <div className="mb-20 md:mb-28 max-w-3xl animate-fade-up">
+            <div className="inline-flex items-center gap-3 mb-6 px-4 py-2 rounded-full bg-primary/5 border border-primary/10">
+                <span className="w-6 h-[2px] bg-primary rounded-full"></span>
+                <span className="text-sm font-bold uppercase tracking-wider text-primary font-outfit">The Pipeline</span>
             </div>
-          ))}
+            
+            <h2 id="process-heading" className="text-4xl md:text-5xl lg:text-[4rem] font-black tracking-tight text-white mb-6 leading-[1.05] font-display">
+                How it works
+            </h2>
+            
+            <p className="text-lg md:text-xl text-[#C7CBCE] font-bold leading-relaxed max-w-xl font-outfit">
+                Your four-stage pathway from basic syntax to verified engineering credentials.
+            </p>
+        </div>
+
+        <div className="relative">
+          {/* Desktop Track */}
+          <div className="hidden md:block absolute top-[44px] left-[10%] right-[10%] h-[2px] bg-[#1a1a1a] rounded-full z-0" />
+          <div 
+            className="hidden md:block absolute top-[43px] h-[4px] w-16 bg-primary rounded-full shadow-[0_0_20px_rgba(156,255,59,1)] z-0 transition-all duration-700 ease-in-out motion-reduce:hidden"
+            style={{ left: `calc(10% + ${(activeStep / 3)} * (80% - 64px))` }} 
+          />
+
+          {/* Mobile Track */}
+          <div className="md:hidden absolute left-0 top-12 bottom-12 w-[2px] bg-[#1a1a1a] rounded-full z-0" />
+          <div 
+            className="md:hidden absolute -left-[1px] w-[4px] h-16 bg-primary rounded-full shadow-[0_0_20px_rgba(156,255,59,1)] z-0 transition-all duration-700 ease-in-out motion-reduce:hidden"
+            style={{ top: `calc(48px + ${(activeStep / 3)} * (100% - 160px))` }} 
+          />
+
+          {/* Grid Container */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 lg:gap-8 pl-6 md:pl-0 relative z-10">
+            {STEPS.map(({ n, icon: Icon, title, desc }, i) => {
+              const isActive = activeStep === i;
+              
+              return (
+                <div 
+                  key={n} 
+                  className={`relative group flex md:flex-col items-start gap-5 md:gap-6 p-6 md:p-8 rounded-[24px] border transition-all duration-500 ease-out 
+                    ${isActive ? 'border-primary/40 bg-[#0a0a0c] shadow-[0_10px_40px_-15px_rgba(156,255,59,0.15)] md:-translate-y-2' : 'border-[#1f1f22] bg-[#050505] hover:border-primary/20 hover:bg-[#0a0a0c] hover:-translate-y-1'}`}
+                >
+                  {/* Active Glow */}
+                  <div className={`absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(156,255,59,0.08),transparent_70%)] rounded-[24px] transition-opacity duration-700 pointer-events-none ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`} />
+
+                  {/* Icon Container */}
+                  <div className="relative flex-shrink-0 z-10">
+                    <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center border transition-all duration-500 ${isActive ? 'bg-primary/10 border-primary/30 text-primary scale-110 shadow-[0_0_15px_rgba(156,255,59,0.2)]' : 'bg-[#121316] border-[#2a2a2e] text-slate-500 group-hover:text-primary group-hover:border-primary/20'}`}>
+                      <Icon className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2} />
+                    </div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="relative z-10 flex-1 pt-1 md:pt-4">
+                    <span className={`block font-display text-4xl md:text-5xl font-black mb-2 transition-colors duration-500 font-orbitron ${isActive ? 'text-primary drop-shadow-[0_0_10px_rgba(156,255,59,0.3)]' : 'text-[#1a1a1a] group-hover:text-[#333]'}`}>
+                      {n}
+                    </span>
+                    <h3 className={`font-display text-xl font-bold mb-2 transition-colors duration-300 tracking-tight ${isActive ? 'text-white' : 'text-slate-300 group-hover:text-white'}`}>
+                      {title}
+                    </h3>
+                    <p className="text-[13px] md:text-sm text-slate-400 leading-relaxed font-medium font-outfit">
+                      {desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-// ─── FEATURED ROADMAPS ────────────────────────────────────────────────────────
 function FeaturedRoadmapsSection() {
   return (
-    <section className="py-24 md:py-32 bg-[#F9FAF5] relative overflow-hidden" aria-labelledby="roadmaps-heading">
-      {/* Top right illustration */}
-      <img 
-        src="/study_illustration.png" 
-        alt="" 
-        className="hidden lg:block absolute right-0 lg:right-[5%] top-12 w-72 lg:w-96 object-contain opacity-80 mix-blend-multiply pointer-events-none"
-        aria-hidden="true"
+    <section className="relative w-full py-24 lg:py-32 px-5 sm:px-6 lg:px-8 overflow-hidden bg-[#fbfcfd]" aria-labelledby="roadmaps-heading">
+        
+      <style>{`
+        @keyframes drawLine {
+            0% { stroke-dashoffset: 1000; }
+            100% { stroke-dashoffset: 0; }
+        }
+        .path-animated {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 3s ease-out forwards 0.5s;
+        }
+      `}</style>
+
+      {/* Ambient Background Details */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-0 opacity-40" 
+        style={{ backgroundImage: 'radial-gradient(rgba(10, 15, 28, 0.05) 1px, transparent 1px)', backgroundSize: '24px 24px' }}
       />
-      <div className="container-page relative z-10">
-        <SectionHeader
-          eyebrow="Featured Roadmaps"
-          title="Start learning the right way"
-          subtitle="Tuned progression charts designed to take you from a curious beginner to a productive engineer."
-          id="roadmaps-heading"
-          theme="light"
-        />
-        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {ROADMAPS.slice(0, 3).map((r) => (
-            <div
-              key={r.slug}
-              className="bg-white border border-slate-200/60 rounded-[1.5rem] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:border-slate-300 hover:-translate-y-1 transition-all duration-300 ease-out group"
-            >
-              <div className="p-8 pb-0 space-y-5 flex-1">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex items-center rounded-full bg-blue-50/50 px-3 py-1 text-[10px] font-bold text-blue-600 border border-blue-100/50 tracking-widest uppercase">
-                    {DOMAIN_NAME_MAP[r.domain]}
-                  </span>
+      <div className="absolute top-0 left-0 w-full h-[400px] bg-gradient-to-b from-[#fbfcfd] to-transparent pointer-events-none z-0" />
+      
+      {/* Subtle Radial Glow specific to the Featured Section */}
+      <div className="absolute top-[30%] left-[-5%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none z-0 animate-[pulse_4s_ease-in-out_infinite_alternate]" />
+      <div className="absolute bottom-[10%] right-[5%] w-[400px] h-[400px] bg-slate-900/5 rounded-full blur-[100px] pointer-events-none z-0" />
+
+      <div className="max-w-[1280px] mx-auto relative z-10">
+        
+        {/* Header & Abstract Illustration Split */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center mb-16 lg:mb-20">
+            
+            {/* Left: Typography */}
+            <div className="lg:col-span-7 space-y-6 animate-fade-up">
+                {/* Refined Premium Eyebrow */}
+                <div className="flex items-center gap-4">
+                    <span className="w-8 h-[2px] bg-primary rounded-full shadow-[0_0_8px_rgba(156,255,59,0.5)]"></span>
+                    <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-slate-800 font-display">Featured Roadmaps</h3>
                 </div>
                 
-                <h3 className="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-tight tracking-tight">
-                  {r.title}
-                </h3>
+                {/* Main Heading */}
+                <h2 id="roadmaps-heading" className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#0a0f1c] leading-[1.05] font-display">
+                    Start learning the <br className="hidden sm:block" />
+                    right way.
+                </h2>
                 
-                <p className="text-sm font-medium leading-relaxed text-slate-500">
-                  {r.description}
+                {/* Supporting Text */}
+                <p className="text-base sm:text-lg text-slate-500 font-medium leading-relaxed max-w-xl font-outfit">
+                    Tuned progression charts designed to take you from a curious beginner to a highly productive engineer. No fluff, just the skills industry demands.
                 </p>
-                
-                <div className="flex flex-wrap items-center gap-2 pt-2">
-                  <span className="rounded-full bg-slate-50 border border-slate-100 px-3 py-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                    {r.difficulty}
-                  </span>
-                  <span className="rounded-full bg-slate-50 border border-slate-100 px-3 py-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                    {r.duration}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="p-8 pt-8 mt-auto">
-                <Link to="/learn/$slug" params={{ slug: r.slug }} className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 transition-colors tracking-widest uppercase group-hover:text-blue-700">
-                  Explore {r.title} Roadmap <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </div>
             </div>
-          ))}
+
+            {/* Right: Minimal Futuristic Node Illustration */}
+            <div className="lg:col-span-5 relative flex justify-center lg:justify-end animate-fade-up hidden sm:flex" style={{ animationDelay: '200ms' }}>
+                <div className="relative w-full max-w-[320px] lg:max-w-[400px] aspect-[4/3]">
+                    
+                    {/* SVG Network / Journey Concept */}
+                    <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full relative z-10 motion-reduce:hidden">
+                        {/* Subtle Background Grid lines */}
+                        <path d="M0 150H400M200 0V300" stroke="#f1f5f9" strokeWidth="2" />
+                        
+                        {/* Winding Progression Path */}
+                        <path d="M50 250 C 150 250, 100 100, 200 150 S 250 50, 350 100" stroke="#e2e8f0" strokeWidth="3" strokeDasharray="8 8" />
+                        <path d="M50 250 C 150 250, 100 100, 200 150 S 250 50, 350 100" stroke="#4ade80" strokeWidth="3" className="path-animated" />
+                        
+                        {/* Floating Nodes (Animated) */}
+                        <g className="animate-[float_6s_ease-in-out_infinite]">
+                            <circle cx="50" cy="250" r="8" fill="white" stroke="#0a0f1c" strokeWidth="4" />
+                            <rect x="20" y="270" width="60" height="12" rx="4" fill="#f1f5f9" />
+                        </g>
+                        
+                        <g className="animate-[float_6s_ease-in-out_infinite]" style={{ animationDelay: '2s' }}>
+                            <circle cx="200" cy="150" r="10" fill="#0a0f1c" />
+                            <circle cx="200" cy="150" r="4" fill="#4ade80" />
+                            <rect x="170" y="110" width="60" height="24" rx="6" fill="white" stroke="#e2e8f0" strokeWidth="2" />
+                            <path d="M180 122H210" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" />
+                        </g>
+                        
+                        <g className="animate-[float_6s_ease-in-out_infinite]" style={{ animationDelay: '1.5s' }}>
+                            <circle cx="350" cy="100" r="14" fill="white" stroke="#0a0f1c" strokeWidth="5" />
+                            <path d="M345 100L349 104L355 96" stroke="#4ade80" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                        </g>
+
+                        {/* Subtle Decorative particles */}
+                        <circle cx="300" cy="200" r="3" fill="#94a3b8" />
+                        <circle cx="100" cy="80" r="4" fill="#4ade80" opacity="0.5" />
+                    </svg>
+                </div>
+            </div>
         </div>
-        <div className="mt-14 text-center">
-            <Link
-              to="/roadmaps"
-              className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-8 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition-all tracking-wide"
-            >
-            Browse All Tech Roadmaps <ArrowRight className="h-4 w-4" />
-          </Link>
+
+        {/* Asymmetric Bento-Style Roadmaps Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 relative z-10">
+            
+            {/* PRIMARY: Web Development (Spans 7 columns on Desktop) */}
+            <article className="animate-fade-up lg:col-span-7 group relative bg-white rounded-[32px] border border-slate-200 p-8 sm:p-10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-15px_rgba(156,255,59,0.15)] hover:border-primary/40 hover:-translate-y-1 transition-all duration-500 ease-out overflow-hidden flex flex-col h-full" style={{ animationDelay: '300ms' }}>
+                
+                {/* Internal Hover Glow */}
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle_at_100%_0%,rgba(156,255,59,0.08),transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+                {/* Top Meta */}
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-8 relative z-10">
+                    <span className="px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-[10px] font-extrabold uppercase tracking-widest text-slate-800 font-outfit">
+                        Web Development
+                    </span>
+                    <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-slate-500 tracking-wider uppercase font-outfit">
+                            <TrendingUp className="w-3.5 h-3.5 text-primary" /> Beginner → Advanced
+                        </span>
+                        <span className="w-1 h-1 rounded-full bg-slate-300" />
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-slate-500 tracking-wider uppercase font-outfit">
+                            <Clock className="w-3.5 h-3.5 text-slate-400" /> 4–6 Months
+                        </span>
+                    </div>
+                </div>
+                
+                {/* Content */}
+                <div className="relative z-10 max-w-lg mb-10">
+                    <h3 className="text-3xl sm:text-4xl font-black text-[#0a0f1c] mb-4 tracking-tight group-hover:text-slate-700 transition-colors font-display">
+                        Full Stack Web Development
+                    </h3>
+                    <p className="text-slate-500 leading-relaxed font-medium font-outfit">
+                        Master frontend to backend, build complete web applications, and confidently deploy to production clouds.
+                    </p>
+                </div>
+
+                {/* Visual Tech Timeline / Progress Indicator */}
+                <div className="mt-auto relative z-10 bg-slate-50/50 rounded-2xl border border-slate-100 p-6">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-4 font-outfit">Core Technology Stack</p>
+                    
+                    <div className="relative flex flex-wrap gap-x-6 gap-y-4">
+                        {/* Connection Line behind badges (visible mostly on desktop) */}
+                        <div className="hidden sm:block absolute top-1/2 left-4 right-4 h-0.5 bg-slate-200 -translate-y-1/2 z-0" />
+                        <div className="hidden sm:block absolute top-1/2 left-4 w-0 h-0.5 bg-primary -translate-y-1/2 z-0 group-hover:w-[80%] transition-all duration-1000 ease-out delay-100" />
+                        
+                        {/* Badges */}
+                        <div className="relative z-10 flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-xl text-xs font-bold text-slate-700 group-hover:-translate-y-1 transition-transform duration-300 delay-0 font-outfit">
+                            <span className="w-2 h-2 rounded-full bg-[#E44D26]" /> HTML/CSS
+                        </div>
+                        <div className="relative z-10 flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-xl text-xs font-bold text-slate-700 group-hover:-translate-y-1 transition-transform duration-300 delay-75 font-outfit">
+                            <span className="w-2 h-2 rounded-full bg-[#F7DF1E]" /> JavaScript
+                        </div>
+                        <div className="relative z-10 flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-xl text-xs font-bold text-slate-700 group-hover:-translate-y-1 transition-transform duration-300 delay-150 font-outfit">
+                            <span className="w-2 h-2 rounded-full bg-[#61DAFB]" /> React
+                        </div>
+                        <div className="relative z-10 flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-xl text-xs font-bold text-slate-700 group-hover:-translate-y-1 transition-transform duration-300 delay-200 font-outfit">
+                            <span className="w-2 h-2 rounded-full bg-[#339933]" /> Node.js
+                        </div>
+                    </div>
+                </div>
+
+                {/* Action */}
+                <div className="mt-8 pt-6 border-t border-slate-100 relative z-10">
+                    <Link to="/roadmaps" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#0a0f1c] group-hover:text-primary transition-colors font-outfit">
+                        <span>Explore Web Dev Roadmap</span>
+                        <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-primary/10 group-hover:translate-x-2 transition-all">
+                            <ArrowRight className="w-3.5 h-3.5" strokeWidth={3} />
+                        </div>
+                    </Link>
+                </div>
+            </article>
+
+            {/* SECONDARY: Cloud & App (Spans 5 columns on Desktop, Stacked layout) */}
+            <div className="lg:col-span-5 flex flex-col gap-6 lg:gap-8">
+                
+                {/* Cloud AWS Roadmap */}
+                <article className="animate-fade-up group relative bg-white rounded-[24px] border border-slate-200 p-7 lg:p-8 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-15px_rgba(156,255,59,0.15)] hover:border-primary/40 hover:-translate-y-1 transition-all duration-500 ease-out flex-1 flex flex-col" style={{ animationDelay: '400ms' }}>
+                    
+                    <div className="flex items-start justify-between mb-5">
+                        <h3 className="text-xl sm:text-2xl font-bold text-[#0a0f1c] tracking-tight font-display">Cloud AWS</h3>
+                        <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-primary group-hover:text-[#0a0f1c] group-hover:border-primary transition-all shadow-sm">
+                            <Cloud className="w-5 h-5" />
+                        </div>
+                    </div>
+                    
+                    <p className="text-sm text-slate-500 leading-relaxed font-medium mb-6 flex-1 font-outfit">
+                        Master AWS services from fundamentals to architect-level production deployments.
+                    </p>
+
+                    {/* Mini Tech Nodes */}
+                    <div className="flex flex-wrap gap-2 mb-6 font-outfit">
+                        <span className="px-2 py-1 rounded bg-slate-50 text-[10px] font-bold text-slate-600 border border-slate-100">IAM</span>
+                        <span className="px-2 py-1 rounded bg-slate-50 text-[10px] font-bold text-slate-600 border border-slate-100">EC2</span>
+                        <span className="px-2 py-1 rounded bg-slate-50 text-[10px] font-bold text-slate-600 border border-slate-100">Lambda</span>
+                        <span className="px-2 py-1 rounded bg-slate-50 text-[10px] font-bold text-slate-600 border border-slate-100">VPC</span>
+                    </div>
+
+                    {/* Meta & Action */}
+                    <div className="pt-5 border-t border-slate-100 flex items-center justify-between">
+                        <div className="flex flex-col gap-0.5">
+                            <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest font-outfit">Intermediate</span>
+                            <span className="text-xs font-bold text-slate-700 font-outfit">3–5 Months</span>
+                        </div>
+                        <Link to="/roadmaps" className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-[#0a0f1c] group-hover:text-primary transition-all shadow-sm">
+                            <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                    </div>
+                </article>
+
+                {/* App Development Roadmap */}
+                <article className="animate-fade-up group relative bg-white rounded-[24px] border border-slate-200 p-7 lg:p-8 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-15px_rgba(156,255,59,0.15)] hover:border-primary/40 hover:-translate-y-1 transition-all duration-500 ease-out flex-1 flex flex-col" style={{ animationDelay: '500ms' }}>
+                    
+                    <div className="flex items-start justify-between mb-5">
+                        <h3 className="text-xl sm:text-2xl font-bold text-[#0a0f1c] tracking-tight font-display">App Dev</h3>
+                        <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-primary group-hover:text-[#0a0f1c] group-hover:border-primary transition-all shadow-sm">
+                            <Smartphone className="w-5 h-5" />
+                        </div>
+                    </div>
+                    
+                    <p className="text-sm text-slate-500 leading-relaxed font-medium mb-6 flex-1 font-outfit">
+                        Build native and cross-platform mobile applications for millions of real users.
+                    </p>
+
+                    {/* Mini Tech Nodes */}
+                    <div className="flex flex-wrap gap-2 mb-6 font-outfit">
+                        <span className="px-2 py-1 rounded bg-slate-50 text-[10px] font-bold text-slate-600 border border-slate-100">Flutter</span>
+                        <span className="px-2 py-1 rounded bg-slate-50 text-[10px] font-bold text-slate-600 border border-slate-100">Kotlin</span>
+                        <span className="px-2 py-1 rounded bg-slate-50 text-[10px] font-bold text-slate-600 border border-slate-100">Firebase</span>
+                    </div>
+
+                    {/* Meta & Action */}
+                    <div className="pt-5 border-t border-slate-100 flex items-center justify-between">
+                        <div className="flex flex-col gap-0.5">
+                            <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest font-outfit">Beginner → Adv</span>
+                            <span className="text-xs font-bold text-slate-700 font-outfit">3–5 Months</span>
+                        </div>
+                        <Link to="/roadmaps" className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-[#0a0f1c] group-hover:text-primary transition-all shadow-sm">
+                            <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                    </div>
+                </article>
+
+            </div>
         </div>
+
+        {/* Premium CTA Button */}
+        <div className="mt-12 lg:mt-16 flex justify-center animate-fade-up" style={{ animationDelay: '600ms' }}>
+            <Link to="/roadmaps" className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-primary text-[#0a0f1c] text-sm font-bold shadow-[0_10px_30px_-10px_rgba(156,255,59,0.5)] hover:shadow-[0_15px_40px_-10px_rgba(156,255,59,0.6)] hover:-translate-y-1 hover:brightness-110 transition-all duration-300 font-outfit">
+                Browse All Tech Roadmaps
+                <ArrowRight className="w-4 h-4" strokeWidth={3} />
+            </Link>
+        </div>
+
       </div>
     </section>
   );
@@ -701,95 +1077,183 @@ const HIGHLIGHTS = [
 ];
 
 function InternshipHighlightsSection() {
+  const containerRef = useRef<HTMLElement>(null);
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setIsActive(true);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="py-24 md:py-32 bg-[#F9FAF5] overflow-hidden relative" aria-labelledby="internship-highlight-heading">
-      <div className="container-page relative z-10">
-        <div className="relative overflow-hidden rounded-[40px] bg-[#F4F7EB] border border-[#222] p-6 md:p-16 lg:p-20 shadow-[0_20px_80px_rgba(0,0,0,0.1)] group transition-all duration-700 hover:shadow-[0_30px_100px_rgba(143,204,30,0.2)] hover:border-black">
-          <div className="relative z-10 grid items-center gap-16 lg:grid-cols-2">
-            <div className="text-left space-y-5">
-              <span className="inline-block rounded-full border border-[#222] bg-[#F9FAF5] px-3.5 py-1 text-xs font-semibold text-black font-orbitron tracking-wider">
-                INDUSTRIAL LAUNCHPAD
-              </span>
-              <h2
-                className="font-display text-4xl md:text-5xl lg:text-7xl font-black text-black font-orbitron leading-[1.1] tracking-tight drop-shadow-sm"
-                id="internship-highlight-heading"
-              >
-                Real engineering.<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-lime-500">Real credentials.</span>
+    <section ref={containerRef} className="relative w-full py-24 lg:py-32 overflow-hidden z-10 bg-[#fbfcfd]" id="industrial-launchpad">
+      <style>{`
+        .bg-tech-grid {
+            background-image: 
+                linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+        .reveal-pipeline {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-pipeline.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @keyframes drawLinePipeline {
+            0% { stroke-dashoffset: 1000; }
+            100% { stroke-dashoffset: 0; }
+        }
+        .path-animated-pipeline {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+        .active .path-animated-pipeline {
+            animation: drawLinePipeline 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.3s;
+        }
+        .pipeline-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+        .active .pipeline-line {
+            animation: drawLinePipeline 2.5s ease-out forwards;
+        }
+      `}</style>
+      
+      {/* Ambient Grid & Glows */}
+      <div className="absolute inset-0 bg-tech-grid pointer-events-none z-0" />
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-1/3 h-full bg-gradient-to-r from-[#fbfcfd] via-[#fbfcfd]/80 to-transparent z-0 pointer-events-none" />
+      
+      <div className="absolute right-[-10%] top-[20%] w-[600px] h-[600px] bg-[#4ade80]/10 rounded-full animate-[pulse_4s_ease-in-out_infinite_alternate] pointer-events-none z-0 mix-blend-multiply filter blur-[80px]" />
+
+      <div className={`max-w-[1280px] mx-auto px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center ${isActive ? 'active' : ''}`}>
+          
+          <div className="lg:col-span-5 flex flex-col items-start z-20">
+              
+              <div className={`reveal-pipeline inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-slate-200 bg-white shadow-sm mb-8 ${isActive ? 'active' : ''}`} style={{ transitionDelay: '100ms' }}>
+                  <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-slate-700"></span>
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-700 font-display">Industrial Launchpad</span>
+              </div>
+
+              <h2 className={`reveal-pipeline text-5xl sm:text-6xl md:text-7xl font-black tracking-tighter leading-[1.05] text-slate-900 mb-6 font-display ${isActive ? 'active' : ''}`} style={{ transitionDelay: '200ms' }}>
+                  Real engineering.<br />
+                  <span className="relative inline-block text-[#22c55e] mt-2">
+                      Real credentials.
+                      <svg className="absolute -bottom-3 left-0 w-full h-4 overflow-visible" viewBox="0 0 400 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path className="path-animated-pipeline" d="M0,10 L30,10 L40,0 L50,10 L390,10" stroke="#4ade80" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                          <circle className="path-animated-pipeline" cx="390" cy="10" r="3" fill="#22c55e" style={{ animationDelay: '1.5s' }} />
+                      </svg>
+                  </span>
               </h2>
-              <p className="text-black leading-relaxed font-outfit">
-                Submit an application for your selected domain. Build features, resolve live issues, and launch production-grade modules.
+
+              <p className={`reveal-pipeline text-lg text-slate-600 font-medium leading-relaxed max-w-md mb-10 font-outfit ${isActive ? 'active' : ''}`} style={{ transitionDelay: '300ms' }}>
+                  Submit an application for your selected domain. Build features, resolve live issues, and launch production-grade modules seamlessly.
               </p>
-              <Link
-                to="/internships"
-                className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-bold text-black shadow-[0_4px_15px_rgba(156,255,59,0.3)] transition-all hover:bg-lime-400 hover:scale-[1.02] font-orbitron"
-              >
-                Apply for Remote Tech Internship <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-            <div className="grid gap-6">
-              {HIGHLIGHTS.map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="flex items-start gap-5 rounded-2xl border border-[#222] bg-[#F9FAF5] p-6 hover:border-black hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
-                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary border border-[#222] text-black shadow-[0_4px_15px_rgba(156,255,59,0.3)]">
-                    <Icon className="h-6 w-6" aria-hidden="true" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-base font-bold text-black font-orbitron">{title}</p>
-                    <p className="mt-1.5 text-sm text-black font-outfit leading-relaxed">{desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
-// ─── BENEFITS ─────────────────────────────────────────────────────────────────
-const BENEFITS = [
-  "100% free access. No premium filters.",
-  "Clear progression roadmaps from zero to active builder.",
-  "Commercial development experience on live codebases.",
-  "Cryptographically verifiable credentials.",
-  "A tangible portfolio to show hiring teams.",
-  "Dedicated direct support channels with mentors.",
-  "Mock interviews and CV architecture support.",
-  "Join a network of India's top tech builders.",
-];
-
-function BenefitsSection() {
-  return (
-    <section className="py-24 md:py-32 bg-white" aria-labelledby="benefits-heading">
-      <div className="container-page">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div className="text-left space-y-4 relative">
-            <img 
-              src="/zerocost.png" 
-              alt="100% Free Tuition at Infynux Academy" 
-              className="w-40 h-auto md:w-56 mb-6 object-contain mix-blend-multiply contrast-125 brightness-110" 
-              width="224"
-              height="100"
-              loading="lazy"
-            />
-            <span className="block text-sm font-semibold uppercase tracking-widest text-primary font-display">Academy Merits</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight font-orbitron" id="benefits-heading">
-              Everything you need,<br />zero costs.
-            </h2>
-            <p className="text-slate-600 leading-relaxed text-lg max-w-md">
-              No subscription gates. No locked content. Infynux Academy runs on a commitment to deliver premium tech training to all.
-            </p>
+              <div className={`reveal-pipeline ${isActive ? 'active' : ''}`} style={{ transitionDelay: '400ms' }}>
+                  <Link to="/internships" className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#22c55e] text-white font-bold rounded-full overflow-hidden transition-all duration-300 hover:bg-[#4ade80] hover:-translate-y-1 hover:shadow-[0_15px_30px_-10px_rgba(34,197,94,0.5)] font-outfit">
+                      <span className="relative z-10">Apply for Remote Tech Internship</span>
+                      <ArrowRight className="w-5 h-5 relative z-10 transform group-hover:translate-x-1.5 transition-transform duration-300" strokeWidth={3} />
+                      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
+                  </Link>
+              </div>
           </div>
-          <ul className="grid gap-4 sm:grid-cols-2" role="list">
-            {BENEFITS.map((benefit) => (
-              <li key={benefit} className="flex items-center gap-5 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-left shadow-sm hover:shadow-md hover:border-indigo-200 hover:-translate-y-1 transition-all duration-300">
-                <CheckCircle2 className="h-6 w-6 shrink-0 text-emerald-500" aria-hidden="true" />
-                <span className="text-base font-semibold text-slate-800 leading-snug">{benefit}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+
+          <div className="lg:col-span-7 relative flex items-center min-h-[500px] w-full" id="pipeline-container">
+              
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] pointer-events-none z-0 opacity-40 animate-[float_8s_ease-in-out_infinite]">
+                  <svg viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                      <path d="M100 100 L700 100 M100 200 L700 200 M100 300 L700 300 M100 400 L700 400 M100 500 L700 500" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 8" />
+                      <path d="M200 50 L200 550 M350 50 L350 550 M500 50 L500 550 M650 50 L650 550" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="4 8" />
+                      <rect x="150" y="120" width="120" height="80" rx="8" fill="white" stroke="#94a3b8" strokeWidth="2" />
+                      <rect x="420" y="250" width="180" height="100" rx="8" fill="white" stroke="#94a3b8" strokeWidth="2" />
+                      <rect x="250" y="420" width="140" height="60" rx="8" fill="white" stroke="#94a3b8" strokeWidth="2" />
+                      <path d="M170 140 H220 M170 160 H250 M170 180 H200" stroke="#4ade80" strokeWidth="3" strokeLinecap="round" />
+                      <path d="M450 280 H500 M450 300 H550 M450 320 H480" stroke="#4ade80" strokeWidth="3" strokeLinecap="round" />
+                      <path d="M270 160 L350 160 L350 300 L420 300" stroke="#94a3b8" strokeWidth="2" fill="none" />
+                      <circle cx="270" cy="160" r="4" fill="#4ade80" />
+                      <circle cx="420" cy="300" r="4" fill="#4ade80" />
+                      <path d="M390 450 L450 450 L450 350" stroke="#94a3b8" strokeWidth="2" fill="none" />
+                      <circle cx="390" cy="450" r="4" fill="#4ade80" />
+                      <text x="600" y="150" fontFamily="monospace" fontSize="40" fontWeight="bold" fill="#cbd5e1" opacity="0.5">&lt;/&gt;</text>
+                      <text x="100" y="400" fontFamily="monospace" fontSize="40" fontWeight="bold" fill="#cbd5e1" opacity="0.5">{`{}`}</text>
+                  </svg>
+              </div>
+
+              <div className="relative w-full z-10 flex flex-col lg:flex-row gap-6 lg:gap-4 xl:gap-8 justify-between pt-8 lg:pt-0">
+                  
+                  {/* Mobile Connecting Vertical Line */}
+                  <div className="block lg:hidden absolute left-[39px] top-[40px] bottom-[40px] w-0.5 bg-slate-200">
+                      <div 
+                          className="absolute top-0 left-0 w-full bg-[#4ade80] origin-top transition-all duration-[2000ms] ease-out" 
+                          style={{ height: '100%', transform: isActive ? 'scaleY(1)' : 'scaleY(0)' }} 
+                      />
+                  </div>
+
+                  {/* Desktop Connecting Angled Line SVG */}
+                  <div className="hidden lg:block absolute inset-0 pointer-events-none -z-10">
+                      <svg width="100%" height="100%" className="overflow-visible">
+                          <path d="M 120 100 C 200 100, 250 200, 350 200 C 450 200, 500 300, 600 300" stroke="#e2e8f0" strokeWidth="3" fill="none" strokeDasharray="6 6" />
+                          <path className="pipeline-line" d="M 120 100 C 200 100, 250 200, 350 200 C 450 200, 500 300, 600 300" stroke="#4ade80" strokeWidth="3" fill="none" />
+                      </svg>
+                  </div>
+
+                  {/* Stage 01 */}
+                  <div className={`reveal-pipeline relative w-full lg:w-1/3 flex lg:block items-start gap-5 lg:gap-0 lg:-mt-12 group ${isActive ? 'active' : ''}`} style={{ transitionDelay: '400ms' }}>
+                      <div className="relative w-14 h-14 lg:w-16 lg:h-16 lg:mb-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center flex-shrink-0 z-10 group-hover:border-[#4ade80] group-hover:shadow-[0_0_20px_rgba(74,222,128,0.2)] group-hover:-translate-y-1 transition-all duration-300">
+                          <span className="absolute -top-2 -right-2 bg-slate-900 text-white text-[10px] font-mono font-bold px-1.5 py-0.5 rounded shadow-sm">01</span>
+                          <Globe className="w-8 h-8 text-slate-700 group-hover:text-[#22c55e] transition-colors" strokeWidth={1.5} />
+                      </div>
+                      <div className="bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-slate-100 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.05)] group-hover:shadow-[0_15px_35px_-15px_rgba(74,222,128,0.1)] transition-all duration-300 flex-1">
+                          <h4 className="text-lg font-bold text-slate-900 mb-2 leading-tight font-display">Remote Operations</h4>
+                          <p className="text-sm text-slate-500 leading-relaxed font-medium font-outfit">Collaborate directly on remote infrastructures from any region in India.</p>
+                      </div>
+                  </div>
+
+                  {/* Stage 02 */}
+                  <div className={`reveal-pipeline relative w-full lg:w-1/3 flex lg:block items-start gap-5 lg:gap-0 lg:mt-[100px] group ${isActive ? 'active' : ''}`} style={{ transitionDelay: '600ms' }}>
+                      <div className="relative w-14 h-14 lg:w-16 lg:h-16 lg:mb-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center flex-shrink-0 z-10 group-hover:border-[#4ade80] group-hover:shadow-[0_0_20px_rgba(74,222,128,0.2)] group-hover:-translate-y-1 transition-all duration-300">
+                          <span className="absolute -top-2 -right-2 bg-slate-900 text-white text-[10px] font-mono font-bold px-1.5 py-0.5 rounded shadow-sm">02</span>
+                          <Award className="w-8 h-8 text-slate-700 group-hover:text-[#22c55e] transition-colors" strokeWidth={1.5} />
+                      </div>
+                      <div className="bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-slate-100 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.05)] group-hover:shadow-[0_15px_35px_-15px_rgba(74,222,128,0.1)] transition-all duration-300 flex-1">
+                          <h4 className="text-lg font-bold text-slate-900 mb-2 leading-tight font-display">Verified Certification</h4>
+                          <p className="text-sm text-slate-500 leading-relaxed font-medium font-outfit">Gain exclusive credentials strictly validated by the Infynux Academy board.</p>
+                      </div>
+                  </div>
+
+                  {/* Stage 03 */}
+                  <div className={`reveal-pipeline relative w-full lg:w-1/3 flex lg:block items-start gap-5 lg:gap-0 lg:mt-[200px] group ${isActive ? 'active' : ''}`} style={{ transitionDelay: '800ms' }}>
+                      <div className="relative w-14 h-14 lg:w-16 lg:h-16 lg:mb-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center flex-shrink-0 z-10 group-hover:border-[#4ade80] group-hover:shadow-[0_0_20px_rgba(74,222,128,0.2)] group-hover:-translate-y-1 transition-all duration-300">
+                          <span className="absolute -top-2 -right-2 bg-[#22c55e] text-white text-[10px] font-mono font-bold px-1.5 py-0.5 rounded shadow-sm">03</span>
+                          <Code2 className="w-8 h-8 text-slate-700 group-hover:text-[#22c55e] transition-colors" strokeWidth={1.5} />
+                      </div>
+                      <div className="bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-slate-100 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.05)] group-hover:shadow-[0_15px_35px_-15px_rgba(74,222,128,0.1)] transition-all duration-300 flex-1 border-b-2 border-b-transparent group-hover:border-b-[#4ade80]">
+                          <h4 className="text-lg font-bold text-slate-900 mb-2 leading-tight font-display">Production Codebase</h4>
+                          <p className="text-sm text-slate-500 leading-relaxed font-medium font-outfit">Publish pull requests to real customer apps, bypassing sandbox restrictions.</p>
+                      </div>
+                  </div>
+
+              </div>
+          </div>
+
       </div>
     </section>
   );

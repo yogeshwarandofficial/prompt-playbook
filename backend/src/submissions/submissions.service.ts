@@ -18,7 +18,11 @@ export class SubmissionsService {
 
   // ── STUDENT: Submit work for a phase ──────────────────────────────────────
 
-  async submitPhase(userId: string, studentProjectPhaseId: string, dto: CreateSubmissionDto) {
+  async submitPhase(
+    userId: string,
+    studentProjectPhaseId: string,
+    dto: CreateSubmissionDto,
+  ) {
     // Verify the StudentProjectPhase belongs to this student
     const spp = await this.prisma.studentProjectPhase.findUnique({
       where: { id: studentProjectPhaseId },
@@ -29,7 +33,11 @@ export class SubmissionsService {
     }
 
     // Enforce state machine — only these statuses allow submission
-    const submittableStatuses: string[] = ['AVAILABLE', 'IN_PROGRESS', 'CHANGES_REQUESTED'];
+    const submittableStatuses: string[] = [
+      'AVAILABLE',
+      'IN_PROGRESS',
+      'CHANGES_REQUESTED',
+    ];
     if (!submittableStatuses.includes(spp.status)) {
       throw new ForbiddenException(
         `Cannot submit: phase is currently ${spp.status}. Only AVAILABLE, IN_PROGRESS, or CHANGES_REQUESTED phases can be submitted.`,
@@ -83,7 +91,11 @@ export class SubmissionsService {
     }
     return this.prisma.submission.findMany({
       where: { studentProjectPhaseId },
-      include: { reviews: { include: { reviewer: { select: { name: true, role: true } } } } },
+      include: {
+        reviews: {
+          include: { reviewer: { select: { name: true, role: true } } },
+        },
+      },
       orderBy: { submittedAt: 'desc' },
     });
   }
@@ -106,7 +118,11 @@ export class SubmissionsService {
               include: { topics: { orderBy: { order: 'asc' } } },
             },
             submissions: {
-              include: { reviews: { include: { reviewer: { select: { name: true, role: true } } } } },
+              include: {
+                reviews: {
+                  include: { reviewer: { select: { name: true, role: true } } },
+                },
+              },
               orderBy: { submittedAt: 'desc' },
               take: 5,
             },
@@ -122,7 +138,9 @@ export class SubmissionsService {
 
   async getAdminSubmissions(status?: string) {
     return this.prisma.submission.findMany({
-      where: status ? { status: status as any } : { status: { in: ['SUBMITTED', 'UNDER_REVIEW'] } },
+      where: status
+        ? { status: status as any }
+        : { status: { in: ['SUBMITTED', 'UNDER_REVIEW'] } },
       include: {
         studentProjectPhase: {
           include: {
@@ -135,7 +153,9 @@ export class SubmissionsService {
             },
           },
         },
-        reviews: { include: { reviewer: { select: { name: true, role: true } } } },
+        reviews: {
+          include: { reviewer: { select: { name: true, role: true } } },
+        },
         automatedReviews: { orderBy: { createdAt: 'desc' }, take: 1 },
       },
       orderBy: { submittedAt: 'desc' },
@@ -151,13 +171,25 @@ export class SubmissionsService {
             phase: true,
             studentProject: {
               include: {
-                student: { select: { id: true, name: true, studentId: true, email: true } },
+                student: {
+                  select: {
+                    id: true,
+                    name: true,
+                    studentId: true,
+                    email: true,
+                  },
+                },
                 project: { select: { id: true, title: true } },
               },
             },
           },
         },
-        reviews: { include: { reviewer: { select: { id: true, name: true, role: true } } }, orderBy: { reviewedAt: 'desc' } },
+        reviews: {
+          include: {
+            reviewer: { select: { id: true, name: true, role: true } },
+          },
+          orderBy: { reviewedAt: 'desc' },
+        },
         automatedReviews: { orderBy: { createdAt: 'desc' }, take: 1 },
       },
     });
@@ -167,7 +199,11 @@ export class SubmissionsService {
 
   // ── ADMIN: Review a submission — state machine enforced in transaction ─────
 
-  async reviewSubmission(reviewerId: string, submissionId: string, dto: CreateReviewDto) {
+  async reviewSubmission(
+    reviewerId: string,
+    submissionId: string,
+    dto: CreateReviewDto,
+  ) {
     const submission = await this.prisma.submission.findUnique({
       where: { id: submissionId },
       include: {
@@ -175,7 +211,11 @@ export class SubmissionsService {
           include: {
             phase: true,
             studentProject: {
-              include: { project: { include: { phases: { orderBy: { phaseOrder: 'asc' } } } } },
+              include: {
+                project: {
+                  include: { phases: { orderBy: { phaseOrder: 'asc' } } },
+                },
+              },
             },
           },
         },
@@ -185,7 +225,9 @@ export class SubmissionsService {
 
     // Only SUBMITTED or UNDER_REVIEW submissions can be reviewed
     if (!['SUBMITTED', 'UNDER_REVIEW'].includes(submission.status)) {
-      throw new BadRequestException(`Cannot review a submission with status ${submission.status}`);
+      throw new BadRequestException(
+        `Cannot review a submission with status ${submission.status}`,
+      );
     }
 
     return this.prisma.$transaction(async (tx) => {
@@ -204,7 +246,10 @@ export class SubmissionsService {
 
       if (dto.decision === 'APPROVED') {
         // Mark submission approved
-        await tx.submission.update({ where: { id: submissionId }, data: { status: 'APPROVED' } });
+        await tx.submission.update({
+          where: { id: submissionId },
+          data: { status: 'APPROVED' },
+        });
         // Mark phase completed
         await tx.studentProjectPhase.update({
           where: { id: spp.id },
@@ -216,10 +261,15 @@ export class SubmissionsService {
         let nextPhase: any = null;
         if (currentPhaseOrder !== undefined) {
           // We need the full phase info — fetch it
-          const currentPhaseData = await tx.projectPhase.findUnique({ where: { id: spp.phaseId } });
+          const currentPhaseData = await tx.projectPhase.findUnique({
+            where: { id: spp.phaseId },
+          });
           if (currentPhaseData) {
             nextPhase = await tx.projectPhase.findFirst({
-              where: { projectId: sp.projectId, phaseOrder: currentPhaseData.phaseOrder + 1 },
+              where: {
+                projectId: sp.projectId,
+                phaseOrder: currentPhaseData.phaseOrder + 1,
+              },
             });
           }
         }
@@ -237,17 +287,21 @@ export class SubmissionsService {
             data: { status: 'COMPLETED', completedAt: new Date() },
           });
         }
-
       } else if (dto.decision === 'CHANGES_REQUESTED') {
-        await tx.submission.update({ where: { id: submissionId }, data: { status: 'CHANGES_REQUESTED' } });
+        await tx.submission.update({
+          where: { id: submissionId },
+          data: { status: 'CHANGES_REQUESTED' },
+        });
         await tx.studentProjectPhase.update({
           where: { id: spp.id },
           data: { status: 'CHANGES_REQUESTED' },
         });
         // Next phase remains LOCKED — no action needed
-
       } else if (dto.decision === 'REJECTED') {
-        await tx.submission.update({ where: { id: submissionId }, data: { status: 'REJECTED' } });
+        await tx.submission.update({
+          where: { id: submissionId },
+          data: { status: 'REJECTED' },
+        });
         // Phase returns to AVAILABLE so student can resubmit or admin can intervene
         await tx.studentProjectPhase.update({
           where: { id: spp.id },

@@ -1,4 +1,10 @@
-import { Injectable, Logger, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import { ScheduleInterviewDto } from './dto/schedule-interview.dto';
@@ -20,9 +26,13 @@ export class InterviewsService {
     if (!application) throw new NotFoundException('Application not found');
 
     // Application must be at least SHORTLISTED or UNDER_REVIEW
-    if (application.status === 'PENDING' || application.status === 'ACCEPTED' || application.status === 'REJECTED') {
+    if (
+      application.status === 'PENDING' ||
+      application.status === 'ACCEPTED' ||
+      application.status === 'REJECTED'
+    ) {
       throw new BadRequestException(
-        `Cannot schedule interview for application with status: ${application.status}. Must be SHORTLISTED or UNDER_REVIEW.`
+        `Cannot schedule interview for application with status: ${application.status}. Must be SHORTLISTED or UNDER_REVIEW.`,
       );
     }
 
@@ -34,7 +44,9 @@ export class InterviewsService {
       },
     });
     if (existing) {
-      throw new ConflictException('An active interview is already scheduled for this application');
+      throw new ConflictException(
+        'An active interview is already scheduled for this application',
+      );
     }
 
     // Update application status to SHORTLISTED if it was UNDER_REVIEW
@@ -69,7 +81,9 @@ export class InterviewsService {
           meetingLink: interview.meetingLink,
           interviewId: interview.id,
         })
-        .catch((err) => this.logger.error('Failed to send interview invitation email', err));
+        .catch((err) =>
+          this.logger.error('Failed to send interview invitation email', err),
+        );
     }
 
     return interview;
@@ -81,7 +95,14 @@ export class InterviewsService {
       orderBy: { scheduledAt: 'asc' },
       include: {
         application: {
-          select: { id: true, name: true, email: true, phone: true, status: true, domainId: true },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            status: true,
+            domainId: true,
+          },
         },
       },
     });
@@ -133,7 +154,9 @@ export class InterviewsService {
     });
     if (!interview) throw new NotFoundException('Interview not found');
     if (interview.status !== 'SCHEDULED') {
-      throw new BadRequestException('Can only record result for SCHEDULED interviews');
+      throw new BadRequestException(
+        'Can only record result for SCHEDULED interviews',
+      );
     }
 
     return this.prisma.$transaction(async (tx) => {
@@ -173,7 +196,9 @@ export class InterviewsService {
     const interview = await this.prisma.interview.findUnique({ where: { id } });
     if (!interview) throw new NotFoundException('Interview not found');
     if (interview.status !== 'SCHEDULED') {
-      throw new BadRequestException('Can only mark SCHEDULED interviews as NO_SHOW');
+      throw new BadRequestException(
+        'Can only mark SCHEDULED interviews as NO_SHOW',
+      );
     }
     return this.prisma.interview.update({
       where: { id },

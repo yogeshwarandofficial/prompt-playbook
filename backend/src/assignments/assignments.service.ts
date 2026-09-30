@@ -13,7 +13,9 @@ export class AssignmentsService {
 
   async assignProject(dto: CreateAssignmentDto) {
     // Validate student
-    const student = await this.prisma.user.findUnique({ where: { id: dto.studentId } });
+    const student = await this.prisma.user.findUnique({
+      where: { id: dto.studentId },
+    });
     if (!student || student.role !== 'STUDENT') {
       throw new NotFoundException('Student not found');
     }
@@ -28,15 +30,24 @@ export class AssignmentsService {
       throw new BadRequestException('Only ACTIVE projects can be assigned');
     }
     if (project.phases.length === 0) {
-      throw new BadRequestException('Project must have at least one phase before assigning');
+      throw new BadRequestException(
+        'Project must have at least one phase before assigning',
+      );
     }
 
     // Prevent duplicate assignment
     const existing = await this.prisma.studentProject.findUnique({
-      where: { studentId_projectId: { studentId: dto.studentId, projectId: dto.projectId } },
+      where: {
+        studentId_projectId: {
+          studentId: dto.studentId,
+          projectId: dto.projectId,
+        },
+      },
     });
     if (existing && existing.status !== 'CANCELLED') {
-      throw new ConflictException('Student already has an active assignment for this project');
+      throw new ConflictException(
+        'Student already has an active assignment for this project',
+      );
     }
 
     // Create assignment + phase states in a single transaction
@@ -63,8 +74,13 @@ export class AssignmentsService {
         where: { id: assignment.id },
         include: {
           project: { include: { phases: { orderBy: { phaseOrder: 'asc' } } } },
-          phases: { include: { phase: true }, orderBy: { phase: { phaseOrder: 'asc' } } },
-          student: { select: { id: true, name: true, studentId: true, email: true } },
+          phases: {
+            include: { phase: true },
+            orderBy: { phase: { phaseOrder: 'asc' } },
+          },
+          student: {
+            select: { id: true, name: true, studentId: true, email: true },
+          },
         },
       });
     });
@@ -74,7 +90,9 @@ export class AssignmentsService {
     return this.prisma.studentProject.findMany({
       where: projectId ? { projectId } : undefined,
       include: {
-        student: { select: { id: true, name: true, studentId: true, email: true } },
+        student: {
+          select: { id: true, name: true, studentId: true, email: true },
+        },
         project: { select: { id: true, title: true, status: true } },
       },
       orderBy: { assignedAt: 'desc' },
@@ -82,13 +100,17 @@ export class AssignmentsService {
   }
 
   async unassignProject(assignmentId: string) {
-    const assignment = await this.prisma.studentProject.findUnique({ where: { id: assignmentId } });
+    const assignment = await this.prisma.studentProject.findUnique({
+      where: { id: assignmentId },
+    });
     if (!assignment) throw new NotFoundException('Assignment not found');
     return this.prisma.studentProject.delete({ where: { id: assignmentId } });
   }
 
   async getStudentInternship(studentId: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: studentId } });
+    const user = await this.prisma.user.findUnique({
+      where: { id: studentId },
+    });
     if (!user) throw new NotFoundException('Student not found');
 
     const assignments = await this.prisma.studentProject.findMany({
@@ -99,7 +121,11 @@ export class AssignmentsService {
           include: {
             phase: { include: { topics: { orderBy: { order: 'asc' } } } },
             submissions: {
-              include: { reviews: { include: { reviewer: { select: { name: true, role: true } } } } },
+              include: {
+                reviews: {
+                  include: { reviewer: { select: { name: true, role: true } } },
+                },
+              },
               orderBy: { submittedAt: 'desc' },
             },
           },
@@ -110,7 +136,12 @@ export class AssignmentsService {
     });
 
     return {
-      student: { id: user.id, name: user.name, studentId: user.studentId, email: user.email },
+      student: {
+        id: user.id,
+        name: user.name,
+        studentId: user.studentId,
+        email: user.email,
+      },
       assignments,
     };
   }

@@ -32,8 +32,8 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     ThrottlerModule.forRoot([
       {
         name: 'short',
-        ttl: 60_000,  // 1 minute window
-        limit: 10,    // 10 requests per minute (default for all routes)
+        ttl: 60_000, // 1 minute window
+        limit: 10, // 10 requests per minute (default for all routes)
       },
     ]),
 

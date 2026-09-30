@@ -34,11 +34,8 @@ export class AdminService {
 
     const existingUser = await this.prisma.user.findFirst({
       where: {
-        OR: [
-          { studentId },
-          { email }
-        ]
-      }
+        OR: [{ studentId }, { email }],
+      },
     });
 
     if (existingUser) {
@@ -57,13 +54,15 @@ export class AdminService {
       // 1. Check if courses exist if courseIds are provided
       if (dto.courseIds && dto.courseIds.length > 0) {
         const courses = await tx.course.findMany({
-          where: { 
+          where: {
             id: { in: dto.courseIds },
-            isActive: true
+            isActive: true,
           },
         });
         if (courses.length !== dto.courseIds.length) {
-          throw new BadRequestException('One or more invalid or inactive course IDs');
+          throw new BadRequestException(
+            'One or more invalid or inactive course IDs',
+          );
         }
       }
 
@@ -102,29 +101,31 @@ export class AdminService {
     const students = await this.prisma.user.findMany({
       where: {
         role: 'STUDENT',
-        isActive: true,   // L-7: exclude soft-deleted students
+        isActive: true, // L-7: exclude soft-deleted students
       },
       include: {
         courses: {
           include: {
-            course: true
-          }
-        }
+            course: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     });
 
     // Strip passwordHash
-    return students.map(student => {
+    return students.map((student) => {
       const { passwordHash: _, ...safeStudent } = student;
       return safeStudent;
     });
   }
 
   async removeStudent(studentId: string) {
-    const student = await this.prisma.user.findUnique({ where: { id: studentId } });
+    const student = await this.prisma.user.findUnique({
+      where: { id: studentId },
+    });
     if (!student || student.role !== 'STUDENT') {
       throw new NotFoundException('Student not found');
     }
@@ -135,7 +136,13 @@ export class AdminService {
     return this.prisma.user.update({
       where: { id: studentId },
       data: { isActive: false },
-      select: { id: true, studentId: true, name: true, email: true, isActive: true },
+      select: {
+        id: true,
+        studentId: true,
+        name: true,
+        email: true,
+        isActive: true,
+      },
     });
   }
 
@@ -182,20 +189,33 @@ export class AdminService {
   }
 
   async getDashboardStats() {
-    const [totalStudents, activeStudents, activeCourses, activeProjects, inProgressAssignments, pendingSubmissions, completedInternships, pendingApplications, activeBatches, scheduledInterviews, issuedCertificates] =
-      await Promise.all([
-        this.prisma.user.count({ where: { role: 'STUDENT' } }),
-        this.prisma.user.count({ where: { role: 'STUDENT', isActive: true } }),
-        this.prisma.course.count({ where: { isActive: true } }),
-        this.prisma.project.count({ where: { status: 'ACTIVE' } }),
-        this.prisma.studentProject.count({ where: { status: 'IN_PROGRESS' } }),
-        this.prisma.submission.count({ where: { status: { in: ['SUBMITTED', 'UNDER_REVIEW'] } } }),
-        this.prisma.studentProject.count({ where: { status: 'COMPLETED' } }),
-        this.prisma.application.count({ where: { status: 'PENDING' } }),
-        this.prisma.batch.count({ where: { status: 'ACTIVE' } }),
-        this.prisma.interview.count({ where: { status: 'SCHEDULED' } }),
-        this.prisma.certificate.count({ where: { status: 'ACTIVE' } }),
-      ]);
+    const [
+      totalStudents,
+      activeStudents,
+      activeCourses,
+      activeProjects,
+      inProgressAssignments,
+      pendingSubmissions,
+      completedInternships,
+      pendingApplications,
+      activeBatches,
+      scheduledInterviews,
+      issuedCertificates,
+    ] = await Promise.all([
+      this.prisma.user.count({ where: { role: 'STUDENT' } }),
+      this.prisma.user.count({ where: { role: 'STUDENT', isActive: true } }),
+      this.prisma.course.count({ where: { isActive: true } }),
+      this.prisma.project.count({ where: { status: 'ACTIVE' } }),
+      this.prisma.studentProject.count({ where: { status: 'IN_PROGRESS' } }),
+      this.prisma.submission.count({
+        where: { status: { in: ['SUBMITTED', 'UNDER_REVIEW'] } },
+      }),
+      this.prisma.studentProject.count({ where: { status: 'COMPLETED' } }),
+      this.prisma.application.count({ where: { status: 'PENDING' } }),
+      this.prisma.batch.count({ where: { status: 'ACTIVE' } }),
+      this.prisma.interview.count({ where: { status: 'SCHEDULED' } }),
+      this.prisma.certificate.count({ where: { status: 'ACTIVE' } }),
+    ]);
     return {
       totalStudents,
       activeStudents,
@@ -212,32 +232,47 @@ export class AdminService {
   }
 
   async assignCourseToStudent(studentId: string, courseId: string) {
-    const student = await this.prisma.user.findUnique({ where: { id: studentId } });
-    if (!student || student.role !== 'STUDENT') throw new NotFoundException('Student not found');
-    const course = await this.prisma.course.findUnique({ where: { id: courseId } });
-    if (!course || !course.isActive) throw new BadRequestException('Course not found or inactive');
+    const student = await this.prisma.user.findUnique({
+      where: { id: studentId },
+    });
+    if (!student || student.role !== 'STUDENT')
+      throw new NotFoundException('Student not found');
+    const course = await this.prisma.course.findUnique({
+      where: { id: courseId },
+    });
+    if (!course || !course.isActive)
+      throw new BadRequestException('Course not found or inactive');
     const existing = await this.prisma.studentCourse.findUnique({
       where: { studentId_courseId: { studentId, courseId } },
     });
-    if (existing) throw new ConflictException('Student already enrolled in this course');
+    if (existing)
+      throw new ConflictException('Student already enrolled in this course');
     return this.prisma.studentCourse.create({ data: { studentId, courseId } });
   }
 
   async updateStudentAccess(studentId: string, enabled: boolean) {
-    const student = await this.prisma.user.findFirst({ where: { id: studentId, role: 'STUDENT' } });
+    const student = await this.prisma.user.findFirst({
+      where: { id: studentId, role: 'STUDENT' },
+    });
     if (!student) throw new NotFoundException('Student not found');
-    
+
     return this.prisma.user.update({
       where: { id: studentId },
-      data: { isActive: enabled }
+      data: { isActive: enabled },
     });
   }
 
   async notifyInterview(body: NotifyInterviewDto) {
-    const { applicantName, applicantEmail, scheduledAt, meetingLink, interviewId } = body;
+    const {
+      applicantName,
+      applicantEmail,
+      scheduledAt,
+      meetingLink,
+      interviewId,
+    } = body;
 
     // Escape all user-supplied values before HTML interpolation
-    const safeName  = escapeHtml(applicantName);
+    const safeName = escapeHtml(applicantName);
     const safeEmail = escapeHtml(applicantEmail);
 
     const interviewDate = new Date(scheduledAt);
@@ -346,12 +381,15 @@ export class AdminService {
       // but returning 200 with success: false is what the frontend currently handles gracefully
       // wait, the frontend checks if res.ok. We should probably throw a HttpException or return an object and let frontend handle it.
       // The original code returns a 503 status code. Let's return a 503 exception.
-      return { success: false, message: 'Email service not configured. The interview is still saved.' };
+      return {
+        success: false,
+        message: 'Email service not configured. The interview is still saved.',
+      };
     }
 
     const resend = new Resend(apiKey);
     const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
-    
+
     let toEmail = applicantEmail;
     const override = process.env.RESEND_TO_EMAIL_OVERRIDE;
     if (override && override.trim()) {
@@ -368,14 +406,21 @@ export class AdminService {
 
       if (error) {
         console.error('[interviews/notify] Resend delivery error:', error);
-        return { success: false, message: `Email delivery failed: ${error.message}. Interview is still saved.` };
+        return {
+          success: false,
+          message: `Email delivery failed: ${error.message}. Interview is still saved.`,
+        };
       }
 
-      console.log(`[interviews/notify] Sent to ${applicantEmail} (interviewId=${interviewId}, resendId=${data?.id})`);
+      console.log(
+        `[interviews/notify] Sent to ${applicantEmail} (interviewId=${interviewId}, resendId=${data?.id})`,
+      );
       return { success: true, messageId: data?.id };
     } catch (err) {
       console.error('[interviews/notify] Unexpected error:', err);
-      throw new InternalServerErrorException('Server error sending notification.');
+      throw new InternalServerErrorException(
+        'Server error sending notification.',
+      );
     }
   }
 }

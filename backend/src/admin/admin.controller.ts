@@ -1,4 +1,13 @@
-import { Controller, Post, Get, Body, UseGuards, Delete, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  UseGuards,
+  Delete,
+  Patch,
+  Param,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -60,7 +69,10 @@ export class AdminController {
     @Param('studentId') studentId: string,
     @Body() assignCourseDto: AssignCourseDto,
   ) {
-    return this.adminService.assignCourseToStudent(studentId, assignCourseDto.courseId);
+    return this.adminService.assignCourseToStudent(
+      studentId,
+      assignCourseDto.courseId,
+    );
   }
 
   @Patch('students/:studentId/access')
@@ -68,12 +80,14 @@ export class AdminController {
     @Param('studentId') studentId: string,
     @Body() updateAccessDto: UpdateAccessDto,
   ) {
-    return this.adminService.updateStudentAccess(studentId, updateAccessDto.enabled);
+    return this.adminService.updateStudentAccess(
+      studentId,
+      updateAccessDto.enabled,
+    );
   }
 
   @Post('interviews/notify')
   notifyInterview(@Body() body: NotifyInterviewDto) {
     return this.adminService.notifyInterview(body);
   }
-
 }

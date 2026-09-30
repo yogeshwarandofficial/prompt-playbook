@@ -10,24 +10,24 @@ export class StudentCurriculumService {
       where: { studentId },
       include: {
         batch: {
-          include: { domain: true, specialization: true }
+          include: { domain: true, specialization: true },
         },
         curriculumVersion: {
-          include: { curriculum: true }
+          include: { curriculum: true },
         },
         phaseProgress: {
           include: {
             phase: {
-              include: { resources: true, tasks: true }
+              include: { resources: true, tasks: true },
             },
-            studentTasks: true
+            studentTasks: true,
           },
           orderBy: {
-            phase: { phaseNumber: 'asc' }
-          }
-        }
+            phase: { phaseNumber: 'asc' },
+          },
+        },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     if (!enrollment) return null;
@@ -38,14 +38,14 @@ export class StudentCurriculumService {
     const progress = await this.prisma.studentPhaseProgress.findFirst({
       where: {
         phaseId,
-        enrollment: { studentId }
+        enrollment: { studentId },
       },
       include: {
         phase: {
-          include: { resources: true, tasks: true }
+          include: { resources: true, tasks: true },
         },
-        studentTasks: true
-      }
+        studentTasks: true,
+      },
     });
 
     if (!progress) throw new NotFoundException('Phase progress not found');
@@ -57,8 +57,8 @@ export class StudentCurriculumService {
     const progress = await this.prisma.studentPhaseProgress.findFirst({
       where: {
         id: progressId,
-        enrollment: { studentId }
-      }
+        enrollment: { studentId },
+      },
     });
 
     if (!progress) throw new NotFoundException('Progress record not found');
@@ -66,18 +66,18 @@ export class StudentCurriculumService {
     // Upsert student task
     return this.prisma.studentTask.upsert({
       where: {
-        progressId_taskId: { progressId, taskId }
+        progressId_taskId: { progressId, taskId },
       },
       update: {
         isCompleted: true,
-        completedAt: new Date()
+        completedAt: new Date(),
       },
       create: {
         progressId,
         taskId,
         isCompleted: true,
-        completedAt: new Date()
-      }
+        completedAt: new Date(),
+      },
     });
   }
 
@@ -85,25 +85,25 @@ export class StudentCurriculumService {
     const progress = await this.prisma.studentPhaseProgress.findFirst({
       where: {
         id: progressId,
-        enrollment: { studentId }
-      }
+        enrollment: { studentId },
+      },
     });
 
     if (!progress) throw new NotFoundException('Progress record not found');
 
     return this.prisma.studentTask.upsert({
       where: {
-        progressId_taskId: { progressId, taskId }
+        progressId_taskId: { progressId, taskId },
       },
       update: {
         isCompleted: false,
-        completedAt: null
+        completedAt: null,
       },
       create: {
         progressId,
         taskId,
-        isCompleted: false
-      }
+        isCompleted: false,
+      },
     });
   }
 }

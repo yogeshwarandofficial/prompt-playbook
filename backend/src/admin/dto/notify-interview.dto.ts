@@ -1,4 +1,11 @@
-import { IsString, IsEmail, IsNotEmpty, IsOptional, IsUrl, MaxLength } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsUrl,
+  MaxLength,
+} from 'class-validator';
 
 export class NotifyInterviewDto {
   @IsString()

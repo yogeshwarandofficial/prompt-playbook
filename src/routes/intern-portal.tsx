@@ -13,13 +13,14 @@ import {
   Menu,
   X
 } from "lucide-react";
+import { createSeoHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/intern-portal")({
-  head: () => ({
-    meta: [
-      { title: "Student Internship Portal — Infynux Academy" },
-      { name: "robots", content: "noindex,nofollow" },
-    ],
+  head: () => createSeoHead({
+    title: "Student Internship Portal — Infynux Academy",
+    description: "Access your internship dashboard.",
+    path: "/intern-portal",
+    noindex: true,
   }),
   component: InterPortal,
 });

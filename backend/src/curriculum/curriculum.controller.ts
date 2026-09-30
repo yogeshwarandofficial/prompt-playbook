@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { CurriculumService } from './curriculum.service';
 import { CreateCurriculumDto } from './dto/create-curriculum.dto';
 import { UpdateCurriculumDto } from './dto/update-curriculum.dto';
@@ -32,7 +41,10 @@ export class CurriculumController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCurriculumDto: UpdateCurriculumDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateCurriculumDto: UpdateCurriculumDto,
+  ) {
     return this.curriculumService.update(id, updateCurriculumDto);
   }
 
@@ -40,24 +52,33 @@ export class CurriculumController {
   remove(@Param('id') id: string) {
     return this.curriculumService.remove(id);
   }
-  
+
   @Post('versions')
   createVersion(@Body() dto: CreateCurriculumVersionDto) {
     return this.curriculumService.createVersion(dto);
   }
-  
+
   @Post('versions/:versionId/phases')
-  createPhase(@Param('versionId') versionId: string, @Body() dto: CreateCurriculumPhaseDto) {
+  createPhase(
+    @Param('versionId') versionId: string,
+    @Body() dto: CreateCurriculumPhaseDto,
+  ) {
     return this.curriculumService.createPhase(versionId, dto);
   }
 
   @Post('phases/:phaseId/resources')
-  createResource(@Param('phaseId') phaseId: string, @Body() dto: CreateCurriculumResourceDto) {
+  createResource(
+    @Param('phaseId') phaseId: string,
+    @Body() dto: CreateCurriculumResourceDto,
+  ) {
     return this.curriculumService.createResource(phaseId, dto);
   }
 
   @Post('phases/:phaseId/tasks')
-  createTask(@Param('phaseId') phaseId: string, @Body() dto: CreateCurriculumTaskDto) {
+  createTask(
+    @Param('phaseId') phaseId: string,
+    @Body() dto: CreateCurriculumTaskDto,
+  ) {
     return this.curriculumService.createTask(phaseId, dto);
   }
 }

@@ -65,8 +65,8 @@ export function Navbar() {
     <>
       <header
         className={cn(
-          "fixed top-4 left-4 right-4 z-50 mx-auto max-w-6xl transition-all duration-500 rounded-full",
-          "bg-[#0A0A0A]/70 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] group overflow-hidden"
+          "fixed top-2 sm:top-4 left-2 right-2 sm:left-4 sm:right-4 z-50 mx-auto max-w-6xl transition-all duration-500 rounded-full",
+          "bg-[#0A0A0A]/80 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] group overflow-hidden"
         )}
         style={{
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.05)"
@@ -79,17 +79,17 @@ export function Navbar() {
         </div>
         
         <nav
-          className="relative z-10 px-6 flex h-16 items-center justify-between"
+          className="relative z-10 px-4 sm:px-6 flex h-14 sm:h-16 items-center justify-between"
           aria-label="Main navigation"
         >
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-2.5 font-display text-lg font-bold text-white hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 sm:gap-2.5 font-display text-lg font-bold text-white hover:opacity-80 transition-opacity"
             aria-label="Infynux Academy home"
           >
-            <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-9 sm:h-10 w-auto object-contain drop-shadow-sm brightness-125 contrast-125" />
-            <span className="text-[1.35rem] sm:text-2xl font-black tracking-tight whitespace-nowrap">
+            <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-7 sm:h-10 w-auto object-contain drop-shadow-sm brightness-125 contrast-125" />
+            <span className="text-[1.15rem] sm:text-2xl font-black tracking-tight whitespace-nowrap">
               <span className="text-white">Infynux </span>
               <span className="bg-[length:200%_auto] animate-text-shine bg-gradient-to-r from-emerald-400 via-primary to-emerald-400 bg-clip-text text-transparent">Academy</span>
             </span>
@@ -125,7 +125,7 @@ export function Navbar() {
           </ul>
 
           {/* Right actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               to="/internships"
               className="hidden items-center rounded-full bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow-md hover:-translate-y-0.5 md:flex"
@@ -141,7 +141,7 @@ export function Navbar() {
               aria-label="Open menu"
               aria-expanded={open}
               aria-controls="mobile-nav"
-              className="flex h-10 w-10 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white md:hidden transition-colors"
+              className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white md:hidden transition-colors"
             >
               <Menu className="h-5 w-5" aria-hidden="true" />
             </button>
