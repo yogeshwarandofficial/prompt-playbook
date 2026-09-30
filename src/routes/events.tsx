@@ -49,7 +49,7 @@ export const DEFAULT_EVENTS = [
 ];
 
 function EventsPage() {
-  const [events, setEvents] = useState<any[]>(DEFAULT_EVENTS);
+  const [events, setEvents] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   const breadcrumbSchema = getBreadcrumbSchema([
@@ -59,17 +59,26 @@ function EventsPage() {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8-second timeout for cold starts
+
       try {
         const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-        const res = await fetch(`${API_URL}/api/events`);
+        const res = await fetch(`${API_URL}/api/events`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             setEvents(data);
+            return;
           }
         }
+        // Fallback to defaults if empty or error
+        setEvents(DEFAULT_EVENTS);
       } catch (e) {
-        console.error("Failed to fetch events", e);
+        console.error("Failed to fetch events:", e);
+        setEvents(DEFAULT_EVENTS);
       } finally {
         setLoading(false);
       }
@@ -102,7 +111,21 @@ function EventsPage() {
             </p>
           </div>
 
-          {events.length === 0 && !loading ? (
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="group relative flex flex-col rounded-3xl bg-slate-900/50 border border-slate-800 overflow-hidden animate-pulse">
+                  <div className="aspect-[16/9] bg-slate-800/50"></div>
+                  <div className="flex flex-col flex-grow p-6">
+                    <div className="w-1/3 h-3 bg-slate-800 rounded mb-4"></div>
+                    <div className="w-3/4 h-6 bg-slate-800 rounded mb-3"></div>
+                    <div className="w-full h-16 bg-slate-800/50 rounded mb-6 flex-grow"></div>
+                    <div className="w-full h-10 bg-slate-800 rounded-xl"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : !events || events.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 bg-slate-900/30 rounded-3xl border border-slate-800">
               <Calendar className="w-16 h-16 text-slate-600 mb-4" />
               <h3 className="text-xl font-bold text-white mb-2">No upcoming events</h3>
