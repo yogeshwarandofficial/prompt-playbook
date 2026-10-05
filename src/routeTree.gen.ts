@@ -11,23 +11,18 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as TutorialsRouteImport } from './routes/tutorials'
-import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RoadmapsRouteImport } from './routes/roadmaps'
-import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InternshipsRouteImport } from './routes/internships'
 import { Route as InternPortalRouteImport } from './routes/intern-portal'
-import { Route as Google3fa6f359a7138e5fDothtmlRouteImport } from './routes/google3fa6f359a7138e5f[.]html'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VerifyTokenRouteImport } from './routes/verify_.$token'
 import { Route as TutorialsSlugRouteImport } from './routes/tutorials_.$slug'
-import { Route as RoadmapsSlugRouteImport } from './routes/roadmaps_.$slug'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
-import { Route as EventsSlugRouteImport } from './routes/events_.$slug'
 import { Route as ApiContactRouteImport } from './routes/api/contact'
 import { Route as ApiNewsletterSubscribeRouteImport } from './routes/api/newsletter/subscribe'
 import { Route as ApiInternshipsApplyRouteImport } from './routes/api/internships/apply'
@@ -42,11 +37,6 @@ const TutorialsRoute = TutorialsRouteImport.update({
   path: '/tutorials',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
-  id: '/terms-of-service',
-  path: '/terms-of-service',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -55,11 +45,6 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const RoadmapsRoute = RoadmapsRouteImport.update({
   id: '/roadmaps',
   path: '/roadmaps',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
-  id: '/privacy-policy',
-  path: '/privacy-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -77,12 +62,6 @@ const InternPortalRoute = InternPortalRouteImport.update({
   path: '/intern-portal',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Google3fa6f359a7138e5fDothtmlRoute =
-  Google3fa6f359a7138e5fDothtmlRouteImport.update({
-    id: '/google3fa6f359a7138e5f.html',
-    path: '/google3fa6f359a7138e5f.html',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -113,19 +92,9 @@ const TutorialsSlugRoute = TutorialsSlugRouteImport.update({
   path: '/tutorials/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RoadmapsSlugRoute = RoadmapsSlugRouteImport.update({
-  id: '/roadmaps_/$slug',
-  path: '/roadmaps/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LearnSlugRoute = LearnSlugRouteImport.update({
   id: '/learn/$slug',
   path: '/learn/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EventsSlugRoute = EventsSlugRouteImport.update({
-  id: '/events_/$slug',
-  path: '/events/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiContactRoute = ApiContactRouteImport.update({
@@ -149,20 +118,15 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/events': typeof EventsRoute
-  '/google3fa6f359a7138e5f.html': typeof Google3fa6f359a7138e5fDothtmlRoute
   '/intern-portal': typeof InternPortalRoute
   '/internships': typeof InternshipsRoute
   '/login': typeof LoginRoute
-  '/privacy-policy': typeof PrivacyPolicyRoute
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
   '/tutorials': typeof TutorialsRoute
   '/verify': typeof VerifyRoute
   '/api/contact': typeof ApiContactRoute
-  '/events/$slug': typeof EventsSlugRoute
   '/learn/$slug': typeof LearnSlugRoute
-  '/roadmaps/$slug': typeof RoadmapsSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
   '/verify/$token': typeof VerifyTokenRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
@@ -173,20 +137,15 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/events': typeof EventsRoute
-  '/google3fa6f359a7138e5f.html': typeof Google3fa6f359a7138e5fDothtmlRoute
   '/intern-portal': typeof InternPortalRoute
   '/internships': typeof InternshipsRoute
   '/login': typeof LoginRoute
-  '/privacy-policy': typeof PrivacyPolicyRoute
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
   '/tutorials': typeof TutorialsRoute
   '/verify': typeof VerifyRoute
   '/api/contact': typeof ApiContactRoute
-  '/events/$slug': typeof EventsSlugRoute
   '/learn/$slug': typeof LearnSlugRoute
-  '/roadmaps/$slug': typeof RoadmapsSlugRoute
   '/tutorials/$slug': typeof TutorialsSlugRoute
   '/verify/$token': typeof VerifyTokenRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
@@ -198,20 +157,15 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/events': typeof EventsRoute
-  '/google3fa6f359a7138e5f.html': typeof Google3fa6f359a7138e5fDothtmlRoute
   '/intern-portal': typeof InternPortalRoute
   '/internships': typeof InternshipsRoute
   '/login': typeof LoginRoute
-  '/privacy-policy': typeof PrivacyPolicyRoute
   '/roadmaps': typeof RoadmapsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
   '/tutorials': typeof TutorialsRoute
   '/verify': typeof VerifyRoute
   '/api/contact': typeof ApiContactRoute
-  '/events_/$slug': typeof EventsSlugRoute
   '/learn/$slug': typeof LearnSlugRoute
-  '/roadmaps_/$slug': typeof RoadmapsSlugRoute
   '/tutorials_/$slug': typeof TutorialsSlugRoute
   '/verify_/$token': typeof VerifyTokenRoute
   '/api/internships/apply': typeof ApiInternshipsApplyRoute
@@ -224,20 +178,15 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/events'
-    | '/google3fa6f359a7138e5f.html'
     | '/intern-portal'
     | '/internships'
     | '/login'
-    | '/privacy-policy'
     | '/roadmaps'
     | '/sitemap.xml'
-    | '/terms-of-service'
     | '/tutorials'
     | '/verify'
     | '/api/contact'
-    | '/events/$slug'
     | '/learn/$slug'
-    | '/roadmaps/$slug'
     | '/tutorials/$slug'
     | '/verify/$token'
     | '/api/internships/apply'
@@ -248,20 +197,15 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/events'
-    | '/google3fa6f359a7138e5f.html'
     | '/intern-portal'
     | '/internships'
     | '/login'
-    | '/privacy-policy'
     | '/roadmaps'
     | '/sitemap.xml'
-    | '/terms-of-service'
     | '/tutorials'
     | '/verify'
     | '/api/contact'
-    | '/events/$slug'
     | '/learn/$slug'
-    | '/roadmaps/$slug'
     | '/tutorials/$slug'
     | '/verify/$token'
     | '/api/internships/apply'
@@ -272,20 +216,15 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/events'
-    | '/google3fa6f359a7138e5f.html'
     | '/intern-portal'
     | '/internships'
     | '/login'
-    | '/privacy-policy'
     | '/roadmaps'
     | '/sitemap.xml'
-    | '/terms-of-service'
     | '/tutorials'
     | '/verify'
     | '/api/contact'
-    | '/events_/$slug'
     | '/learn/$slug'
-    | '/roadmaps_/$slug'
     | '/tutorials_/$slug'
     | '/verify_/$token'
     | '/api/internships/apply'
@@ -297,20 +236,15 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ContactRoute: typeof ContactRoute
   EventsRoute: typeof EventsRoute
-  Google3fa6f359a7138e5fDothtmlRoute: typeof Google3fa6f359a7138e5fDothtmlRoute
   InternPortalRoute: typeof InternPortalRoute
   InternshipsRoute: typeof InternshipsRoute
   LoginRoute: typeof LoginRoute
-  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   RoadmapsRoute: typeof RoadmapsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  TermsOfServiceRoute: typeof TermsOfServiceRoute
   TutorialsRoute: typeof TutorialsRoute
   VerifyRoute: typeof VerifyRoute
   ApiContactRoute: typeof ApiContactRoute
-  EventsSlugRoute: typeof EventsSlugRoute
   LearnSlugRoute: typeof LearnSlugRoute
-  RoadmapsSlugRoute: typeof RoadmapsSlugRoute
   TutorialsSlugRoute: typeof TutorialsSlugRoute
   VerifyTokenRoute: typeof VerifyTokenRoute
   ApiInternshipsApplyRoute: typeof ApiInternshipsApplyRoute
@@ -333,13 +267,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TutorialsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/terms-of-service': {
-      id: '/terms-of-service'
-      path: '/terms-of-service'
-      fullPath: '/terms-of-service'
-      preLoaderRoute: typeof TermsOfServiceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -352,13 +279,6 @@ declare module '@tanstack/react-router' {
       path: '/roadmaps'
       fullPath: '/roadmaps'
       preLoaderRoute: typeof RoadmapsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy-policy': {
-      id: '/privacy-policy'
-      path: '/privacy-policy'
-      fullPath: '/privacy-policy'
-      preLoaderRoute: typeof PrivacyPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -380,13 +300,6 @@ declare module '@tanstack/react-router' {
       path: '/intern-portal'
       fullPath: '/intern-portal'
       preLoaderRoute: typeof InternPortalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/google3fa6f359a7138e5f.html': {
-      id: '/google3fa6f359a7138e5f.html'
-      path: '/google3fa6f359a7138e5f.html'
-      fullPath: '/google3fa6f359a7138e5f.html'
-      preLoaderRoute: typeof Google3fa6f359a7138e5fDothtmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -431,25 +344,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TutorialsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/roadmaps_/$slug': {
-      id: '/roadmaps_/$slug'
-      path: '/roadmaps/$slug'
-      fullPath: '/roadmaps/$slug'
-      preLoaderRoute: typeof RoadmapsSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/learn/$slug': {
       id: '/learn/$slug'
       path: '/learn/$slug'
       fullPath: '/learn/$slug'
       preLoaderRoute: typeof LearnSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events_/$slug': {
-      id: '/events_/$slug'
-      path: '/events/$slug'
-      fullPath: '/events/$slug'
-      preLoaderRoute: typeof EventsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/contact': {
@@ -481,20 +380,15 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ContactRoute: ContactRoute,
   EventsRoute: EventsRoute,
-  Google3fa6f359a7138e5fDothtmlRoute: Google3fa6f359a7138e5fDothtmlRoute,
   InternPortalRoute: InternPortalRoute,
   InternshipsRoute: InternshipsRoute,
   LoginRoute: LoginRoute,
-  PrivacyPolicyRoute: PrivacyPolicyRoute,
   RoadmapsRoute: RoadmapsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  TermsOfServiceRoute: TermsOfServiceRoute,
   TutorialsRoute: TutorialsRoute,
   VerifyRoute: VerifyRoute,
   ApiContactRoute: ApiContactRoute,
-  EventsSlugRoute: EventsSlugRoute,
   LearnSlugRoute: LearnSlugRoute,
-  RoadmapsSlugRoute: RoadmapsSlugRoute,
   TutorialsSlugRoute: TutorialsSlugRoute,
   VerifyTokenRoute: VerifyTokenRoute,
   ApiInternshipsApplyRoute: ApiInternshipsApplyRoute,

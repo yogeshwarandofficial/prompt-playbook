@@ -426,6 +426,16 @@ model Certificate {
   studentCourse     StudentCourse     @relation(fields: [studentCourseId], references: [id], onDelete: Cascade)
 }
 
+model EventCertificate {
+  id                String            @id @default(uuid())
+  studentName       String
+  eventName         String
+  eventDescription  String?
+  certificateNo     String            @unique
+  verificationToken String            @unique
+  issuedAt          DateTime          @default(now())
+}
+
 model Notification {
   id        String   @id @default(uuid())
   userId    String

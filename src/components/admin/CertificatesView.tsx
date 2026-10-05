@@ -108,6 +108,7 @@ export function CertificatesView() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [showIssueModal, setShowIssueModal] = useState(false);
+  const [showEventModal, setShowEventModal] = useState(false);
 
   const fetchCertificates = async () => {
     setLoading(true);
@@ -145,12 +146,20 @@ export function CertificatesView() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-xl font-bold text-slate-800">Certificates Management</h3>
-        <button
-          onClick={() => setShowIssueModal(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 flex items-center gap-2 shadow-sm"
-        >
-          <Award className="h-4 w-4" /> Issue Certificate
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowEventModal(true)}
+            className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700 flex items-center gap-2 shadow-sm"
+          >
+            <Download className="h-4 w-4" /> Event Certificate
+          </button>
+          <button
+            onClick={() => setShowIssueModal(true)}
+            className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 flex items-center gap-2 shadow-sm"
+          >
+            <Award className="h-4 w-4" /> Issue Certificate
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden p-4 flex gap-4 items-center">
@@ -232,6 +241,140 @@ export function CertificatesView() {
           onIssued={fetchCertificates}
         />
       )}
+      {showEventModal && (
+        <EventCertModal
+          onClose={() => setShowEventModal(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+function EventCertModal({ onClose }: { onClose: () => void }) {
+  const [studentName, setStudentName] = useState('');
+  const [eventName, setEventName] = useState('');
+  const [eventDescription, setEventDescription] = useState('A 24-HOUR ONLINE HACKATHON ORGANIZED BY INFYNUX ACADEMY');
+  const [eventContent, setEventContent] = useState('in recognition of their participation, dedication, and efforts in developing a solution to a real-world technology challenge.');
+  const [date, setDate] = useState('');
+  const [certificateCode, setCertificateCode] = useState('');
+  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const payload: any = { studentName, eventName, eventDescription, eventContent };
+      if (date) payload.date = date;
+      if (certificateCode) payload.certificateCode = certificateCode;
+      
+      const res = await fetch(`${API_URL}/api/admin/certificates/event`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        throw new Error('Failed to generate event certificate');
+      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `event_certificate_${studentName.replace(/\s+/g, '_')}.png`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      onClose();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
+        <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <Award className="h-5 w-5 text-indigo-600" />
+          Generate Event Certificate
+        </h3>
+        {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{error}</div>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Student Name *</label>
+            <input
+              type="text"
+              required
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value)}
+              placeholder="e.g. John Doe"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Event Name *</label>
+            <input
+              type="text"
+              required
+              value={eventName}
+              onChange={(e) => setEventName(e.target.value)}
+              placeholder="e.g. INFYHACKATHON 2.0 2026"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Event Description</label>
+            <input
+              type="text"
+              value={eventDescription}
+              onChange={(e) => setEventDescription(e.target.value)}
+              placeholder="e.g. A 24-HOUR ONLINE HACKATHON ORGANIZED BY INFYNUX ACADEMY"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Event Content</label>
+            <textarea
+              rows={2}
+              value={eventContent}
+              onChange={(e) => setEventContent(e.target.value)}
+              placeholder="e.g. in recognition of their participation..."
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Date</label>
+              <input
+                type="text"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                placeholder="Defaults to Today"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Certificate Code</label>
+              <input
+                type="text"
+                value={certificateCode}
+                onChange={(e) => setCertificateCode(e.target.value)}
+                placeholder="Auto-generated if empty"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50 transition-colors">Cancel</button>
+            <button type="submit" disabled={loading} className="flex-1 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+              {loading ? 'Generating…' : <><Download className="h-4 w-4" /> Generate</>}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

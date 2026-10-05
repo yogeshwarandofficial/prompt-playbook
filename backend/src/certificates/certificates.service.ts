@@ -13,6 +13,7 @@ import { randomUUID } from 'crypto';
 import * as path from 'path';
 import * as QRCode from 'qrcode';
 import { PassThrough } from 'stream';
+import * as fs from 'fs';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const PImage = require('pureimage');
 
@@ -230,6 +231,151 @@ export class CertificatesService {
     return await image.getBuffer(jimp.JimpMime.png);
   }
 
+  async generateEventCertificate(
+    studentName: string, 
+    eventName: string,
+    eventDescription: string,
+    eventContent: string,
+    dateStr: string,
+    certCode: string,
+    verifyUrl: string
+  ): Promise<Buffer> {
+    const templatePath = path.join(process.cwd(), 'public', 'Your paragraph text (2).png');
+    let image;
+    try {
+      image = await jimp.Jimp.read(templatePath);
+    } catch (e) {
+      throw new BadRequestException('Certificate template error: ' + (e as Error).message);
+    }
+
+    const fontPath64 = path.join(require.resolve('@jimp/plugin-print'), '../../fonts/open-sans/open-sans-64-black/open-sans-64-black.fnt');
+    const fontPath32 = path.join(require.resolve('@jimp/plugin-print'), '../../fonts/open-sans/open-sans-32-black/open-sans-32-black.fnt');
+    const font64 = await jimp.loadFont(fontPath64);
+    const font32 = await jimp.loadFont(fontPath32);
+
+    const printColorized = (img: any, font: any, x: number, y: number, textObj: any, maxWidth?: number, scale: number = 1, color?: [number, number, number]) => {
+      const boxWidth = maxWidth ? Math.ceil(maxWidth / scale) : img.bitmap.width;
+      const textImg = new jimp.Jimp({ width: boxWidth, height: 300 });
+      
+      const printArgs: any = { font, x: 0, y: 0, text: textObj };
+      if (maxWidth) printArgs.maxWidth = Math.ceil(maxWidth / scale);
+      textImg.print(printArgs);
+      
+      textImg.scan(0, 0, textImg.bitmap.width, textImg.bitmap.height, function(px: number, py: number, idx: number) {
+        if (this.bitmap.data[idx + 3] > 0) {
+          this.bitmap.data[idx + 0] = color ? color[0] : 12; // R
+          this.bitmap.data[idx + 1] = color ? color[1] : 31; // G
+          this.bitmap.data[idx + 2] = color ? color[2] : 56; // B
+        }
+      });
+
+      if (scale !== 1) {
+        textImg.scale(scale);
+      }
+
+      const finalX = maxWidth ? x + (maxWidth - textImg.bitmap.width) / 2 : x;
+      img.composite(textImg, finalX, y);
+    };
+
+    const fontPathPinyon = path.join(process.cwd(), 'public', 'PinyonScript-Regular.ttf');
+    const customFont = PImage.registerFont(fontPathPinyon, 'PinyonScript');
+    customFont.loadSync();
+
+    // 1. Draw Student Name
+    const nameCanvas = PImage.make(image.bitmap.width, 200);
+    const ctx = nameCanvas.getContext('2d');
+    ctx.clearRect(0, 0, image.bitmap.width, 200);
+    ctx.fillStyle = 'rgba(12, 31, 56, 1)';
+    ctx.font = "96pt 'PinyonScript'";
+    
+    const textWidth = ctx.measureText(studentName).width;
+    const nameX = (image.bitmap.width - textWidth) / 2;
+    ctx.fillText(studentName, nameX, 130);
+
+    const passThrough = new PassThrough();
+    const chunks: Buffer[] = [];
+    passThrough.on('data', chunk => chunks.push(Buffer.from(chunk)));
+    await PImage.encodePNGToStream(nameCanvas, passThrough);
+    const nameBuffer = Buffer.concat(chunks);
+    const nameJimpImage = await jimp.Jimp.read(nameBuffer);
+
+    image.composite(nameJimpImage, 0, 410);
+
+    // 3. Draw Event Name
+    printColorized(image, font64, 0, 625, {
+      text: eventName,
+      alignmentX: jimp.HorizontalAlign.CENTER,
+      alignmentY: jimp.VerticalAlign.TOP,
+    }, image.bitmap.width, 0.55, [184, 134, 11]); // Scale reduced to 0.55 to prevent wrapping
+
+    // 4. Draw Event Description / Duration
+    printColorized(image, font32, image.bitmap.width * 0.075, 700, {
+      text: eventDescription,
+      alignmentX: jimp.HorizontalAlign.CENTER,
+      alignmentY: jimp.VerticalAlign.TOP,
+    }, image.bitmap.width * 0.85, 0.45, [12, 31, 56]); // Dark blue to match original
+
+    // 5. Draw Event Content (italicized / descriptive)
+    printColorized(image, font32, image.bitmap.width * 0.15, 740, {
+      text: eventContent,
+      alignmentX: jimp.HorizontalAlign.CENTER,
+      alignmentY: jimp.VerticalAlign.TOP,
+    }, image.bitmap.width * 0.70, 0.55, [12, 31, 56]); // Dark blue to match original
+
+    // 6. Draw Date
+    // Using the new template, we now draw "Date :" ourselves! This guarantees perfect alignment and style with the Certificate Code.
+    printColorized(image, font32, 240, 835, `Date : ${dateStr}`, undefined, 0.65, [12, 31, 56]);
+
+    // 7. Draw Certificate Code
+    let finalCertCode = certCode;
+    if (!finalCertCode || finalCertCode === 'EVT-001') {
+      const seqPath = path.join(process.cwd(), 'event_cert_seq.txt');
+      let seq = 1;
+      if (fs.existsSync(seqPath)) {
+        const val = parseInt(fs.readFileSync(seqPath, 'utf8'), 10);
+        if (!isNaN(val)) seq = val + 1;
+      }
+      fs.writeFileSync(seqPath, seq.toString());
+      finalCertCode = `IF-EVT-${seq.toString().padStart(3, '0')}`;
+    }
+    
+    // Aligning precisely under the gold line
+    printColorized(image, font32, 240, 885, `Certificate Code : ${finalCertCode}`, undefined, 0.65, [12, 31, 56]);
+
+    // Save Event Certificate to DB
+    const verificationToken = randomUUID();
+    await this.prisma.eventCertificate.create({
+      data: {
+        studentName,
+        eventName,
+        eventDescription,
+        certificateNo: finalCertCode,
+        verificationToken
+      }
+    });
+
+    const finalVerifyUrl = verifyUrl.replace('EVT-001', finalCertCode);
+
+    // 8. Generate and Draw QR Code
+    const qrBuffer = await QRCode.toBuffer(finalVerifyUrl, {
+      margin: 1,
+      width: 140,
+      color: {
+        dark: '#000000',
+        light: '#ffffff'
+      }
+    });
+    const qrImage = await jimp.Jimp.read(qrBuffer);
+    
+    // Position the QR code at the bottom center
+    const qrX = (image.bitmap.width / 2) - (qrImage.bitmap.width / 2);
+    const qrY = image.bitmap.height - 210;
+    
+    image.composite(qrImage, qrX, qrY);
+
+    return await image.getBuffer(jimp.JimpMime.png);
+  }
+
   /**
    * Determines eligibility
    */
@@ -439,17 +585,43 @@ export class CertificatesService {
       },
     });
 
-    if (!cert) {
-      throw new NotFoundException('Certificate not found or invalid.');
+    if (cert) {
+      if (cert.status !== 'ACTIVE') {
+        throw new BadRequestException(`This certificate is ${cert.status}. Reason: ${cert.revokeReason || 'Unknown'}`);
+      }
+      return cert;
     }
 
+<<<<<<< HEAD
     if (cert.status !== 'ACTIVE') {
       throw new BadRequestException(
         `This certificate is ${cert.status}. Reason: ${cert.revokeReason || 'Unknown'}`,
       );
+=======
+    // Fallback: check event certificates
+    const eventCert = await this.prisma.eventCertificate.findFirst({
+      where: {
+        OR: [
+          { verificationToken: tokenOrCertNo },
+          { certificateNo: tokenOrCertNo }
+        ]
+      }
+    });
+
+    if (eventCert) {
+      return {
+        ...eventCert,
+        isEventCertificate: true,
+        domain: eventCert.eventName,
+        student: {
+          name: eventCert.studentName,
+          studentId: 'GUEST'
+        }
+      };
+>>>>>>> 121c99a (feat: event certificates db tracking and verify qr fix)
     }
 
-    return cert;
+    throw new NotFoundException('Certificate not found or invalid.');
   }
 
   async verifyByStudentId(studentId: string) {

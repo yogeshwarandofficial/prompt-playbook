@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   Controller,
   Get,
@@ -7,6 +8,9 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
+=======
+import { Controller, Get, Post, Patch, Body, Param, UseGuards, Res } from '@nestjs/common';
+>>>>>>> 121c99a (feat: event certificates db tracking and verify qr fix)
 import { CertificatesService } from './certificates.service';
 import {
   IssueCertificateDto,
@@ -40,6 +44,35 @@ export class CertificatesController {
   @Post('issue')
   issue(@Body() dto: IssueCertificateDto) {
     return this.certificatesService.issue(dto);
+  }
+
+  @Post('event')
+  async generateEventCertificate(
+    @Body() dto: { 
+      studentName: string; 
+      eventName: string; 
+      eventDescription?: string; 
+      eventContent?: string; 
+      date?: string; 
+      certificateCode?: string; 
+      verifyUrl?: string 
+    }, 
+    @Res() res: any
+  ) {
+    const buffer = await this.certificatesService.generateEventCertificate(
+      dto.studentName, 
+      dto.eventName,
+      dto.eventDescription || 'AN EVENT ORGANIZED BY INFYNUX ACADEMY',
+      dto.eventContent || 'in recognition of their participation and efforts.',
+      dto.date || new Date().toLocaleDateString(),
+      dto.certificateCode || 'EVT-001',
+      dto.verifyUrl || 'https://infynuxsolutions.in'
+    );
+    res.set({
+      'Content-Type': 'image/png',
+      'Content-Disposition': 'attachment; filename="event-certificate.png"',
+    });
+    res.send(buffer);
   }
 
   @Patch(':id/revoke')

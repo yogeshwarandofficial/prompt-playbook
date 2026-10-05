@@ -89,7 +89,11 @@ function VerifyResultPage() {
                         <span className="text-sm text-slate-400 font-medium font-mono">{cert.certificateNo}</span>
                       </div>
                       <h3 className="text-2xl font-bold text-slate-800 mb-1">{cert.domain}</h3>
-                      <p className="text-slate-500 mb-6">Successfully completed the remote internship program.</p>
+                      <p className="text-slate-500 mb-6">
+                        {cert.isEventCertificate 
+                          ? 'Successfully participated in the event.' 
+                          : 'Successfully completed the remote internship program.'}
+                      </p>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-sm">
                         <div className="flex items-center gap-3">
