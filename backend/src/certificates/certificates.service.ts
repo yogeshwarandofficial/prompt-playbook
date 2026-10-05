@@ -329,13 +329,19 @@ export class CertificatesService {
     // 7. Draw Certificate Code
     let finalCertCode = certCode;
     if (!finalCertCode || finalCertCode === 'EVT-001') {
-      const seqPath = path.join(process.cwd(), 'event_cert_seq.txt');
+      const lastCert = await this.prisma.eventCertificate.findFirst({
+        where: { certificateNo: { startsWith: 'IF-EVT-' } },
+        orderBy: { certificateNo: 'desc' }
+      });
+      
       let seq = 1;
-      if (fs.existsSync(seqPath)) {
-        const val = parseInt(fs.readFileSync(seqPath, 'utf8'), 10);
-        if (!isNaN(val)) seq = val + 1;
+      if (lastCert && lastCert.certificateNo) {
+        const parts = lastCert.certificateNo.split('-');
+        if (parts.length === 3) {
+          const num = parseInt(parts[2], 10);
+          if (!isNaN(num)) seq = num + 1;
+        }
       }
-      fs.writeFileSync(seqPath, seq.toString());
       finalCertCode = `IF-EVT-${seq.toString().padStart(3, '0')}`;
     }
     
