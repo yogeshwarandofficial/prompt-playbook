@@ -598,12 +598,6 @@ export class CertificatesService {
       return cert;
     }
 
-<<<<<<< HEAD
-    if (cert.status !== 'ACTIVE') {
-      throw new BadRequestException(
-        `This certificate is ${cert.status}. Reason: ${cert.revokeReason || 'Unknown'}`,
-      );
-=======
     // Fallback: check event certificates
     const eventCert = await this.prisma.eventCertificate.findFirst({
       where: {
@@ -624,7 +618,6 @@ export class CertificatesService {
           studentId: 'GUEST'
         }
       };
->>>>>>> 121c99a (feat: event certificates db tracking and verify qr fix)
     }
 
     throw new NotFoundException('Certificate not found or invalid.');

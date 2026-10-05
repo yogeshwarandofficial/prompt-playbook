@@ -1,16 +1,4 @@
-<<<<<<< HEAD
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Body,
-  Param,
-  UseGuards,
-} from '@nestjs/common';
-=======
 import { Controller, Get, Post, Patch, Body, Param, UseGuards, Res } from '@nestjs/common';
->>>>>>> 121c99a (feat: event certificates db tracking and verify qr fix)
 import { CertificatesService } from './certificates.service';
 import {
   IssueCertificateDto,
