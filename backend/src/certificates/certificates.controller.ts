@@ -55,7 +55,7 @@ export class CertificatesController {
         dto.eventContent || 'in recognition of their participation and efforts.',
         dto.date || new Date().toLocaleDateString(),
         dto.certificateCode || 'EVT-001',
-        dto.verifyUrl || 'https://infynuxsolutions.in'
+        dto.verifyUrl || (process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://infynuxsolutions.in').split(',')[0].trim() + '/verify/EVT-001'
       );
       res.set({
         'Content-Type': 'image/png',
