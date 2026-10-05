@@ -240,9 +240,10 @@ export class CertificatesService {
     certCode: string,
     verifyUrl: string
   ): Promise<Buffer> {
-    const templatePath = path.join(process.cwd(), 'public', 'Your paragraph text (2).png');
-    let image;
     try {
+      const templatePath = path.join(process.cwd(), 'public', 'Your paragraph text (2).png');
+      let image;
+      try {
       image = await jimp.Jimp.read(templatePath);
     } catch (e) {
       throw new BadRequestException('Certificate template error: ' + (e as Error).message);
@@ -380,6 +381,9 @@ export class CertificatesService {
     image.composite(qrImage, qrX, qrY);
 
     return await image.getBuffer(jimp.JimpMime.png);
+    } catch (error: any) {
+      throw new BadRequestException('Generation failed: ' + error.message + '\n' + error.stack);
+    }
   }
 
   /**
