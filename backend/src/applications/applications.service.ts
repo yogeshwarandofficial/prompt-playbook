@@ -54,7 +54,10 @@ export class ApplicationsService {
         const mimeMatch = parts[0].match(/data:(.*?);/);
         if (mimeMatch) {
           resumeType = mimeMatch[1];
-          const ext = resumeType.split('/')[1] || 'pdf';
+          let ext = 'pdf';
+          if (resumeType.includes('pdf')) ext = 'pdf';
+          else if (resumeType.includes('msword')) ext = 'doc';
+          else if (resumeType.includes('wordprocessingml')) ext = 'docx';
           resumeName = `resume.${ext}`;
         }
       }

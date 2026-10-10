@@ -37,7 +37,8 @@ function validate(data: FormData): FormErrors {
   if (!data.fullName || data.fullName.trim().length < 2) errors.fullName = "Name must be at least 2 characters";
   else if (!/^[A-Za-z\u00C0-\u017F'\- ]{2,100}$/.test(data.fullName.trim())) errors.fullName = "Name can only contain letters, spaces, and hyphens";
   if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email)) errors.email = "Please enter a valid email address";
-  if (!data.mobile || !/^(?:\+?91[\s-]?)?[6-9]\d{9}$/.test(data.mobile.trim())) errors.mobile = "Enter a valid 10-digit Indian mobile number";
+  const cleanMobile = data.mobile.replace(/[\s-]/g, "");
+  if (!cleanMobile || !/^(?:\+?91)?[6-9]\d{9}$/.test(cleanMobile)) errors.mobile = "Enter a valid 10-digit Indian mobile number";
   if (!data.college || data.college.trim().length < 3) errors.college = "College name must be at least 3 characters";
   if (!data.subdomain) errors.subdomain = "Please select an internship domain";
   if (data.message && data.message.length > 500) errors.message = "Message must be at most 500 characters";
@@ -108,8 +109,15 @@ export function ApplicationModal({ open, domain, onClose }: Props) {
 
   const handleFileSelect = (file: File | null) => {
     if (!file) return;
-    const ALLOWED = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-    if (!ALLOWED.includes(file.type)) {
+    const ext = file.name.split(".").pop()?.toLowerCase() || "";
+    const isPdf =
+      file.type === "application/pdf" || file.type === "application/x-pdf" || ext === "pdf";
+    const isDoc = file.type === "application/msword" || ext === "doc";
+    const isDocx =
+      file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      ext === "docx";
+
+    if (!isPdf && !isDoc && !isDocx) {
       setResumeError("Only PDF, DOC, or DOCX files are accepted.");
       return;
     }
@@ -153,7 +161,8 @@ export function ApplicationModal({ open, domain, onClose }: Props) {
           const reader = new FileReader();
           reader.onload = () => {
             const result = reader.result as string;
-            resolve(result.split(",")[1]);
+            const b64 = result.split(",")[1] || "";
+            resolve(b64.replace(/\s+/g, ""));
           };
           reader.onerror = reject;
           reader.readAsDataURL(file!);
@@ -161,16 +170,30 @@ export function ApplicationModal({ open, domain, onClose }: Props) {
 
       const resumeData = await toBase64(resumeFile!);
 
+      const ext = resumeFile!.name.split(".").pop()?.toLowerCase() || "";
+      const detectedType =
+        resumeFile!.type &&
+        resumeFile!.type !== "application/octet-stream" &&
+        resumeFile!.type !== ""
+          ? resumeFile!.type
+          : ext === "pdf"
+          ? "application/pdf"
+          : ext === "docx"
+          ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          : ext === "doc"
+          ? "application/msword"
+          : "application/pdf";
+
       const payload: Record<string, string | null | boolean> = {
         fullName: formData.fullName.trim(),
         email: formData.email.trim(),
-        mobile: formData.mobile.trim(),
+        mobile: formData.mobile.replace(/[\s-]/g, "").slice(-10),
         college: formData.college.trim(),
         subdomain: formData.subdomain,
         message: formData.message.trim() || null,
         resumeData,
         resumeName: resumeFile!.name,
-        resumeType: resumeFile!.type,
+        resumeType: detectedType,
         agreement: formData.agreement,
       };
 

@@ -44,7 +44,27 @@ export const Route = createFileRoute("/api/internships/apply")({
           
           let resumeDataUri: string | undefined = undefined;
           if (resumeData && resumeType) {
-            resumeDataUri = `data:${resumeType};base64,${resumeData}`;
+            const cleanData = resumeData.replace(/\s+/g, "");
+            let normalizedType = resumeType.toLowerCase().trim();
+            if (normalizedType.includes("pdf")) {
+              normalizedType = "application/pdf";
+            } else if (normalizedType.includes("msword")) {
+              normalizedType = "application/msword";
+            } else if (
+              normalizedType.includes("wordprocessingml") ||
+              normalizedType.includes("docx")
+            ) {
+              normalizedType =
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            } else if (resumeName?.toLowerCase().endsWith(".pdf")) {
+              normalizedType = "application/pdf";
+            } else if (resumeName?.toLowerCase().endsWith(".docx")) {
+              normalizedType =
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            } else if (resumeName?.toLowerCase().endsWith(".doc")) {
+              normalizedType = "application/msword";
+            }
+            resumeDataUri = `data:${normalizedType};base64,${cleanData}`;
           }
           
           const backendRes = await fetch(`${API_URL}/api/applications`, {
@@ -66,7 +86,22 @@ export const Route = createFileRoute("/api/internships/apply")({
           });
 
           if (!backendRes.ok) {
-             throw new Error(`Backend error: ${await backendRes.text()}`);
+            let errorMsg = "Application submission failed. Please try again.";
+            try {
+              const errBody = await backendRes.json();
+              if (Array.isArray(errBody.message)) {
+                errorMsg = errBody.message.join(", ");
+              } else if (typeof errBody.message === "string") {
+                errorMsg = errBody.message;
+              }
+            } catch {
+              const text = await backendRes.text().catch(() => "");
+              if (text) errorMsg = text;
+            }
+            return Response.json(
+              { success: false, message: errorMsg },
+              { status: backendRes.status }
+            );
           }
 
           const backendApp = await backendRes.json();
@@ -82,10 +117,10 @@ export const Route = createFileRoute("/api/internships/apply")({
             },
             { status: 201 }
           );
-        } catch (err) {
+        } catch (err: any) {
           console.error("[apply]", err);
           return Response.json(
-            { success: false, message: "Server error. Please try again." },
+            { success: false, message: err?.message || "Server error. Please try again." },
             { status: 500 }
           );
         }

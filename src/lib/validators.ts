@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const NAME_RE = /^[A-Za-z\u00C0-\u017F'\- ]{2,100}$/;
-const MOBILE_RE = /^(?:\+?91[\s-]?)?[6-9]\d{9}$/;
+const MOBILE_RE = /^(?:\+?91[\s-]?)?[6-9](?:[\s-]?\d){9}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export const internshipSchema = z.object({
