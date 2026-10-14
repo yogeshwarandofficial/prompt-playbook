@@ -18,10 +18,16 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const { studentId, password } = loginDto;
-    const normalizedStudentId = studentId.trim();
+    const identifier = studentId.trim();
 
-    const user = await this.prisma.user.findUnique({
-      where: { studentId: normalizedStudentId },
+    // Support case-insensitive login by studentId OR by email
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { studentId: { equals: identifier, mode: 'insensitive' } },
+          { email: { equals: identifier, mode: 'insensitive' } },
+        ],
+      },
     });
 
     if (!user) {

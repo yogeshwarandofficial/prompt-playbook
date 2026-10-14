@@ -518,11 +518,11 @@ function LoginPage() {
 
                   <form onSubmit={onSubmit}>
                       <div className="login-form-group">
-                          <label>User ID (Student or Admin)</label>
+                          <label>User ID or Email Address</label>
                           <div className="login-input-wrapper">
                               <input 
                                 type="text" 
-                                placeholder="INFY-26-TEST-001" 
+                                placeholder="Student ID (e.g. INFY-IN-001) or Email" 
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
