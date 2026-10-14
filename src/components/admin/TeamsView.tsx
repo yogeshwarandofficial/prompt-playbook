@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  Plus, Trash2, X, Users, CheckCircle2, Clock, AlertCircle,
+  Plus, Trash2, X, Users, CheckCircle2, Clock, AlertCircle, Calendar,
   ChevronDown, ChevronUp, ChevronRight, UserPlus, ClipboardList, Save,
   Edit, Loader2, ExternalLink, FileText, BarChart3, CheckSquare
 } from "lucide-react";
@@ -784,16 +784,18 @@ function MemberCard({
           )}
 
           <div className="space-y-2">
-            {member.tasks.map(task => (
-              <TaskRow
-                key={task.id}
-                task={task}
-                onCycle={() => onCycleTaskStatus(task)}
-                onEdit={() => onEditTask(task)}
-                onDelete={() => onDeleteTask(task.id)}
-                onViewSubmission={() => onViewSubmission(task)}
-              />
-            ))}
+            {[...member.tasks]
+              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+              .map(task => (
+                <TaskRow
+                  key={task.id}
+                  task={task}
+                  onCycle={() => onCycleTaskStatus(task)}
+                  onEdit={() => onEditTask(task)}
+                  onDelete={() => onDeleteTask(task.id)}
+                  onViewSubmission={() => onViewSubmission(task)}
+                />
+              ))}
           </div>
         </div>
       )}
@@ -860,9 +862,16 @@ function TaskRow({
           )}
         </div>
 
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+          {task.createdAt && (
+            <span className="text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+              <Calendar className="h-3 w-3 text-slate-400" />
+              Assigned {new Date(task.createdAt).toLocaleDateString()}
+            </span>
+          )}
           {task.dueDate && (
-            <span className="text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-md hidden sm:inline-block">
+            <span className="text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+              <Clock className="h-3 w-3 text-slate-400" />
               Due {new Date(task.dueDate).toLocaleDateString()}
             </span>
           )}

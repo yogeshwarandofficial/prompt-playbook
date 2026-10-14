@@ -189,11 +189,13 @@ export function StudentTeamView({ session }: { session: any }) {
     );
   }
 
-  // Filter tasks for the logged-in student
-  const myFilteredTasks = currentTeam.myTasks.filter((t) => {
-    if (taskFilter === "ALL") return true;
-    return t.status === taskFilter;
-  });
+  // Filter tasks for the logged-in student (newest assigned first)
+  const myFilteredTasks = currentTeam.myTasks
+    .filter((t) => {
+      if (taskFilter === "ALL") return true;
+      return t.status === taskFilter;
+    })
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   const toggleTaskExpand = (taskId: string) => {
     setExpandedTaskIds((prev) => ({
@@ -486,15 +488,22 @@ export function StudentTeamView({ session }: { session: any }) {
                           </div>
                         )}
 
-                        {/* Meta: Due Date & Reference Link */}
+                        {/* Meta: Assigned Date, Due Date & Reference Link */}
                         <div className="flex items-center gap-3 pt-1 flex-wrap text-xs">
+                          {task.createdAt && (
+                            <span className="inline-flex items-center gap-1 font-medium text-slate-500">
+                              <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                              Assigned: {new Date(task.createdAt).toLocaleDateString()}
+                            </span>
+                          )}
+
                           {task.dueDate && (
                             <span
                               className={`inline-flex items-center gap-1 font-medium ${
                                 isOverdue ? "text-red-600 font-bold" : "text-slate-500"
                               }`}
                             >
-                              <Calendar className="h-3.5 w-3.5" />
+                              <Clock className="h-3.5 w-3.5" />
                               Due: {new Date(task.dueDate).toLocaleDateString()}
                               {isOverdue && " (Overdue)"}
                             </span>
@@ -757,7 +766,9 @@ export function StudentTeamView({ session }: { session: any }) {
                           No tasks assigned to this teammate yet.
                         </p>
                       ) : (
-                        member.tasks.map((t) => (
+                        [...member.tasks]
+                          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                          .map((t) => (
                           <div
                             key={t.id}
                             className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs space-y-1.5"
@@ -782,6 +793,15 @@ export function StudentTeamView({ session }: { session: any }) {
                               >
                                 {t.status.replace("_", " ")}
                               </span>
+                            </div>
+
+                            <div className="flex items-center gap-2 pl-6 text-[11px] text-slate-400">
+                              {t.createdAt && (
+                                <span>Assigned: {new Date(t.createdAt).toLocaleDateString()}</span>
+                              )}
+                              {t.dueDate && (
+                                <span>• Due: {new Date(t.dueDate).toLocaleDateString()}</span>
+                              )}
                             </div>
 
                             {/* Show if teammate submitted Github code */}
