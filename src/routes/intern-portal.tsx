@@ -52,11 +52,7 @@ function InterPortal() {
   const [courses, setCourses] = useState<any[]>([]);
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
 
-  // Interactive navbar states
-  const [teamData, setTeamData] = useState<{ id: string; name: string; members: { id: string; name: string; studentId: string }[] } | null>(null);
-  const [showTeamPopover, setShowTeamPopover] = useState(false);
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [copied, setCopied] = useState(false);
+  // Notifications state
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(3);
   const [notifications, setNotifications] = useState([
@@ -90,35 +86,8 @@ function InterPortal() {
             setLoading(false);
           }
         };
-
-        // Fetch student's assigned team for the navbar
-        const fetchStudentTeam = async () => {
-          try {
-            const res = await fetch(`${API_URL}/api/student/teams`, {
-              credentials: 'include'
-            });
-            if (res.ok) {
-              const data = await res.json();
-              if (Array.isArray(data) && data.length > 0) {
-                const current = data[0];
-                setTeamData({
-                  id: current.id,
-                  name: current.name,
-                  members: (current.members || []).map((m: any) => ({
-                    id: m.id,
-                    name: m.student?.name || "Student",
-                    studentId: m.student?.studentId || "",
-                  }))
-                });
-              }
-            }
-          } catch (err) {
-            console.error("Failed to fetch team:", err);
-          }
-        };
         
         fetchCourses();
-        fetchStudentTeam();
       }
     });
   }, [navigate]);
@@ -126,15 +95,6 @@ function InterPortal() {
   const handleLogout = async () => {
     await signOut();
     navigate({ to: "/login" });
-  };
-
-  const handleCopyShareLink = () => {
-    const url = typeof window !== 'undefined' ? window.location.href : 'https://infynuxacademy.in/intern-portal';
-    if (navigator?.clipboard?.writeText) {
-      navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    }
   };
 
   const handleMarkAllNotificationsRead = () => {

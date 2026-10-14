@@ -296,12 +296,12 @@ export function StudentTeamView({ session }: { session: any }) {
           </div>
         </div>
 
-        {/* 3rd Screenshot: Team Collaboration graphic on top right */}
-        <div className="shrink-0 max-w-sm sm:max-w-md w-full md:w-auto flex justify-center md:justify-end z-10">
+        {/* Team Graphic with transparent PNG fitting box fully */}
+        <div className="shrink-0 w-full md:w-[380px] lg:w-[460px] h-36 sm:h-44 md:h-52 flex items-center justify-center md:justify-end z-10">
           <img
-            src="/team-illustration.png"
-            alt="Team Collaboration"
-            className="h-32 sm:h-36 md:h-40 w-auto object-contain drop-shadow-sm"
+            src="/Teamwork Around Giant TEAM Letters.png"
+            alt="Teamwork Around Giant TEAM Letters"
+            className="w-full h-full object-contain drop-shadow-sm select-none"
           />
         </div>
       </div>
