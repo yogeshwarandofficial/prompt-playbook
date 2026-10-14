@@ -12,7 +12,14 @@ import {
   X,
   Share2,
   Bell,
-  Sparkles
+  Sparkles,
+  Copy,
+  Check,
+  ExternalLink,
+  MessageSquare,
+  Clock,
+  Send,
+  CheckCircle2
 } from "lucide-react";
 import { createSeoHead } from "@/lib/seo";
 import { StudentTeamView } from "@/components/intern-portal/StudentTeamView";
@@ -45,6 +52,19 @@ function InterPortal() {
   const [courses, setCourses] = useState<any[]>([]);
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
 
+  // Interactive navbar states
+  const [teamData, setTeamData] = useState<{ id: string; name: string; members: { id: string; name: string; studentId: string }[] } | null>(null);
+  const [showTeamPopover, setShowTeamPopover] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(3);
+  const [notifications, setNotifications] = useState([
+    { id: 1, title: "New Sprint Tasks Assigned", desc: "Check your team deliverables for this week.", time: "10m ago", read: false },
+    { id: 2, title: "Sprint Progress Milestone", desc: "Your team completed active milestone goals.", time: "2h ago", read: false },
+    { id: 3, title: "Code Submission Verified", desc: "Mentor reviewed GitHub code deliverables.", time: "1d ago", read: false },
+  ]);
+
   useEffect(() => {
     getSession().then((s) => {
       if (!s || s.role !== 'STUDENT') {
@@ -52,10 +72,11 @@ function InterPortal() {
       } else {
         setSession(s);
         
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
         // Fetch student's assigned courses
         const fetchCourses = async () => {
           try {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
             const res = await fetch(`${API_URL}/api/student/courses`, {
               credentials: 'include'
             });
@@ -69,8 +90,35 @@ function InterPortal() {
             setLoading(false);
           }
         };
+
+        // Fetch student's assigned team for the navbar
+        const fetchStudentTeam = async () => {
+          try {
+            const res = await fetch(`${API_URL}/api/student/teams`, {
+              credentials: 'include'
+            });
+            if (res.ok) {
+              const data = await res.json();
+              if (Array.isArray(data) && data.length > 0) {
+                const current = data[0];
+                setTeamData({
+                  id: current.id,
+                  name: current.name,
+                  members: (current.members || []).map((m: any) => ({
+                    id: m.id,
+                    name: m.student?.name || "Student",
+                    studentId: m.student?.studentId || "",
+                  }))
+                });
+              }
+            }
+          } catch (err) {
+            console.error("Failed to fetch team:", err);
+          }
+        };
         
         fetchCourses();
+        fetchStudentTeam();
       }
     });
   }, [navigate]);
@@ -78,6 +126,20 @@ function InterPortal() {
   const handleLogout = async () => {
     await signOut();
     navigate({ to: "/login" });
+  };
+
+  const handleCopyShareLink = () => {
+    const url = typeof window !== 'undefined' ? window.location.href : 'https://infynuxacademy.in/intern-portal';
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  };
+
+  const handleMarkAllNotificationsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setUnreadCount(0);
   };
 
   if (loading || !session) {
@@ -90,30 +152,23 @@ function InterPortal() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#EFF2F6] font-sans">
-      {/* Exact Navbar Design matching the Behance reference */}
+      {/* Exact Navbar Design matching the reference with company logo and interactive controls */}
       <header className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-xl border-b border-slate-200/70 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-3">
-            {/* Left: Brand Cluster Logo & Navigation Tabs */}
-            <div className="flex items-center gap-4 lg:gap-6 min-w-0">
-              {/* Spoke Cluster Logo Icon matching screenshot */}
+            {/* Left: Official Company Logo & Navigation Tabs */}
+            <div className="flex items-center gap-3 lg:gap-5 min-w-0">
+              {/* Company Logo Container */}
               <div className="flex items-center gap-2.5 shrink-0">
-                <div className="h-10 w-10 rounded-full bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-[#111317]">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="4" r="2" fill="currentColor" />
-                    <circle cx="12" cy="20" r="2" fill="currentColor" />
-                    <circle cx="4" cy="12" r="2" fill="currentColor" />
-                    <circle cx="20" cy="12" r="2" fill="currentColor" />
-                    <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-                    <path d="M12 6v4M12 14v4M6 12h4M14 12h4" />
-                  </svg>
+                <div className="h-10 px-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center">
+                  <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-7 w-auto object-contain" />
                 </div>
                 <div className="hidden sm:flex flex-col">
                   <span className="text-sm font-black tracking-tight text-[#111317] leading-tight">
                     INFYNUX
                   </span>
-                  <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase leading-none">
-                    Platform
+                  <span className="text-[10px] font-bold text-[#0D7A53] tracking-wider uppercase leading-none">
+                    Student Portal
                   </span>
                 </div>
               </div>
@@ -141,43 +196,277 @@ function InterPortal() {
               </nav>
             </div>
 
-            {/* Right: Teammates Pile, Shared Pill, Notification Circle & Profile */}
-            <div className="flex items-center gap-3 shrink-0">
-              {/* Overlapping Avatar Stack matching screenshot */}
-              <div className="hidden lg:flex items-center -space-x-2 pl-2">
-                <div className="h-8 w-8 rounded-full bg-slate-800 text-white font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs">
-                  A
-                </div>
-                <div className="h-8 w-8 rounded-full bg-[#0D7A53] text-white font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs">
-                  S
-                </div>
-                <div className="h-8 w-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs">
-                  K
-                </div>
-                <div className="h-8 w-8 rounded-full bg-[#111317] text-slate-200 font-extrabold text-[11px] flex items-center justify-center ring-2 ring-white shadow-xs">
-                  +6
-                </div>
+            {/* Right: Functional Teammates Stack, Share Modal, Notification Center & Profile */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              {/* 1. Functional Dynamic Teammate Avatar Stack */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowTeamPopover(!showTeamPopover);
+                    setShowNotifications(false);
+                    setShowShareModal(false);
+                  }}
+                  title={teamData ? `Team ${teamData.name} (${teamData.members.length} members)` : "View Team Members"}
+                  className="flex items-center -space-x-2 p-1 rounded-full hover:bg-slate-100/80 transition-colors cursor-pointer group"
+                >
+                  {teamData && teamData.members.length > 0 ? (
+                    <>
+                      {teamData.members.slice(0, 3).map((member, idx) => (
+                        <div
+                          key={member.id}
+                          title={member.name}
+                          className={`h-8 w-8 rounded-full ${
+                            idx === 0
+                              ? "bg-[#111317] text-[#34D399]"
+                              : idx === 1
+                              ? "bg-[#0D7A53] text-white"
+                              : "bg-emerald-700 text-white"
+                          } font-extrabold text-xs flex items-center justify-center ring-2 ring-white shadow-xs uppercase`}
+                        >
+                          {member.name.charAt(0)}
+                        </div>
+                      ))}
+                      {teamData.members.length > 3 && (
+                        <div className="h-8 w-8 rounded-full bg-[#111317] text-slate-200 font-extrabold text-[11px] flex items-center justify-center ring-2 ring-white shadow-xs">
+                          +{teamData.members.length - 3}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="h-8 px-2.5 rounded-full bg-white border border-slate-200 text-slate-600 text-xs font-semibold flex items-center gap-1.5 shadow-xs">
+                      <Users className="h-3.5 w-3.5 text-[#0D7A53]" />
+                      <span className="hidden lg:inline text-[11px] font-bold">My Team</span>
+                    </div>
+                  )}
+                </button>
+
+                {/* Team Members Popover Dropdown */}
+                {showTeamPopover && (
+                  <div className="absolute right-0 mt-2 w-72 rounded-[24px] bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)] p-4 z-50">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                      <div>
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Team Members</div>
+                        <div className="text-sm font-extrabold text-[#111317]">{teamData ? teamData.name : "Your Team"}</div>
+                      </div>
+                      <button
+                        onClick={() => setShowTeamPopover(false)}
+                        className="w-6 h-6 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+
+                    <div className="mt-3 space-y-2 max-h-56 overflow-y-auto">
+                      {teamData && teamData.members.length > 0 ? (
+                        teamData.members.map((member) => {
+                          const isSelf = member.studentId === session.studentId;
+                          return (
+                            <div key={member.id} className="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-[#E6F7F0]/60 transition-colors">
+                              <div className="flex items-center gap-2.5">
+                                <div className="h-7 w-7 rounded-full bg-[#111317] text-[#34D399] font-bold text-xs flex items-center justify-center uppercase">
+                                  {member.name.charAt(0)}
+                                </div>
+                                <div>
+                                  <div className="text-xs font-bold text-[#111317] flex items-center gap-1.5">
+                                    <span>{member.name}</span>
+                                    {isSelf && (
+                                      <span className="text-[9px] font-extrabold bg-[#0D7A53] text-white px-1.5 py-0.2 rounded-full">YOU</span>
+                                    )}
+                                  </div>
+                                  <div className="text-[10px] text-slate-400 font-mono">{member.studentId}</div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <p className="text-xs text-slate-400 py-3 text-center">No teammates assigned yet.</p>
+                      )}
+                    </div>
+
+                    <div className="mt-3 pt-2 border-t border-slate-100">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentView('team');
+                          setShowTeamPopover(false);
+                        }}
+                        className="w-full py-1.5 rounded-full text-xs font-bold bg-[#0D7A53] hover:bg-[#0A6B48] text-white text-center transition-colors"
+                      >
+                        Open Team Workspace
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Pill Button: Shared / Team */}
-              <button
-                type="button"
-                onClick={() => setCurrentView('team')}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200/90 hover:bg-slate-50 hover:text-[#111317] transition-all shadow-xs"
-              >
-                <Share2 className="h-3.5 w-3.5 text-slate-500" />
-                <span>Shared</span>
-              </button>
+              {/* 2. Functional Shared Pill Button */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleCopyShareLink();
+                    setShowShareModal(!showShareModal);
+                    setShowNotifications(false);
+                    setShowTeamPopover(false);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200/90 hover:bg-slate-50 hover:text-[#111317] transition-all shadow-xs"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-[#0D7A53]" />
+                      <span className="text-[#0D7A53]">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="h-3.5 w-3.5 text-slate-500" />
+                      <span>Shared</span>
+                    </>
+                  )}
+                </button>
 
-              {/* Circular Notification Bell Button */}
-              <button
-                type="button"
-                title="Notifications"
-                className="relative w-9 h-9 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 hover:text-[#111317] hover:bg-slate-50 transition-all shadow-xs"
-              >
-                <Bell className="h-4 w-4" />
-                <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span>
-              </button>
+                {/* Share Dropdown Modal */}
+                {showShareModal && (
+                  <div className="absolute right-0 mt-2 w-80 rounded-[24px] bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)] p-4 z-50">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                      <div>
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Share Workspace</div>
+                        <div className="text-sm font-extrabold text-[#111317]">Share Dashboard Link</div>
+                      </div>
+                      <button
+                        onClick={() => setShowShareModal(false)}
+                        className="w-6 h-6 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+
+                    <p className="text-xs text-slate-500 mt-2">
+                      Copy link to your current dashboard view or invite teammates to review progress.
+                    </p>
+
+                    <div className="mt-3 flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+                      <input
+                        type="text"
+                        readOnly
+                        value={typeof window !== 'undefined' ? window.location.href : 'https://infynuxacademy.in/intern-portal'}
+                        className="bg-transparent text-[11px] font-mono text-slate-700 w-full px-2 focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleCopyShareLink}
+                        className="px-3 py-1 bg-[#111317] text-white rounded-xl text-xs font-bold hover:bg-[#0D7A53] transition-colors shrink-0 flex items-center gap-1"
+                      >
+                        {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                        <span>{copied ? "Copied" : "Copy"}</span>
+                      </button>
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-around pt-2 border-t border-slate-100 text-xs">
+                      <a
+                        href={`https://wa.me/?text=${encodeURIComponent(`Check out our Infynux Academy Team Workspace: ${typeof window !== 'undefined' ? window.location.href : ''}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-1 rounded-full bg-[#E6F7F0] text-[#064E3B] font-bold hover:bg-[#d5f3e4] transition-colors"
+                      >
+                        WhatsApp
+                      </a>
+                      <a
+                        href={`mailto:?subject=${encodeURIComponent("Infynux Academy Team Workspace")}&body=${encodeURIComponent(`Here is the link: ${typeof window !== 'undefined' ? window.location.href : ''}`)}`}
+                        className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition-colors"
+                      >
+                        Email
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 3. Functional Notification Bell */}
+              <div className="relative">
+                <button
+                  type="button"
+                  title="Notifications"
+                  onClick={() => {
+                    setShowNotifications(!showNotifications);
+                    setShowShareModal(false);
+                    setShowTeamPopover(false);
+                  }}
+                  className="relative w-9 h-9 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 hover:text-[#111317] hover:bg-slate-50 transition-all shadow-xs cursor-pointer"
+                >
+                  <Bell className="h-4 w-4" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#0D7A53] ring-2 ring-white animate-pulse"></span>
+                  )}
+                </button>
+
+                {/* Notifications Dropdown Popover */}
+                {showNotifications && (
+                  <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-[24px] bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)] p-4 z-50">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-extrabold text-[#111317]">Notifications</span>
+                        {unreadCount > 0 && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30">
+                            {unreadCount} new
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {unreadCount > 0 && (
+                          <button
+                            type="button"
+                            onClick={handleMarkAllNotificationsRead}
+                            className="text-[11px] font-bold text-[#0D7A53] hover:underline"
+                          >
+                            Mark all as read
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setShowNotifications(false)}
+                          className="w-6 h-6 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 space-y-2.5 max-h-72 overflow-y-auto">
+                      {notifications.map((item) => (
+                        <div
+                          key={item.id}
+                          className={`p-3 rounded-2xl border transition-colors ${
+                            !item.read
+                              ? "bg-[#E6F7F0]/40 border-[#0D7A53]/30"
+                              : "bg-slate-50/70 border-slate-200/60"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <span className="text-xs font-bold text-[#111317]">{item.title}</span>
+                            <span className="text-[10px] text-slate-400 whitespace-nowrap">{item.time}</span>
+                          </div>
+                          <p className="text-xs text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                      <span className="text-slate-400 text-[11px]">Infynux Sprint Alerts</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentView('team');
+                          setShowNotifications(false);
+                        }}
+                        className="text-[#0D7A53] font-bold hover:underline text-xs"
+                      >
+                        View Team Tasks →
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Profile Avatar & Info */}
               <div className="flex items-center gap-2 pl-1">

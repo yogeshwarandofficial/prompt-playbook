@@ -231,11 +231,11 @@ export function StudentTeamView({ session }: { session: any }) {
 
   return (
     <div className="space-y-7">
-      {/* Top Header & Breadcrumbs / Team Switcher */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
+      {/* Top Header with Team Illustration from Screenshot */}
+      <div className="relative overflow-hidden rounded-[32px] bg-white/80 backdrop-blur-xl border border-white/90 p-6 sm:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex-1 min-w-0 z-10 w-full">
           {/* Breadcrumb pill tags matching screenshot */}
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-2.5">
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30 shadow-xs">
               <Sparkles className="h-3.5 w-3.5 text-[#0D7A53]" />
               Team Workspace
@@ -246,7 +246,7 @@ export function StudentTeamView({ session }: { session: any }) {
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <h2 className="text-3xl font-extrabold tracking-tight text-[#111317]">
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-[#111317]">
               {currentTeam.name}
             </h2>
             <span
@@ -261,39 +261,48 @@ export function StudentTeamView({ session }: { session: any }) {
           </div>
 
           {currentTeam.description && (
-            <p className="text-sm text-slate-500 mt-1 max-w-2xl leading-relaxed">
+            <p className="text-sm text-slate-500 mt-2 max-w-xl leading-relaxed">
               {currentTeam.description}
             </p>
           )}
+
+          {/* Action Controls / Team Switcher */}
+          <div className="flex items-center gap-3 mt-4 pt-1 flex-wrap">
+            {teams.length > 1 && (
+              <div className="flex items-center gap-2 bg-slate-100/80 px-3.5 py-1.5 rounded-full border border-slate-200/90 shadow-xs">
+                <span className="text-xs font-bold text-slate-500 pl-1">Switch Team:</span>
+                <select
+                  value={currentTeam.id}
+                  onChange={(e) => setSelectedTeamId(e.target.value)}
+                  className="bg-transparent text-xs font-bold text-[#111317] focus:outline-none cursor-pointer pr-2"
+                >
+                  {teams.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={fetchTeams}
+              title="Refresh team data"
+              className="w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-[#111317] hover:text-[#34D399] hover:border-[#111317] transition-all shadow-xs"
+            >
+              <ArrowUpRight className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
-        {/* Action Controls / Team Switcher */}
-        <div className="flex items-center gap-3">
-          {teams.length > 1 && (
-            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-slate-200/90 shadow-xs">
-              <span className="text-xs font-bold text-slate-500 pl-1">Team:</span>
-              <select
-                value={currentTeam.id}
-                onChange={(e) => setSelectedTeamId(e.target.value)}
-                className="bg-transparent text-xs font-bold text-[#111317] focus:outline-none cursor-pointer pr-2"
-              >
-                {teams.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <button
-            type="button"
-            onClick={fetchTeams}
-            title="Refresh team data"
-            className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-[#111317] hover:text-[#34D399] hover:border-[#111317] transition-all shadow-xs"
-          >
-            <ArrowUpRight className="h-4 w-4" />
-          </button>
+        {/* 3rd Screenshot: Team Collaboration graphic on top right */}
+        <div className="shrink-0 max-w-sm sm:max-w-md w-full md:w-auto flex justify-center md:justify-end z-10">
+          <img
+            src="/team-illustration.png"
+            alt="Team Collaboration"
+            className="h-32 sm:h-36 md:h-40 w-auto object-contain drop-shadow-sm"
+          />
         </div>
       </div>
 

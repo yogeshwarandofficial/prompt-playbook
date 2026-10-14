@@ -94,23 +94,16 @@ function AdminDashboard() {
           <div className="flex h-16 items-center justify-between gap-3">
             {/* Left: Brand Cluster Logo & Navigation Tabs */}
             <div className="flex items-center gap-3 lg:gap-5 min-w-0">
-              {/* Spoke Cluster Logo Icon matching reference */}
+              {/* Official Company Logo */}
               <div className="flex items-center gap-2.5 shrink-0">
-                <div className="h-10 w-10 rounded-full bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-[#111317]">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="4" r="2" fill="currentColor" />
-                    <circle cx="12" cy="20" r="2" fill="currentColor" />
-                    <circle cx="4" cy="12" r="2" fill="currentColor" />
-                    <circle cx="20" cy="12" r="2" fill="currentColor" />
-                    <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-                    <path d="M12 6v4M12 14v4M6 12h4M14 12h4" />
-                  </svg>
+                <div className="h-10 px-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center">
+                  <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-7 w-auto object-contain" />
                 </div>
                 <div className="hidden sm:flex flex-col">
                   <span className="text-sm font-black tracking-tight text-[#111317] leading-tight">
                     INFYNUX
                   </span>
-                  <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase leading-none">
+                  <span className="text-[10px] font-bold text-[#0D7A53] tracking-wider uppercase leading-none">
                     Admin Suite
                   </span>
                 </div>
