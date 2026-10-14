@@ -109,6 +109,7 @@ export function StudentTeamView({ session }: { session: any }) {
   const [submittingTask, setSubmittingTask] = useState<TeamTask | null>(null);
   const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null);
   const [taskFilter, setTaskFilter] = useState<"ALL" | "PENDING" | "IN_PROGRESS" | "COMPLETED">("ALL");
+  const [expandedTaskIds, setExpandedTaskIds] = useState<Record<string, boolean>>({});
 
   const fetchTeams = useCallback(async () => {
     try {
@@ -192,8 +193,6 @@ export function StudentTeamView({ session }: { session: any }) {
     if (taskFilter === "ALL") return true;
     return t.status === taskFilter;
   });
-
-  const [expandedTaskIds, setExpandedTaskIds] = useState<Record<string, boolean>>({});
 
   const toggleTaskExpand = (taskId: string) => {
     setExpandedTaskIds((prev) => ({
