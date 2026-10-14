@@ -9,6 +9,8 @@ import {
   Loader2,
   ClipboardList,
   ChevronDown,
+  ChevronUp,
+  ChevronsUpDown,
   ChevronRight,
   X,
   ExternalLink,
@@ -191,6 +193,28 @@ export function StudentTeamView({ session }: { session: any }) {
     return t.status === taskFilter;
   });
 
+  const [expandedTaskIds, setExpandedTaskIds] = useState<Record<string, boolean>>({});
+
+  const toggleTaskExpand = (taskId: string) => {
+    setExpandedTaskIds((prev) => ({
+      ...prev,
+      [taskId]: !prev[taskId],
+    }));
+  };
+
+  const allExpanded =
+    myFilteredTasks.length > 0 &&
+    myFilteredTasks.every((t) => expandedTaskIds[t.id]);
+
+  const toggleExpandAll = () => {
+    const nextState = !allExpanded;
+    const newMap: Record<string, boolean> = {};
+    myFilteredTasks.forEach((t) => {
+      newMap[t.id] = nextState;
+    });
+    setExpandedTaskIds(newMap);
+  };
+
   return (
     <div className="space-y-8">
       {/* Header & Team Switcher */}
@@ -307,27 +331,41 @@ export function StudentTeamView({ session }: { session: any }) {
               </p>
             </div>
 
-            {/* Filter Pills */}
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
-              {(["ALL", "PENDING", "IN_PROGRESS", "COMPLETED"] as const).map((filter) => (
+            {/* Filter Pills & Expand/Collapse All Button */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+                {(["ALL", "PENDING", "IN_PROGRESS", "COMPLETED"] as const).map((filter) => (
+                  <button
+                    key={filter}
+                    onClick={() => setTaskFilter(filter)}
+                    className={`px-2.5 py-1 rounded-lg transition-all ${
+                      taskFilter === filter
+                        ? "bg-white text-indigo-700 shadow-sm"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    {filter === "ALL"
+                      ? `All (${currentTeam.myTasks.length})`
+                      : filter === "PENDING"
+                      ? `Pending (${currentTeam.myTasks.filter((t) => t.status === "PENDING").length})`
+                      : filter === "IN_PROGRESS"
+                      ? `Active (${currentTeam.myTasks.filter((t) => t.status === "IN_PROGRESS").length})`
+                      : `Done (${currentTeam.myTasks.filter((t) => t.status === "COMPLETED").length})`}
+                  </button>
+                ))}
+              </div>
+
+              {myFilteredTasks.length > 0 && (
                 <button
-                  key={filter}
-                  onClick={() => setTaskFilter(filter)}
-                  className={`px-2.5 py-1 rounded-lg transition-all ${
-                    taskFilter === filter
-                      ? "bg-white text-indigo-700 shadow-sm"
-                      : "text-slate-600 hover:text-slate-900"
-                  }`}
+                  type="button"
+                  onClick={toggleExpandAll}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-indigo-600 bg-white border border-slate-200 hover:border-indigo-200 transition-colors shadow-sm"
+                  title={allExpanded ? "Minimize all task descriptions" : "Expand all task descriptions"}
                 >
-                  {filter === "ALL"
-                    ? `All (${currentTeam.myTasks.length})`
-                    : filter === "PENDING"
-                    ? `Pending (${currentTeam.myTasks.filter((t) => t.status === "PENDING").length})`
-                    : filter === "IN_PROGRESS"
-                    ? `Active (${currentTeam.myTasks.filter((t) => t.status === "IN_PROGRESS").length})`
-                    : `Done (${currentTeam.myTasks.filter((t) => t.status === "COMPLETED").length})`}
+                  <ChevronsUpDown className="h-3.5 w-3.5 text-slate-400" />
+                  <span>{allExpanded ? "Minimize All" : "Expand All"}</span>
                 </button>
-              ))}
+              )}
             </div>
           </div>
 
@@ -350,23 +388,44 @@ export function StudentTeamView({ session }: { session: any }) {
                   new Date(task.dueDate).getTime() < Date.now() &&
                   task.status !== "COMPLETED";
 
+                const isExpanded = Boolean(expandedTaskIds[task.id]);
+                const isLongDescription = Boolean(
+                  task.description && (task.description.length > 120 || task.description.includes("\n"))
+                );
+
                 return (
                   <div
                     key={task.id}
                     className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:shadow transition-shadow space-y-3"
                   >
                     <div className="flex items-start justify-between gap-4">
-                      <div className="space-y-1.5 flex-1">
+                      <div className="space-y-2 flex-1 min-w-0">
+                        {/* Title & Status Row */}
                         <div className="flex items-center gap-2 flex-wrap">
+                          <button
+                            type="button"
+                            onClick={() => toggleTaskExpand(task.id)}
+                            title={isExpanded ? "Minimize details" : "Expand details"}
+                            className="p-1 -ml-1 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition-colors"
+                          >
+                            {isExpanded ? (
+                              <ChevronUp className="h-4 w-4" />
+                            ) : (
+                              <ChevronDown className="h-4 w-4" />
+                            )}
+                          </button>
+
                           <h5
-                            className={`text-base font-semibold ${
+                            onClick={() => toggleTaskExpand(task.id)}
+                            className={`text-base font-semibold cursor-pointer transition-colors ${
                               task.status === "COMPLETED"
-                                ? "line-through text-slate-400"
-                                : "text-slate-900"
+                                ? "line-through text-slate-400 hover:text-slate-600"
+                                : "text-slate-900 hover:text-indigo-600"
                             }`}
                           >
                             {task.title}
                           </h5>
+
                           <span
                             className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusBadge(
                               task.status
@@ -377,12 +436,47 @@ export function StudentTeamView({ session }: { session: any }) {
                           </span>
                         </div>
 
+                        {/* Collapsible / Expandable Task Description */}
                         {task.description && (
-                          <p className="text-xs text-slate-600 leading-relaxed">
-                            {task.description}
-                          </p>
+                          <div>
+                            {!isExpanded ? (
+                              <div className="space-y-1">
+                                <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                                  {task.description}
+                                </p>
+                                {isLongDescription && (
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleTaskExpand(task.id)}
+                                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 transition-colors pt-0.5"
+                                  >
+                                    <span>Read full description</span>
+                                    <ChevronDown className="h-3 w-3" />
+                                  </button>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-200/60 space-y-2">
+                                <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                                  <span>Task Requirements & Instructions</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleTaskExpand(task.id)}
+                                    className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-800 text-[11px] font-medium transition-colors"
+                                  >
+                                    <span>Minimize</span>
+                                    <ChevronUp className="h-3 w-3" />
+                                  </button>
+                                </div>
+                                <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">
+                                  {task.description}
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         )}
 
+                        {/* Meta: Due Date & Reference Link */}
                         <div className="flex items-center gap-3 pt-1 flex-wrap text-xs">
                           {task.dueDate && (
                             <span

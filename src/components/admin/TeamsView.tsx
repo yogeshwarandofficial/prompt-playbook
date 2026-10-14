@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   Plus, Trash2, X, Users, CheckCircle2, Clock, AlertCircle,
-  ChevronDown, ChevronRight, UserPlus, ClipboardList, Save,
+  ChevronDown, ChevronUp, ChevronRight, UserPlus, ClipboardList, Save,
   Edit, Loader2, ExternalLink, FileText, BarChart3, CheckSquare
 } from "lucide-react";
 
@@ -808,12 +808,14 @@ function TaskRow({
 }: {
   task: TeamTask; onCycle: () => void; onEdit: () => void; onDelete: () => void; onViewSubmission: () => void;
 }) {
+  const [expanded, setExpanded] = useState(false);
   const hasSubmission = Boolean(task.submissionUrl || task.submissionContent);
+  const isLongDescription = Boolean(task.description && (task.description.length > 120 || task.description.includes("\n")));
 
   return (
     <div className="bg-white rounded-xl border border-slate-200/90 p-3.5 shadow-sm space-y-2.5 hover:border-slate-300 transition-colors">
       <div className="flex items-start justify-between gap-3">
-        <div className="space-y-1 min-w-0 flex-1">
+        <div className="space-y-1.5 min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={onCycle}
@@ -826,7 +828,35 @@ function TaskRow({
             <h5 className="text-sm font-semibold text-slate-800">{task.title}</h5>
           </div>
           {task.description && (
-            <p className="text-xs text-slate-500 leading-relaxed">{task.description}</p>
+            <div>
+              {!expanded ? (
+                <div className="space-y-1">
+                  <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">{task.description}</p>
+                  {isLongDescription && (
+                    <button
+                      type="button"
+                      onClick={() => setExpanded(true)}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+                    >
+                      <span>Show full description</span>
+                      <ChevronDown className="h-3 w-3" />
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200/60 space-y-1.5 mt-1">
+                  <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">{task.description}</p>
+                  <button
+                    type="button"
+                    onClick={() => setExpanded(false)}
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-slate-700 transition-colors"
+                  >
+                    <span>Minimize</span>
+                    <ChevronUp className="h-3 w-3" />
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
