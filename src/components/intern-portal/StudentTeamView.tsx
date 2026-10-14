@@ -110,6 +110,7 @@ export function StudentTeamView({ session }: { session: any }) {
   const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null);
   const [taskFilter, setTaskFilter] = useState<"ALL" | "PENDING" | "IN_PROGRESS" | "COMPLETED">("ALL");
   const [expandedTaskIds, setExpandedTaskIds] = useState<Record<string, boolean>>({});
+  const [expandedSubmissions, setExpandedSubmissions] = useState<Record<string, boolean>>({});
 
   const fetchTeams = useCallback(async () => {
     try {
@@ -201,6 +202,13 @@ export function StudentTeamView({ session }: { session: any }) {
     }));
   };
 
+  const toggleSubmissionExpand = (taskId: string) => {
+    setExpandedSubmissions((prev) => ({
+      ...prev,
+      [taskId]: !prev[taskId],
+    }));
+  };
+
   const allExpanded =
     myFilteredTasks.length > 0 &&
     myFilteredTasks.every((t) => expandedTaskIds[t.id]);
@@ -208,10 +216,13 @@ export function StudentTeamView({ session }: { session: any }) {
   const toggleExpandAll = () => {
     const nextState = !allExpanded;
     const newMap: Record<string, boolean> = {};
+    const newSubMap: Record<string, boolean> = {};
     myFilteredTasks.forEach((t) => {
       newMap[t.id] = nextState;
+      newSubMap[t.id] = nextState;
     });
     setExpandedTaskIds(newMap);
+    setExpandedSubmissions(newSubMap);
   };
 
   return (
@@ -544,42 +555,105 @@ export function StudentTeamView({ session }: { session: any }) {
                     </div>
 
                     {/* Student Submission Card when Task is Completed or has Submission Details */}
-                    {(task.submissionUrl || task.submissionContent) && (
-                      <div className="mt-2 p-3 bg-emerald-50/60 rounded-xl border border-emerald-100 space-y-1.5">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="font-semibold text-emerald-800 flex items-center gap-1.5">
-                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                            Your Submitted Deliverable
-                          </span>
-                          {task.submittedAt && (
-                            <span className="text-[11px] text-emerald-700">
-                              Submitted: {new Date(task.submittedAt).toLocaleDateString()}
+                    {(task.submissionUrl || task.submissionContent) && (() => {
+                      const isSubExpanded = Boolean(expandedSubmissions[task.id]);
+                      const isSubLong = Boolean(
+                        task.submissionContent &&
+                          (task.submissionContent.length > 120 || task.submissionContent.includes("\n"))
+                      );
+
+                      return (
+                        <div className="mt-2 p-3 bg-emerald-50/60 rounded-xl border border-emerald-100 space-y-2">
+                          <div
+                            className="flex items-center justify-between text-xs cursor-pointer select-none"
+                            onClick={() => toggleSubmissionExpand(task.id)}
+                          >
+                            <span className="font-semibold text-emerald-800 flex items-center gap-1.5">
+                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                              Your Submitted Deliverable
                             </span>
+                            <div className="flex items-center gap-2">
+                              {task.submittedAt && (
+                                <span className="text-[11px] text-emerald-700">
+                                  Submitted: {new Date(task.submittedAt).toLocaleDateString()}
+                                </span>
+                              )}
+                              {task.submissionContent && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleSubmissionExpand(task.id);
+                                  }}
+                                  className="p-0.5 text-emerald-700 hover:text-emerald-950 rounded hover:bg-emerald-100/60 transition-colors"
+                                  title={isSubExpanded ? "Minimize submission details" : "Expand submission details"}
+                                >
+                                  {isSubExpanded ? (
+                                    <ChevronUp className="h-3.5 w-3.5" />
+                                  ) : (
+                                    <ChevronDown className="h-3.5 w-3.5" />
+                                  )}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          {task.submissionUrl && (
+                            <div className="pt-0.5">
+                              <a
+                                href={task.submissionUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 hover:text-emerald-950 bg-emerald-100/70 hover:bg-emerald-200/70 px-2.5 py-1 rounded-lg transition-colors break-all"
+                              >
+                                <GithubIcon className="h-3.5 w-3.5 shrink-0" />
+                                <span>{task.submissionUrl}</span>
+                                <ExternalLink className="h-3 w-3 shrink-0" />
+                              </a>
+                            </div>
+                          )}
+
+                          {task.submissionContent && (
+                            <div>
+                              {!isSubExpanded ? (
+                                <div className="space-y-1">
+                                  <p className="text-xs text-slate-700 bg-white/70 p-2.5 rounded-lg border border-emerald-100/60 leading-relaxed line-clamp-2">
+                                    {task.submissionContent}
+                                  </p>
+                                  {isSubLong && (
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleSubmissionExpand(task.id)}
+                                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 hover:text-emerald-950 transition-colors pt-0.5"
+                                    >
+                                      <span>Read full submission notes</span>
+                                      <ChevronDown className="h-3 w-3" />
+                                    </button>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="bg-white/80 p-3 rounded-lg border border-emerald-100/70 space-y-2">
+                                  <div className="flex items-center justify-between text-[11px] font-semibold text-emerald-700 uppercase tracking-wider">
+                                    <span>Submitted Notes & Documentation</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleSubmissionExpand(task.id)}
+                                      className="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-900 text-[11px] font-medium transition-colors"
+                                    >
+                                      <span>Minimize</span>
+                                      <ChevronUp className="h-3 w-3" />
+                                    </button>
+                                  </div>
+                                  <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">
+                                    {task.submissionContent}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
                           )}
                         </div>
-
-                        {task.submissionUrl && (
-                          <div className="pt-0.5">
-                            <a
-                              href={task.submissionUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 hover:text-emerald-950 bg-emerald-100/70 hover:bg-emerald-200/70 px-2.5 py-1 rounded-lg transition-colors break-all"
-                            >
-                              <GithubIcon className="h-3.5 w-3.5 shrink-0" />
-                              <span>{task.submissionUrl}</span>
-                              <ExternalLink className="h-3 w-3 shrink-0" />
-                            </a>
-                          </div>
-                        )}
-
-                        {task.submissionContent && (
-                          <p className="text-xs text-slate-700 bg-white/70 p-2 rounded-lg border border-emerald-100/60 leading-relaxed whitespace-pre-wrap">
-                            {task.submissionContent}
-                          </p>
-                        )}
-                      </div>
-                    )}
+                      );
+                    })()}
                   </div>
                 );
               })}
