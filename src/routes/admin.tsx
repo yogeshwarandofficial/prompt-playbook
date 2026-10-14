@@ -23,7 +23,7 @@ import {
   Briefcase,
   ClipboardList,
   Plus, Edit, ListChecks, UserCheck, ChevronUp, ChevronDown, Trash2, Eye, ArrowLeft, ExternalLink, MessageSquare, Check, XCircle,
-  Target, Map, Bell, Share2, Sparkles, RefreshCw
+  Target, Map, Bell, Share2, Sparkles, RefreshCw, Search, ChevronLeft
 } from "lucide-react";
 import { createSeoHead } from "@/lib/seo";
 
@@ -513,6 +513,13 @@ function StudentsView() {
   const [addCourseLoading, setAddCourseLoading] = useState(false);
   const [addCourseError, setAddCourseError] = useState("");
 
+  // Search, Filter & Pagination states for scaling to 50+ students
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"ALL" | "ACTIVE" | "INACTIVE">("ALL");
+  const [courseFilter, setCourseFilter] = useState("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
+
   const fetchStudents = async () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
@@ -750,134 +757,274 @@ function StudentsView() {
       </div>
 
       {/* Student List */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-slate-100 p-2 rounded-lg">
-              <Users className="h-5 w-5 text-slate-600" />
+      {(() => {
+        const filteredStudents = students.filter((s) => {
+          const q = searchQuery.toLowerCase().trim();
+          const matchesSearch =
+            !q ||
+            s.name?.toLowerCase().includes(q) ||
+            s.studentId?.toLowerCase().includes(q) ||
+            s.email?.toLowerCase().includes(q);
+
+          const matchesStatus =
+            statusFilter === "ALL" ||
+            (statusFilter === "ACTIVE" && s.isActive) ||
+            (statusFilter === "INACTIVE" && !s.isActive);
+
+          const matchesCourse =
+            courseFilter === "ALL" ||
+            (s.courses && s.courses.some((sc: any) => sc.course?.id === courseFilter || sc.course?.key === courseFilter));
+
+          return matchesSearch && matchesStatus && matchesCourse;
+        });
+
+        const totalPages = Math.ceil(filteredStudents.length / pageSize) || 1;
+        const validCurrentPage = Math.min(currentPage, totalPages);
+        const paginatedStudents = filteredStudents.slice((validCurrentPage - 1) * pageSize, validCurrentPage * pageSize);
+
+        return (
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="bg-slate-100 p-2 rounded-lg">
+                  <Users className="h-5 w-5 text-slate-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Student Roster</h3>
+                  <p className="text-xs text-slate-500">Easily search and manage 50+ enrolled students</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center rounded-md bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/20 px-2.5 py-1 text-xs font-bold">
+                  {filteredStudents.length} of {students.length} Students
+                </span>
+              </div>
             </div>
-            <h3 className="text-lg font-semibold text-slate-900">Student Roster</h3>
-          </div>
-          <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600">
-            {students.length} Total
-          </span>
-        </div>
-        
-        <div className="overflow-x-auto">
-          {loading ? (
-            <div className="p-8 text-center text-slate-500">Loading students...</div>
-          ) : students.length === 0 ? (
-            <div className="p-8 text-center text-slate-500">No students found.</div>
-          ) : (
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th scope="col" className="py-3.5 pl-6 pr-3 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
-                    Student ID
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
-                    Courses
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
-                    Created
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 bg-white">
-                {students.map((student) => (
-                  <tr key={student.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-slate-900">
-                      <span className="bg-slate-100 px-2 py-1 rounded text-slate-700 font-mono text-xs border border-slate-200">
-                        {student.studentId}
-                      </span>
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-900">
-                      {student.name}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500">
-                      {student.email}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm">
-                      {student.isActive ? (
-                        <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
-                          Active
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">
-                          Inactive
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-3 py-4 text-sm text-slate-500">
-                      {student.courses && student.courses.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {student.courses.map((sc: any) => (
-                            <span key={sc.course.id} className="bg-slate-100 text-slate-700 text-[10px] font-semibold px-2 py-0.5 rounded border border-slate-200 uppercase">
-                              {sc.course.key}
+
+            {/* Filter & Search Bar */}
+            <div className="p-4 border-b border-slate-100 bg-white flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              {/* Search input */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  placeholder="Search by name, student ID, or email..."
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none"
+                />
+              </div>
+
+              {/* Status Filter */}
+              <div className="flex items-center gap-2">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value as any);
+                    setCurrentPage(1);
+                  }}
+                  className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none"
+                >
+                  <option value="ALL">All Status</option>
+                  <option value="ACTIVE">Active Only</option>
+                  <option value="INACTIVE">Inactive Only</option>
+                </select>
+
+                {/* Course Filter */}
+                <select
+                  value={courseFilter}
+                  onChange={(e) => {
+                    setCourseFilter(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none max-w-[160px] truncate"
+                >
+                  <option value="ALL">All Courses</option>
+                  {availableCourses.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Page Size */}
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="px-2.5 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none"
+                >
+                  <option value={15}>15 / page</option>
+                  <option value={25}>25 / page</option>
+                  <option value={50}>50 / page</option>
+                  <option value={100}>100 / page</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="overflow-x-auto">
+              {loading ? (
+                <div className="p-8 text-center text-slate-500">Loading students...</div>
+              ) : filteredStudents.length === 0 ? (
+                <div className="p-8 text-center text-slate-500">
+                  {searchQuery || statusFilter !== "ALL" || courseFilter !== "ALL"
+                    ? "No students match your filter criteria."
+                    : "No students found."}
+                </div>
+              ) : (
+                <table className="min-w-full divide-y divide-slate-200">
+                  <thead className="bg-slate-50">
+                    <tr>
+                      <th scope="col" className="py-3.5 pl-6 pr-3 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
+                        Student ID
+                      </th>
+                      <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
+                        Name
+                      </th>
+                      <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
+                        Email
+                      </th>
+                      <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
+                        Courses
+                      </th>
+                      <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
+                        Created
+                      </th>
+                      <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200 bg-white">
+                    {paginatedStudents.map((student) => (
+                      <tr key={student.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-slate-900">
+                          <span className="bg-slate-100 px-2 py-1 rounded text-slate-700 font-mono text-xs border border-slate-200 font-bold">
+                            {student.studentId}
+                          </span>
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm font-semibold text-slate-900">
+                          {student.name}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500 font-mono text-xs">
+                          {student.email}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm">
+                          {student.isActive ? (
+                            <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20 font-bold">
+                              Active
                             </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-slate-400 italic text-xs">None</span>
-                      )}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500">
-                      {new Date(student.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm flex gap-2">
-                      <button
-                        onClick={() => { setAddCourseFor(student); setAddCourseId(""); setAddCourseError(""); }}
-                        className="inline-flex items-center gap-1 text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg font-medium hover:bg-indigo-100 transition-colors"
-                      >
-                        <Plus className="h-3 w-3" /> Add Course
-                      </button>
-                      <button
-                        onClick={async () => {
-                          try {
-                            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-                            const res = await fetch(`${API_URL}/api/admin/students/${student.id}/access`, {
-                              method: 'PATCH',
-                              headers: { 'Content-Type': 'application/json' },
-                              credentials: 'include',
-                              body: JSON.stringify({ enabled: !student.isActive }),
-                            });
-                            if (!res.ok) throw new Error('Failed to update access');
-                            fetchStudents();
-                          } catch(err) {
-                            alert('Failed to update student access');
-                          }
-                        }}
-                        className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg font-medium transition-colors ${student.isActive ? 'bg-red-50 text-red-700 hover:bg-red-100' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'}`}
-                      >
-                        {student.isActive ? 'Revoke Access' : 'Restore Access'}
-                      </button>
-                      <button
-                        onClick={() => handleDeleteStudent(student.id)}
-                        className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg font-medium transition-colors bg-red-100 text-red-700 hover:bg-red-200"
-                        title="Permanently Delete Student"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      </div>
+                          ) : (
+                            <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20 font-bold">
+                              Inactive
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-3 py-4 text-sm text-slate-500">
+                          {student.courses && student.courses.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {student.courses.map((sc: any) => (
+                                <span key={sc.course.id} className="bg-slate-100 text-slate-700 text-[10px] font-semibold px-2 py-0.5 rounded border border-slate-200 uppercase">
+                                  {sc.course.key}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-slate-400 italic text-xs">None</span>
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500">
+                          {new Date(student.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm flex gap-2">
+                          <button
+                            onClick={() => { setAddCourseFor(student); setAddCourseId(""); setAddCourseError(""); }}
+                            className="inline-flex items-center gap-1 text-xs bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg font-bold hover:bg-indigo-100 transition-colors"
+                          >
+                            <Plus className="h-3 w-3" /> Course
+                          </button>
+                          <button
+                            onClick={async () => {
+                              try {
+                                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+                                const res = await fetch(`${API_URL}/api/admin/students/${student.id}/access`, {
+                                  method: 'PATCH',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  credentials: 'include',
+                                  body: JSON.stringify({ enabled: !student.isActive }),
+                                });
+                                if (!res.ok) throw new Error('Failed to update access');
+                                fetchStudents();
+                              } catch(err) {
+                                alert('Failed to update student access');
+                              }
+                            }}
+                            className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg font-bold transition-colors ${student.isActive ? 'bg-red-50 text-red-700 hover:bg-red-100' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'}`}
+                          >
+                            {student.isActive ? 'Revoke' : 'Restore'}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteStudent(student.id)}
+                            className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg font-medium transition-colors bg-red-100 text-red-700 hover:bg-red-200"
+                            title="Permanently Delete Student"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            {/* Pagination Controls */}
+            {filteredStudents.length > 0 && (
+              <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
+                <div>
+                  Showing <span className="font-bold text-slate-900">{(validCurrentPage - 1) * pageSize + 1}</span> to{" "}
+                  <span className="font-bold text-slate-900">
+                    {Math.min(validCurrentPage * pageSize, filteredStudents.length)}
+                  </span>{" "}
+                  of <span className="font-bold text-slate-900">{filteredStudents.length}</span> students
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={validCurrentPage <= 1}
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" /> Previous
+                  </button>
+
+                  <span className="px-2 font-bold text-slate-700">
+                    Page {validCurrentPage} of {totalPages}
+                  </span>
+
+                  <button
+                    type="button"
+                    disabled={validCurrentPage >= totalPages}
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs"
+                  >
+                    Next <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Add Course Modal */}
       {addCourseFor && (

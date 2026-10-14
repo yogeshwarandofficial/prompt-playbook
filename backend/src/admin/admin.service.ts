@@ -98,27 +98,34 @@ export class AdminService {
   }
 
   async getStudents() {
-    const students = await this.prisma.user.findMany({
+    return this.prisma.user.findMany({
       where: {
         role: 'STUDENT',
         isActive: true, // L-7: exclude soft-deleted students
       },
-      include: {
+      select: {
+        id: true,
+        studentId: true,
+        name: true,
+        email: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
         courses: {
-          include: {
-            course: true,
+          select: {
+            course: {
+              select: {
+                id: true,
+                key: true,
+                name: true,
+              },
+            },
           },
         },
       },
       orderBy: {
         createdAt: 'desc',
       },
-    });
-
-    // Strip passwordHash
-    return students.map((student) => {
-      const { passwordHash: _, ...safeStudent } = student;
-      return safeStudent;
     });
   }
 

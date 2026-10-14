@@ -52,8 +52,14 @@ export class PrismaService
       `);
       await this.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "EventCertificate_certificateNo_key" ON "EventCertificate"("certificateNo");`);
       await this.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "EventCertificate_verificationToken_key" ON "EventCertificate"("verificationToken");`);
+      // Ensure high-performance indexes exist for 50+ students scale
+      await this.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "User_role_isActive_idx" ON "User"("role", "isActive");`);
+      await this.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "User_studentId_idx" ON "User"("studentId");`);
+      await this.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "User_createdAt_idx" ON "User"("createdAt");`);
+      await this.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "StudentCourse_studentId_idx" ON "StudentCourse"("studentId");`);
+      await this.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "TeamMember_studentId_idx" ON "TeamMember"("studentId");`);
     } catch (err) {
-      this.logger.error('Failed to auto-create EventCertificate table', err);
+      this.logger.error('Failed to auto-create schema optimizations/indexes', err);
     }
     
     this.logger.log('Prisma connected to Aiven PostgreSQL');
