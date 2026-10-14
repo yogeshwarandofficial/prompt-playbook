@@ -139,19 +139,70 @@ export class AdminService {
       throw new NotFoundException('Student not found');
     }
 
-    // L-7: Soft-delete — deactivate instead of hard-delete so all historical
-    // data (submissions, reviews, certificates) is preserved for audit purposes.
-    // isActive=false also immediately blocks their login via AuthService.
-    return this.prisma.user.update({
-      where: { id: studentId },
-      data: { isActive: false },
-      select: {
-        id: true,
-        studentId: true,
-        name: true,
-        email: true,
-        isActive: true,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Delete associated StudentCourse records
+      await tx.studentCourse.deleteMany({ where: { studentId } });
+
+      // 2. Delete StudentProjectPhase and Submissions
+      const studentProjects = await tx.studentProject.findMany({
+        where: { studentId },
+        select: { id: true },
+      });
+      for (const sp of studentProjects) {
+        await tx.submission.deleteMany({
+          where: { studentProjectPhase: { studentProjectId: sp.id } },
+        });
+        await tx.studentProjectPhase.deleteMany({
+          where: { studentProjectId: sp.id },
+        });
+      }
+      await tx.studentProject.deleteMany({ where: { studentId } });
+
+      // 3. Delete TeamMember and TeamTasks
+      await tx.teamTask.deleteMany({
+        where: { teamMember: { studentId } },
+      });
+      await tx.teamMember.deleteMany({ where: { studentId } });
+
+      // 4. Delete Certificates
+      await tx.certificate.deleteMany({ where: { studentId } });
+
+      // 5. Delete Curriculum Enrollments and progress
+      const enrollments =
+        (await (tx as any).studentCurriculumEnrollment?.findMany({
+          where: { studentId },
+          select: { id: true },
+        })) || [];
+      for (const en of enrollments) {
+        await (tx as any).studentTask?.deleteMany({
+          where: { progress: { enrollmentId: en.id } },
+        });
+        await (tx as any).studentPhaseProgress?.deleteMany({
+          where: { enrollmentId: en.id },
+        });
+      }
+      if ((tx as any).studentCurriculumEnrollment) {
+        await (tx as any).studentCurriculumEnrollment.deleteMany({
+          where: { studentId },
+        });
+      }
+
+      // 6. Delete reviews given
+      await tx.review.deleteMany({ where: { reviewerId: studentId } });
+
+      // 7. Delete Notification records
+      await tx.notification.deleteMany({ where: { userId: studentId } });
+
+      // 8. Permanently delete User from database
+      return tx.user.delete({
+        where: { id: studentId },
+        select: {
+          id: true,
+          studentId: true,
+          name: true,
+          email: true,
+        },
+      });
     });
   }
 
