@@ -15,7 +15,9 @@ import {
   X,
   ExternalLink,
   Send,
-  FileText
+  FileText,
+  ArrowUpRight,
+  Sparkles
 } from "lucide-react";
 
 const API_URL = (import.meta as any).env?.VITE_API_URL || "http://localhost:3001";
@@ -80,23 +82,23 @@ interface Team {
 function statusBadge(status: string) {
   switch (status) {
     case "COMPLETED":
-      return "bg-emerald-100 text-emerald-700 border-emerald-200";
+      return "bg-[#D4F63C] text-[#111317] border border-[#c5e830] font-black";
     case "IN_PROGRESS":
-      return "bg-blue-100 text-blue-700 border-blue-200";
+      return "bg-[#111317] text-[#D4F63C] border border-[#111317] font-bold";
     case "PENDING":
-      return "bg-amber-100 text-amber-700 border-amber-200";
+      return "bg-[#F1F9D4] text-[#222E03] border border-[#D4F63C]/80 font-bold";
     case "CANCELLED":
-      return "bg-slate-100 text-slate-500 border-slate-200";
+      return "bg-slate-100 text-slate-500 border border-slate-200 font-medium";
     default:
-      return "bg-slate-100 text-slate-600 border-slate-200";
+      return "bg-slate-100 text-slate-600 border border-slate-200 font-medium";
   }
 }
 
 function statusIcon(status: string) {
-  if (status === "COMPLETED") return <CheckCircle2 className="h-4 w-4 text-emerald-600" />;
-  if (status === "IN_PROGRESS") return <Clock className="h-4 w-4 text-blue-600" />;
-  if (status === "CANCELLED") return <AlertCircle className="h-4 w-4 text-slate-400" />;
-  return <Clock className="h-4 w-4 text-amber-600" />;
+  if (status === "COMPLETED") return <CheckCircle2 className="h-3.5 w-3.5 text-[#111317]" />;
+  if (status === "IN_PROGRESS") return <Clock className="h-3.5 w-3.5 text-[#D4F63C]" />;
+  if (status === "CANCELLED") return <AlertCircle className="h-3.5 w-3.5 text-slate-400" />;
+  return <Clock className="h-3.5 w-3.5 text-[#222E03]" />;
 }
 
 export function StudentTeamView({ session }: { session: any }) {
@@ -176,11 +178,11 @@ export function StudentTeamView({ session }: { session: any }) {
           </p>
         </div>
 
-        <div className="overflow-hidden rounded-2xl bg-white border border-slate-200/80 p-12 text-center shadow-sm">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 ring-8 ring-indigo-50/50 mb-6">
+        <div className="overflow-hidden rounded-[28px] bg-white border border-slate-200/80 p-12 text-center shadow-sm">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#F1F9D4] text-[#111317] border border-[#D4F63C] mb-6">
             <Users className="h-8 w-8" />
           </div>
-          <h4 className="text-xl font-bold text-slate-900">No Team Assigned Yet</h4>
+          <h4 className="text-xl font-bold text-[#111317]">No Team Assigned Yet</h4>
           <p className="mt-2 text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
             You haven't been assigned to a team yet. Your mentor or administrator will assign you to your project team and provide your tasks shortly.
           </p>
@@ -228,605 +230,710 @@ export function StudentTeamView({ session }: { session: any }) {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header & Team Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-7">
+      {/* Top Header & Breadcrumbs / Team Switcher */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-3">
-            <h3 className="text-2xl font-bold text-slate-900">{currentTeam.name}</h3>
-            <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                currentTeam.isActive ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-600"
-              }`}
-            >
-              {currentTeam.isActive ? "Active Team" : "Inactive"}
+          {/* Breadcrumb pill tags */}
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-[#F1F9D4] text-[#1F2E05] border border-[#D4F63C]/80">
+              <Sparkles className="h-3 w-3 text-[#111317]" />
+              Team Workspace
+            </span>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-white border border-slate-200 text-slate-600">
+              Active Sprint
             </span>
           </div>
+
+          <div className="flex items-center gap-3 flex-wrap">
+            <h2 className="text-3xl font-extrabold tracking-tight text-[#111317]">
+              {currentTeam.name}
+            </h2>
+            <span
+              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
+                currentTeam.isActive
+                  ? "bg-[#D4F63C] text-[#111317] border border-[#CEF23F]"
+                  : "bg-slate-100 text-slate-600 border border-slate-200"
+              }`}
+            >
+              {currentTeam.isActive ? "● Active Team" : "Inactive"}
+            </span>
+          </div>
+
           {currentTeam.description && (
-            <p className="text-sm text-slate-500 mt-1 max-w-2xl">{currentTeam.description}</p>
+            <p className="text-sm text-slate-500 mt-1 max-w-2xl leading-relaxed">
+              {currentTeam.description}
+            </p>
           )}
         </div>
 
-        {teams.length > 1 && (
-          <div className="flex items-center gap-2">
-            <label className="text-xs font-semibold text-slate-500">Switch Team:</label>
-            <select
-              value={currentTeam.id}
-              onChange={(e) => setSelectedTeamId(e.target.value)}
-              className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm focus:border-indigo-500 focus:outline-none"
-            >
-              {teams.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+        {/* Action Controls / Team Switcher */}
+        <div className="flex items-center gap-3">
+          {teams.length > 1 && (
+            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
+              <span className="text-xs font-bold text-slate-500 pl-1">Team:</span>
+              <select
+                value={currentTeam.id}
+                onChange={(e) => setSelectedTeamId(e.target.value)}
+                className="bg-transparent text-xs font-bold text-[#111317] focus:outline-none cursor-pointer pr-2"
+              >
+                {teams.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={fetchTeams}
+            title="Refresh team data"
+            className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-[#111317] hover:text-[#D4F63C] hover:border-[#111317] transition-all shadow-sm"
+          >
+            <ArrowUpRight className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
-      {/* Team Progress Overview Cards */}
+      {/* Bento Grid: 4 Modern Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Progress Bar Card */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        {/* Card 1: Team Progress */}
+        <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+          <div className="flex items-start justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Team Progress
             </span>
-            <span className="text-sm font-bold text-indigo-600">
+            <div className="w-8 h-8 rounded-full bg-[#F1F9D4] flex items-center justify-center text-[#111317]">
+              <ArrowUpRight className="h-4 w-4" />
+            </div>
+          </div>
+          <div className="my-3">
+            <div className="text-3xl font-black text-[#111317] tracking-tight">
               {currentTeam.progressPercentage}%
+            </div>
+            <div className="mt-3 w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-[#D4F63C] h-2 rounded-full transition-all duration-500"
+                style={{ width: `${currentTeam.progressPercentage}%` }}
+              />
+            </div>
+          </div>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-slate-400">Milestones Done</span>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F1F9D4] text-[#1F2E05]">
+              {currentTeam.completedTasks}/{currentTeam.totalTasks}
             </span>
           </div>
-          <div className="mt-3 w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-            <div
-              className="bg-indigo-600 h-2.5 rounded-full transition-all duration-500"
-              style={{ width: `${currentTeam.progressPercentage}%` }}
-            />
-          </div>
-          <p className="mt-3 text-xs text-slate-400">
-            {currentTeam.completedTasks} of {currentTeam.totalTasks} milestones completed
-          </p>
         </div>
 
-        {/* Members Count */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
-            <Users className="h-6 w-6" />
+        {/* Card 2: Teammates */}
+        <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+          <div className="flex items-start justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              Teammates
+            </span>
+            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
+              <Users className="h-4 w-4" />
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Teammates</p>
-            <h4 className="text-2xl font-bold text-slate-900">{currentTeam.members.length}</h4>
-            <p className="text-xs text-slate-400">Collaborating</p>
+          <div className="my-2">
+            <div className="text-3xl font-black text-[#111317] tracking-tight">
+              {currentTeam.members.length}
+            </div>
+            <p className="text-xs text-slate-400 mt-1">Colleagues collaborating</p>
+          </div>
+          {/* Avatar stack matching reference design */}
+          <div className="flex items-center -space-x-2 pt-1">
+            {currentTeam.members.slice(0, 4).map((m, idx) => (
+              <div
+                key={m.id}
+                title={m.student.name}
+                className="h-8 w-8 rounded-full bg-[#111317] text-[#D4F63C] font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-sm"
+              >
+                {m.student.name.charAt(0).toUpperCase()}
+              </div>
+            ))}
+            {currentTeam.members.length > 4 && (
+              <div className="h-8 w-8 rounded-full bg-[#D4F63C] text-[#111317] font-extrabold text-[11px] flex items-center justify-center ring-2 ring-white shadow-sm">
+                +{currentTeam.members.length - 4}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* My Tasks Overview */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
-            <CheckSquare className="h-6 w-6" />
+        {/* Card 3: My Assigned Tasks */}
+        <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+          <div className="flex items-start justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              My Tasks
+            </span>
+            <div className="w-8 h-8 rounded-full bg-[#D4F63C] flex items-center justify-center text-[#111317]">
+              <CheckSquare className="h-4 w-4" />
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">My Tasks</p>
-            <h4 className="text-2xl font-bold text-slate-900">
+          <div className="my-2">
+            <div className="text-3xl font-black text-[#111317] tracking-tight">
               {currentTeam.myTasks.filter((t) => t.status === "COMPLETED").length}/
               {currentTeam.myTasks.length}
-            </h4>
-            <p className="text-xs text-slate-400">Completed by you</p>
+            </div>
+            <p className="text-xs text-slate-400 mt-1">Tasks completed by you</p>
+          </div>
+          <div className="flex items-center gap-1.5 pt-1">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#111317] text-[#D4F63C]">
+              {currentTeam.myTasks.filter((t) => t.status === "IN_PROGRESS").length} Active
+            </span>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F1F9D4] text-[#1F2E05]">
+              {currentTeam.myTasks.filter((t) => t.status === "PENDING").length} Pending
+            </span>
           </div>
         </div>
 
-        {/* In Progress */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
-            <Clock className="h-6 w-6" />
+        {/* Card 4: Team In-Progress Sprints */}
+        <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+          <div className="flex items-start justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              Active Sprints
+            </span>
+            <div className="w-8 h-8 rounded-full bg-[#111317] flex items-center justify-center text-[#D4F63C]">
+              <Clock className="h-4 w-4" />
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">In Progress</p>
-            <h4 className="text-2xl font-bold text-slate-900">{currentTeam.inProgressTasks}</h4>
-            <p className="text-xs text-slate-400">Active tasks across team</p>
+          <div className="my-2">
+            <div className="text-3xl font-black text-[#111317] tracking-tight">
+              {currentTeam.inProgressTasks}
+            </div>
+            <p className="text-xs text-slate-400 mt-1">In-flight across entire team</p>
+          </div>
+          <div className="flex items-center justify-between text-xs pt-1">
+            <span className="text-slate-400">Team Status</span>
+            <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-[#D4F63C] text-[#111317]">
+              Live
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Main Grid: My Assigned Tasks & Teammates' Progress */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column: My Assigned Tasks (7 Cols) */}
+      {/* Main Content Layout: Tasks Bento (7 Cols) & Teammates Bento (5 Cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
+        {/* Left Column: My Assigned Tasks */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
-            <div>
-              <h4 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <ClipboardList className="h-5 w-5 text-indigo-600" />
-                My Assigned Tasks
-              </h4>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Tasks assigned to you by administrators and mentors.
-              </p>
-            </div>
-
-            {/* Filter Pills & Expand/Collapse All Button */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
-                {(["ALL", "PENDING", "IN_PROGRESS", "COMPLETED"] as const).map((filter) => (
-                  <button
-                    key={filter}
-                    onClick={() => setTaskFilter(filter)}
-                    className={`px-2.5 py-1 rounded-lg transition-all ${
-                      taskFilter === filter
-                        ? "bg-white text-indigo-700 shadow-sm"
-                        : "text-slate-600 hover:text-slate-900"
-                    }`}
-                  >
-                    {filter === "ALL"
-                      ? `All (${currentTeam.myTasks.length})`
-                      : filter === "PENDING"
-                      ? `Pending (${currentTeam.myTasks.filter((t) => t.status === "PENDING").length})`
-                      : filter === "IN_PROGRESS"
-                      ? `Active (${currentTeam.myTasks.filter((t) => t.status === "IN_PROGRESS").length})`
-                      : `Done (${currentTeam.myTasks.filter((t) => t.status === "COMPLETED").length})`}
-                  </button>
-                ))}
+          <div className="rounded-[28px] bg-white border border-slate-200/80 p-6 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] space-y-5">
+            {/* Header & Filter Capsules */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-xl font-bold text-[#111317] flex items-center gap-2">
+                  <ClipboardList className="h-5 w-5 text-[#111317]" />
+                  My Assigned Tasks
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Tasks assigned to you by administrators and mentors.
+                </p>
               </div>
 
-              {myFilteredTasks.length > 0 && (
-                <button
-                  type="button"
-                  onClick={toggleExpandAll}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-indigo-600 bg-white border border-slate-200 hover:border-indigo-200 transition-colors shadow-sm"
-                  title={allExpanded ? "Minimize all task descriptions" : "Expand all task descriptions"}
-                >
-                  <ChevronsUpDown className="h-3.5 w-3.5 text-slate-400" />
-                  <span>{allExpanded ? "Minimize All" : "Expand All"}</span>
-                </button>
-              )}
-            </div>
-          </div>
+              {/* Capsule Filter Pills */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-full text-xs font-semibold">
+                  {(["ALL", "PENDING", "IN_PROGRESS", "COMPLETED"] as const).map((filter) => {
+                    const isActive = taskFilter === filter;
+                    return (
+                      <button
+                        key={filter}
+                        onClick={() => setTaskFilter(filter)}
+                        className={`px-3 py-1.5 rounded-full transition-all ${
+                          isActive
+                            ? "bg-[#111317] text-[#D4F63C] font-bold shadow-sm"
+                            : "text-slate-600 hover:text-slate-900"
+                        }`}
+                      >
+                        {filter === "ALL"
+                          ? `All (${currentTeam.myTasks.length})`
+                          : filter === "PENDING"
+                          ? `Pending (${currentTeam.myTasks.filter((t) => t.status === "PENDING").length})`
+                          : filter === "IN_PROGRESS"
+                          ? `Active (${currentTeam.myTasks.filter((t) => t.status === "IN_PROGRESS").length})`
+                          : `Done (${currentTeam.myTasks.filter((t) => t.status === "COMPLETED").length})`}
+                      </button>
+                    );
+                  })}
+                </div>
 
-          {/* Task Cards List */}
-          {myFilteredTasks.length === 0 ? (
-            <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white/60 p-8 text-center">
-              <CheckSquare className="mx-auto h-10 w-10 text-slate-300 mb-2" />
-              <h5 className="text-sm font-semibold text-slate-800">No tasks in this view</h5>
-              <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-                {taskFilter === "ALL"
-                  ? "You have no tasks assigned in this team yet. Your mentor or administrator will assign tasks to you."
-                  : `You don't have any tasks marked as ${taskFilter.toLowerCase().replace("_", " ")}.`}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {myFilteredTasks.map((task) => {
-                const isOverdue =
-                  task.dueDate &&
-                  new Date(task.dueDate).getTime() < Date.now() &&
-                  task.status !== "COMPLETED";
-
-                const isExpanded = Boolean(expandedTaskIds[task.id]);
-                const isLongDescription = Boolean(
-                  task.description && (task.description.length > 120 || task.description.includes("\n"))
-                );
-
-                return (
-                  <div
-                    key={task.id}
-                    className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:shadow transition-shadow space-y-3"
+                {myFilteredTasks.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={toggleExpandAll}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-700 hover:text-[#111317] bg-white border border-slate-200 hover:border-slate-300 transition-colors shadow-sm"
+                    title={allExpanded ? "Minimize all task descriptions" : "Expand all task descriptions"}
                   >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="space-y-2 flex-1 min-w-0">
-                        {/* Title & Status Row */}
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <button
-                            type="button"
-                            onClick={() => toggleTaskExpand(task.id)}
-                            title={isExpanded ? "Minimize details" : "Expand details"}
-                            className="p-1 -ml-1 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition-colors"
-                          >
-                            {isExpanded ? (
-                              <ChevronUp className="h-4 w-4" />
-                            ) : (
-                              <ChevronDown className="h-4 w-4" />
-                            )}
-                          </button>
+                    <ChevronsUpDown className="h-3.5 w-3.5 text-slate-400" />
+                    <span>{allExpanded ? "Minimize All" : "Expand All"}</span>
+                  </button>
+                )}
+              </div>
+            </div>
 
-                          <h5
-                            onClick={() => toggleTaskExpand(task.id)}
-                            className={`text-base font-semibold cursor-pointer transition-colors ${
-                              task.status === "COMPLETED"
-                                ? "line-through text-slate-400 hover:text-slate-600"
-                                : "text-slate-900 hover:text-indigo-600"
-                            }`}
-                          >
-                            {task.title}
-                          </h5>
+            {/* Task Cards List */}
+            {myFilteredTasks.length === 0 ? (
+              <div className="rounded-[22px] border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center">
+                <div className="w-12 h-12 rounded-full bg-[#F1F9D4] flex items-center justify-center text-[#111317] mx-auto mb-3">
+                  <CheckSquare className="h-6 w-6" />
+                </div>
+                <h5 className="text-sm font-bold text-[#111317]">No tasks in this view</h5>
+                <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                  {taskFilter === "ALL"
+                    ? "You have no tasks assigned in this team yet. Your mentor or administrator will assign tasks to you."
+                    : `You don't have any tasks marked as ${taskFilter.toLowerCase().replace("_", " ")}.`}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {myFilteredTasks.map((task) => {
+                  const isOverdue =
+                    task.dueDate &&
+                    new Date(task.dueDate).getTime() < Date.now() &&
+                    task.status !== "COMPLETED";
 
-                          <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusBadge(
-                              task.status
-                            )}`}
-                          >
-                            {statusIcon(task.status)}
-                            {task.status.replace("_", " ")}
-                          </span>
-                        </div>
+                  const isExpanded = Boolean(expandedTaskIds[task.id]);
+                  const isLongDescription = Boolean(
+                    task.description && (task.description.length > 120 || task.description.includes("\n"))
+                  );
 
-                        {/* Collapsible / Expandable Task Description */}
-                        {task.description && (
-                          <div>
-                            {!isExpanded ? (
-                              <div className="space-y-1">
-                                <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                                  {task.description}
-                                </p>
-                                {isLongDescription && (
-                                  <button
-                                    type="button"
-                                    onClick={() => toggleTaskExpand(task.id)}
-                                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 transition-colors pt-0.5"
-                                  >
-                                    <span>Read full description</span>
-                                    <ChevronDown className="h-3 w-3" />
-                                  </button>
-                                )}
-                              </div>
-                            ) : (
-                              <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-200/60 space-y-2">
-                                <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                                  <span>Task Requirements & Instructions</span>
-                                  <button
-                                    type="button"
-                                    onClick={() => toggleTaskExpand(task.id)}
-                                    className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-800 text-[11px] font-medium transition-colors"
-                                  >
-                                    <span>Minimize</span>
-                                    <ChevronUp className="h-3 w-3" />
-                                  </button>
-                                </div>
-                                <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">
-                                  {task.description}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        )}
+                  return (
+                    <div
+                      key={task.id}
+                      className="bg-slate-50/70 hover:bg-slate-50/90 rounded-[22px] border border-slate-200/90 p-5 shadow-sm transition-all space-y-3"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="space-y-2 flex-1 min-w-0">
+                          {/* Title & Status Row */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <button
+                              type="button"
+                              onClick={() => toggleTaskExpand(task.id)}
+                              title={isExpanded ? "Minimize details" : "Expand details"}
+                              className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-[#111317] hover:border-slate-300 transition-colors shadow-xs"
+                            >
+                              {isExpanded ? (
+                                <ChevronUp className="h-3.5 w-3.5" />
+                              ) : (
+                                <ChevronDown className="h-3.5 w-3.5" />
+                              )}
+                            </button>
 
-                        {/* Meta: Assigned Date, Due Date & Reference Link */}
-                        <div className="flex items-center gap-3 pt-1 flex-wrap text-xs">
-                          {task.createdAt && (
-                            <span className="inline-flex items-center gap-1 font-medium text-slate-500">
-                              <Calendar className="h-3.5 w-3.5 text-slate-400" />
-                              Assigned: {new Date(task.createdAt).toLocaleDateString()}
-                            </span>
-                          )}
-
-                          {task.dueDate && (
-                            <span
-                              className={`inline-flex items-center gap-1 font-medium ${
-                                isOverdue ? "text-red-600 font-bold" : "text-slate-500"
+                            <h4
+                              onClick={() => toggleTaskExpand(task.id)}
+                              className={`text-base font-bold cursor-pointer transition-colors ${
+                                task.status === "COMPLETED"
+                                  ? "line-through text-slate-400"
+                                  : "text-[#111317] hover:text-slate-700"
                               }`}
                             >
-                              <Clock className="h-3.5 w-3.5" />
-                              Due: {new Date(task.dueDate).toLocaleDateString()}
-                              {isOverdue && " (Overdue)"}
+                              {task.title}
+                            </h4>
+
+                            <span
+                              className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border ${statusBadge(
+                                task.status
+                              )}`}
+                            >
+                              {statusIcon(task.status)}
+                              {task.status.replace("_", " ")}
                             </span>
-                          )}
-
-                          {/* Admin Reference Link */}
-                          {task.taskUrl && (
-                            <a
-                              href={task.taskUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 font-semibold px-2 py-0.5 rounded-md transition-colors"
-                            >
-                              <ExternalLink className="h-3 w-3" />
-                              Assigned Spec / Link
-                            </a>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="shrink-0 flex items-center gap-2">
-                        {task.status === "PENDING" && (
-                          <>
-                            <button
-                              disabled={updatingTaskId === task.id}
-                              onClick={() => handleUpdateStatus(task.id, "IN_PROGRESS")}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-semibold transition-colors disabled:opacity-50"
-                            >
-                              {updatingTaskId === task.id ? (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                              ) : (
-                                <Clock className="h-3.5 w-3.5" />
-                              )}
-                              Start
-                            </button>
-                            <button
-                              onClick={() => setSubmittingTask(task)}
-                              className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-xs font-semibold transition-colors shadow-sm"
-                            >
-                              <Send className="h-3.5 w-3.5" />
-                              Submit
-                            </button>
-                          </>
-                        )}
-
-                        {task.status === "IN_PROGRESS" && (
-                          <button
-                            onClick={() => setSubmittingTask(task)}
-                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-semibold transition-colors shadow-sm"
-                          >
-                            <Send className="h-3.5 w-3.5" />
-                            Submit Work
-                          </button>
-                        )}
-
-                      </div>
-                    </div>
-
-                    {/* Student Submission Card when Task is Completed or has Submission Details */}
-                    {(task.submissionUrl || task.submissionContent) && (() => {
-                      const isSubExpanded = Boolean(expandedSubmissions[task.id]);
-                      const isSubLong = Boolean(
-                        task.submissionContent &&
-                          (task.submissionContent.length > 120 || task.submissionContent.includes("\n"))
-                      );
-
-                      return (
-                        <div className="mt-2 p-3 bg-emerald-50/60 rounded-xl border border-emerald-100 space-y-2">
-                          <div
-                            className="flex items-center justify-between text-xs cursor-pointer select-none"
-                            onClick={() => toggleSubmissionExpand(task.id)}
-                          >
-                            <span className="font-semibold text-emerald-800 flex items-center gap-1.5">
-                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                              Your Submitted Deliverable
-                            </span>
-                            <div className="flex items-center gap-2">
-                              {task.submittedAt && (
-                                <span className="text-[11px] text-emerald-700">
-                                  Submitted: {new Date(task.submittedAt).toLocaleDateString()}
-                                </span>
-                              )}
-                              {task.submissionContent && (
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleSubmissionExpand(task.id);
-                                  }}
-                                  className="p-0.5 text-emerald-700 hover:text-emerald-950 rounded hover:bg-emerald-100/60 transition-colors"
-                                  title={isSubExpanded ? "Minimize submission details" : "Expand submission details"}
-                                >
-                                  {isSubExpanded ? (
-                                    <ChevronUp className="h-3.5 w-3.5" />
-                                  ) : (
-                                    <ChevronDown className="h-3.5 w-3.5" />
-                                  )}
-                                </button>
-                              )}
-                            </div>
                           </div>
 
-                          {task.submissionUrl && (
-                            <div className="pt-0.5">
-                              <a
-                                href={task.submissionUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 hover:text-emerald-950 bg-emerald-100/70 hover:bg-emerald-200/70 px-2.5 py-1 rounded-lg transition-colors break-all"
-                              >
-                                <GithubIcon className="h-3.5 w-3.5 shrink-0" />
-                                <span>{task.submissionUrl}</span>
-                                <ExternalLink className="h-3 w-3 shrink-0" />
-                              </a>
-                            </div>
-                          )}
-
-                          {task.submissionContent && (
+                          {/* Collapsible / Expandable Task Description */}
+                          {task.description && (
                             <div>
-                              {!isSubExpanded ? (
+                              {!isExpanded ? (
                                 <div className="space-y-1">
-                                  <p className="text-xs text-slate-700 bg-white/70 p-2.5 rounded-lg border border-emerald-100/60 leading-relaxed line-clamp-2">
-                                    {task.submissionContent}
+                                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                                    {task.description}
                                   </p>
-                                  {isSubLong && (
+                                  {isLongDescription && (
                                     <button
                                       type="button"
-                                      onClick={() => toggleSubmissionExpand(task.id)}
-                                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 hover:text-emerald-950 transition-colors pt-0.5"
+                                      onClick={() => toggleTaskExpand(task.id)}
+                                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#111317] hover:underline pt-0.5"
                                     >
-                                      <span>Read full submission notes</span>
+                                      <span>Read full description</span>
                                       <ChevronDown className="h-3 w-3" />
                                     </button>
                                   )}
                                 </div>
                               ) : (
-                                <div className="bg-white/80 p-3 rounded-lg border border-emerald-100/70 space-y-2">
-                                  <div className="flex items-center justify-between text-[11px] font-semibold text-emerald-700 uppercase tracking-wider">
-                                    <span>Submitted Notes & Documentation</span>
+                                <div className="bg-white rounded-2xl p-4 border border-slate-200/80 space-y-2 shadow-xs">
+                                  <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                    <span>Task Requirements & Instructions</span>
                                     <button
                                       type="button"
-                                      onClick={() => toggleSubmissionExpand(task.id)}
-                                      className="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-900 text-[11px] font-medium transition-colors"
+                                      onClick={() => toggleTaskExpand(task.id)}
+                                      className="inline-flex items-center gap-1 text-slate-600 hover:text-[#111317] text-[11px] font-semibold transition-colors"
                                     >
                                       <span>Minimize</span>
                                       <ChevronUp className="h-3 w-3" />
                                     </button>
                                   </div>
                                   <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">
-                                    {task.submissionContent}
+                                    {task.description}
                                   </p>
                                 </div>
                               )}
                             </div>
                           )}
+
+                          {/* Meta: Assigned Date, Due Date & Reference Link */}
+                          <div className="flex items-center gap-2.5 pt-1 flex-wrap text-xs">
+                            {task.createdAt && (
+                              <span className="inline-flex items-center gap-1 font-semibold text-slate-500 bg-white px-2.5 py-1 rounded-full border border-slate-200">
+                                <Calendar className="h-3 w-3 text-slate-400" />
+                                Assigned: {new Date(task.createdAt).toLocaleDateString()}
+                              </span>
+                            )}
+
+                            {task.dueDate && (
+                              <span
+                                className={`inline-flex items-center gap-1 font-semibold px-2.5 py-1 rounded-full border ${
+                                  isOverdue
+                                    ? "bg-rose-50 text-rose-700 border-rose-200 font-bold"
+                                    : "bg-white text-slate-600 border-slate-200"
+                                }`}
+                              >
+                                <Clock className="h-3 w-3" />
+                                Due: {new Date(task.dueDate).toLocaleDateString()}
+                                {isOverdue && " (Overdue)"}
+                              </span>
+                            )}
+
+                            {/* Assigned Reference Spec */}
+                            {task.taskUrl && (
+                              <a
+                                href={task.taskUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-xs text-[#111317] bg-[#F1F9D4] hover:bg-[#D4F63C] border border-[#D4F63C] font-bold px-3 py-1 rounded-full transition-colors"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                Assigned Spec / Link
+                              </a>
+                            )}
+                          </div>
                         </div>
-                      );
-                    })()}
+
+                        {/* Action Buttons: Pill-shaped CTA */}
+                        <div className="shrink-0 flex items-center gap-2">
+                          {task.status === "PENDING" && (
+                            <>
+                              <button
+                                disabled={updatingTaskId === task.id}
+                                onClick={() => handleUpdateStatus(task.id, "IN_PROGRESS")}
+                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-[#111317] border border-slate-300 hover:bg-slate-100 text-xs font-bold transition-all shadow-xs disabled:opacity-50"
+                              >
+                                {updatingTaskId === task.id ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                  <Clock className="h-3.5 w-3.5" />
+                                )}
+                                Start
+                              </button>
+                              <button
+                                onClick={() => setSubmittingTask(task)}
+                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#D4F63C] text-[#111317] hover:bg-[#C2E82E] text-xs font-extrabold transition-all shadow-sm"
+                              >
+                                <Send className="h-3.5 w-3.5" />
+                                Submit
+                              </button>
+                            </>
+                          )}
+
+                          {task.status === "IN_PROGRESS" && (
+                            <button
+                              onClick={() => setSubmittingTask(task)}
+                              className="inline-flex items-center gap-1.5 px-4.5 py-2 rounded-full bg-[#D4F63C] text-[#111317] hover:bg-[#C2E82E] text-xs font-extrabold transition-all shadow-sm"
+                            >
+                              <Send className="h-3.5 w-3.5" />
+                              Submit Work
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Submitted Deliverable Details Card */}
+                      {(task.submissionUrl || task.submissionContent) && (() => {
+                        const isSubExpanded = Boolean(expandedSubmissions[task.id]);
+                        const isSubLong = Boolean(
+                          task.submissionContent &&
+                            (task.submissionContent.length > 120 || task.submissionContent.includes("\n"))
+                        );
+
+                        return (
+                          <div className="mt-3 p-4 bg-[#F8FCEB] rounded-[20px] border border-[#D4F63C] space-y-2.5">
+                            <div
+                              className="flex items-center justify-between text-xs cursor-pointer select-none"
+                              onClick={() => toggleSubmissionExpand(task.id)}
+                            >
+                              <span className="font-extrabold text-[#111317] flex items-center gap-2">
+                                <CheckCircle2 className="h-4 w-4 text-[#111317]" />
+                                Your Submitted Deliverable
+                              </span>
+                              <div className="flex items-center gap-2">
+                                {task.submittedAt && (
+                                  <span className="text-[11px] font-semibold text-slate-500">
+                                    Submitted: {new Date(task.submittedAt).toLocaleDateString()}
+                                  </span>
+                                )}
+                                {task.submissionContent && (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleSubmissionExpand(task.id);
+                                    }}
+                                    className="w-6 h-6 rounded-full bg-white border border-[#D4F63C] flex items-center justify-center text-[#111317] hover:bg-[#D4F63C] transition-colors"
+                                    title={isSubExpanded ? "Minimize submission details" : "Expand submission details"}
+                                  >
+                                    {isSubExpanded ? (
+                                      <ChevronUp className="h-3 w-3" />
+                                    ) : (
+                                      <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+
+                            {task.submissionUrl && (
+                              <div className="pt-0.5">
+                                <a
+                                  href={task.submissionUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-2 text-xs font-bold text-[#111317] bg-white hover:bg-[#F1F9D4] border border-[#D4F63C] px-3.5 py-1.5 rounded-full transition-colors break-all shadow-xs"
+                                >
+                                  <GithubIcon className="h-3.5 w-3.5 shrink-0" />
+                                  <span>{task.submissionUrl}</span>
+                                  <ExternalLink className="h-3 w-3 shrink-0 text-slate-400" />
+                                </a>
+                              </div>
+                            )}
+
+                            {task.submissionContent && (
+                              <div>
+                                {!isSubExpanded ? (
+                                  <div className="space-y-1">
+                                    <p className="text-xs text-slate-700 bg-white/90 p-3 rounded-xl border border-slate-200/80 leading-relaxed line-clamp-2">
+                                      {task.submissionContent}
+                                    </p>
+                                    {isSubLong && (
+                                      <button
+                                        type="button"
+                                        onClick={() => toggleSubmissionExpand(task.id)}
+                                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#111317] hover:underline transition-colors pt-0.5"
+                                      >
+                                        <span>Read full submission notes</span>
+                                        <ChevronDown className="h-3 w-3" />
+                                      </button>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <div className="bg-white p-3.5 rounded-xl border border-slate-200/80 space-y-2">
+                                    <div className="flex items-center justify-between text-[11px] font-bold text-[#111317] uppercase tracking-wider">
+                                      <span>Submitted Notes & Documentation</span>
+                                      <button
+                                        type="button"
+                                        onClick={() => toggleSubmissionExpand(task.id)}
+                                        className="inline-flex items-center gap-1 text-slate-500 hover:text-[#111317] text-[11px] font-semibold transition-colors"
+                                      >
+                                        <span>Minimize</span>
+                                        <ChevronUp className="h-3 w-3" />
+                                      </button>
+                                    </div>
+                                    <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">
+                                      {task.submissionContent}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Column: Teammates Progress Bento Card (5 Cols) */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="rounded-[28px] bg-white border border-slate-200/80 p-6 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-[#111317] flex items-center gap-2">
+                  <Users className="h-5 w-5 text-[#111317]" />
+                  Teammates Progress
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Monitor team member milestones & tasks.
+                </p>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
+                <ArrowUpRight className="h-4 w-4" />
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-1">
+              {currentTeam.members.map((member) => {
+                const isCurrentUser =
+                  member.student.id === session.id ||
+                  member.student.studentId === session.studentId;
+                const totalMemberTasks = member.tasks.length;
+                const completedMemberTasks = member.tasks.filter(
+                  (t) => t.status === "COMPLETED"
+                ).length;
+                const progress =
+                  totalMemberTasks > 0
+                    ? Math.round((completedMemberTasks / totalMemberTasks) * 100)
+                    : 0;
+                const isExpanded = expandedMemberId === member.id;
+
+                return (
+                  <div
+                    key={member.id}
+                    className="bg-slate-50/70 hover:bg-slate-50 rounded-[22px] border border-slate-200/90 p-4 shadow-xs transition-all"
+                  >
+                    <div
+                      className="flex items-center justify-between cursor-pointer"
+                      onClick={() =>
+                        setExpandedMemberId(isExpanded ? null : member.id)
+                      }
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-[#111317] text-[#D4F63C] font-extrabold text-sm flex items-center justify-center shadow-xs">
+                          {member.student.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-[#111317]">
+                              {member.student.name}
+                            </span>
+                            {isCurrentUser && (
+                              <span className="text-[10px] bg-[#F1F9D4] text-[#1F2E05] border border-[#D4F63C] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                YOU
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-slate-400 font-mono">
+                            {member.student.studentId}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <span className="text-xs font-extrabold text-[#111317]">
+                            {completedMemberTasks}/{totalMemberTasks}
+                          </span>
+                          <span className="text-[10px] text-slate-400 block font-semibold">
+                            {progress}% Done
+                          </span>
+                        </div>
+                        <div className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 shadow-xs">
+                          {isExpanded ? (
+                            <ChevronDown className="h-3.5 w-3.5" />
+                          ) : (
+                            <ChevronRight className="h-3.5 w-3.5" />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="mt-3 w-full bg-slate-200/80 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-[#D4F63C] h-1.5 rounded-full transition-all duration-300"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+
+                    {/* Expanded Teammate Tasks List */}
+                    {isExpanded && (
+                      <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-2">
+                        <div className="flex items-center justify-between text-xs text-slate-500 font-bold mb-2">
+                          <span>Assigned Milestones</span>
+                          <span className="text-[11px] font-normal text-slate-400">
+                            {member.tasks.length} tasks
+                          </span>
+                        </div>
+
+                        {member.tasks.length === 0 ? (
+                          <p className="text-xs text-slate-400 italic py-1">
+                            No tasks assigned to this teammate yet.
+                          </p>
+                        ) : (
+                          [...member.tasks]
+                            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                            .map((t) => (
+                            <div
+                              key={t.id}
+                              className="bg-white p-3 rounded-xl border border-slate-200 text-xs space-y-1.5 shadow-xs"
+                            >
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  {statusIcon(t.status)}
+                                  <span
+                                    className={`font-semibold truncate ${
+                                      t.status === "COMPLETED"
+                                        ? "line-through text-slate-400"
+                                        : "text-[#111317]"
+                                    }`}
+                                  >
+                                    {t.title}
+                                  </span>
+                                </div>
+                                <span
+                                  className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold shrink-0 ${statusBadge(
+                                    t.status
+                                  )}`}
+                                >
+                                  {t.status.replace("_", " ")}
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-2 pl-5 text-[11px] text-slate-400">
+                                {t.createdAt && (
+                                  <span>Assigned: {new Date(t.createdAt).toLocaleDateString()}</span>
+                                )}
+                                {t.dueDate && (
+                                  <span>• Due: {new Date(t.dueDate).toLocaleDateString()}</span>
+                                )}
+                              </div>
+
+                              {t.submissionUrl && (
+                                <div className="pl-5 pt-0.5">
+                                  <a
+                                    href={t.submissionUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 text-[11px] text-[#111317] hover:underline font-bold bg-[#F1F9D4] px-2.5 py-0.5 rounded-full border border-[#D4F63C]"
+                                  >
+                                    <GithubIcon className="h-3 w-3" />
+                                    <span>View Code</span>
+                                    <ExternalLink className="h-2.5 w-2.5 text-slate-500" />
+                                  </a>
+                                </div>
+                              )}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
-          )}
-        </div>
-
-        {/* Right Column: Teammates & Progress (5 Cols) */}
-        <div className="lg:col-span-5 space-y-4">
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
-            <h4 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <Users className="h-5 w-5 text-indigo-600" />
-              Teammates Progress
-            </h4>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Monitor team member milestones & tasks.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            {currentTeam.members.map((member) => {
-              const isCurrentUser =
-                member.student.id === session.id ||
-                member.student.studentId === session.studentId;
-              const totalMemberTasks = member.tasks.length;
-              const completedMemberTasks = member.tasks.filter(
-                (t) => t.status === "COMPLETED"
-              ).length;
-              const progress =
-                totalMemberTasks > 0
-                  ? Math.round((completedMemberTasks / totalMemberTasks) * 100)
-                  : 0;
-              const isExpanded = expandedMemberId === member.id;
-
-              return (
-                <div
-                  key={member.id}
-                  className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm transition-all"
-                >
-                  <div
-                    className="flex items-center justify-between cursor-pointer"
-                    onClick={() =>
-                      setExpandedMemberId(isExpanded ? null : member.id)
-                    }
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-indigo-500 to-indigo-600 text-white font-bold text-sm flex items-center justify-center shadow-sm">
-                        {member.student.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-bold text-slate-900">
-                            {member.student.name}
-                          </span>
-                          {isCurrentUser && (
-                            <span className="text-[10px] bg-indigo-50 text-indigo-700 font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
-                              You
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-slate-400 font-mono">
-                          {member.student.studentId}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <div className="text-right">
-                        <span className="text-xs font-bold text-slate-800">
-                          {completedMemberTasks}/{totalMemberTasks}
-                        </span>
-                        <span className="text-[10px] text-slate-400 block">
-                          {progress}% Done
-                        </span>
-                      </div>
-                      {isExpanded ? (
-                        <ChevronDown className="h-4 w-4 text-slate-400" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4 text-slate-400" />
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Progress Bar */}
-                  <div className="mt-3 w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                    <div
-                      className="bg-indigo-600 h-1.5 rounded-full transition-all duration-300"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-
-                  {/* Expanded Teammate Tasks List */}
-                  {isExpanded && (
-                    <div className="mt-4 pt-3 border-t border-slate-100 space-y-2">
-                      <div className="flex items-center justify-between text-xs text-slate-500 font-semibold mb-2">
-                        <span>Assigned Tasks</span>
-                      </div>
-
-                      {member.tasks.length === 0 ? (
-                        <p className="text-xs text-slate-400 italic py-1">
-                          No tasks assigned to this teammate yet.
-                        </p>
-                      ) : (
-                        [...member.tasks]
-                          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-                          .map((t) => (
-                          <div
-                            key={t.id}
-                            className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs space-y-1.5"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                {statusIcon(t.status)}
-                                <span
-                                  className={`font-medium ${
-                                    t.status === "COMPLETED"
-                                      ? "line-through text-slate-400"
-                                      : "text-slate-800"
-                                  }`}
-                                >
-                                  {t.title}
-                                </span>
-                              </div>
-                              <span
-                                className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${statusBadge(
-                                  t.status
-                                )}`}
-                              >
-                                {t.status.replace("_", " ")}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center gap-2 pl-6 text-[11px] text-slate-400">
-                              {t.createdAt && (
-                                <span>Assigned: {new Date(t.createdAt).toLocaleDateString()}</span>
-                              )}
-                              {t.dueDate && (
-                                <span>• Due: {new Date(t.dueDate).toLocaleDateString()}</span>
-                              )}
-                            </div>
-
-                            {/* Show if teammate submitted Github code */}
-                            {t.submissionUrl && (
-                              <div className="pl-6">
-                                <a
-                                  href={t.submissionUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-[11px] text-emerald-700 hover:text-emerald-900 font-medium"
-                                >
-                                  <GithubIcon className="h-3 w-3" />
-                                  <span>View Code</span>
-                                  <ExternalLink className="h-2.5 w-2.5" />
-                                </a>
-                              </div>
-                            )}
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
           </div>
         </div>
       </div>
@@ -895,39 +1002,39 @@ function SubmitTaskModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl border border-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111317]/70 backdrop-blur-sm">
+      <div className="w-full max-w-lg rounded-[32px] bg-white p-7 shadow-2xl border border-slate-200">
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-[#F1F9D4] text-[#111317] rounded-full border border-[#D4F63C]">
               <CheckCircle2 className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="text-lg font-bold text-slate-900">Submit Task Work</h4>
-              <p className="text-xs text-slate-400">Describe what you did and link your GitHub repository</p>
+              <h4 className="text-lg font-black text-[#111317]">Submit Task Deliverable</h4>
+              <p className="text-xs text-slate-500">Provide GitHub repo and implementation notes</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors"
+            className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:text-[#111317] hover:bg-slate-200 flex items-center justify-center transition-colors"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Task Summary Banner */}
-        <div className="mt-4 p-3.5 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-          <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Task Title</div>
-          <div className="text-sm font-semibold text-slate-800">{task.title}</div>
+        <div className="mt-4 p-4 bg-slate-50 rounded-[20px] border border-slate-200/80 space-y-1.5">
+          <div className="text-[11px] font-black uppercase tracking-wider text-slate-400">Task Title</div>
+          <div className="text-sm font-bold text-[#111317]">{task.title}</div>
           {task.description && (
-            <p className="text-xs text-slate-500 line-clamp-2">{task.description}</p>
+            <p className="text-xs text-slate-600 line-clamp-2">{task.description}</p>
           )}
           {task.taskUrl && (
             <a
               href={task.taskUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 font-semibold pt-1"
+              className="inline-flex items-center gap-1.5 text-xs text-[#111317] font-bold pt-1 hover:underline"
             >
               <ExternalLink className="h-3 w-3" /> View Assigned Spec / Reference Link
             </a>
@@ -935,7 +1042,7 @@ function SubmitTaskModal({
         </div>
 
         {error && (
-          <div className="mt-4 p-3 rounded-xl bg-red-50 text-red-700 text-xs font-medium border border-red-200 flex items-center gap-2">
+          <div className="mt-4 p-3.5 rounded-2xl bg-rose-50 text-rose-700 text-xs font-semibold border border-rose-200 flex items-center gap-2">
             <AlertCircle className="h-4 w-4 shrink-0" />
             {error}
           </div>
@@ -944,7 +1051,7 @@ function SubmitTaskModal({
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-              GitHub Repository / Pull Request Link <span className="text-red-500">*</span>
+              GitHub Repository / Pull Request Link <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -956,7 +1063,7 @@ function SubmitTaskModal({
                 value={submissionUrl}
                 onChange={(e) => setSubmissionUrl(e.target.value)}
                 placeholder="https://github.com/username/project or PR link"
-                className="w-full rounded-xl border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 focus:outline-none"
+                className="w-full rounded-2xl border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-[#111317] placeholder:text-slate-400 focus:border-[#111317] focus:ring-2 focus:ring-[#D4F63C] focus:outline-none"
               />
             </div>
             <p className="text-[11px] text-slate-400 mt-1">
@@ -966,7 +1073,7 @@ function SubmitTaskModal({
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-              Describe What You Did <span className="text-red-500">*</span>
+              Describe What You Did <span className="text-rose-500">*</span>
             </label>
             <textarea
               rows={4}
@@ -974,7 +1081,7 @@ function SubmitTaskModal({
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Explain your implementation, what was built, features added, files changed, or instructions for review..."
-              className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 focus:outline-none"
+              className="w-full rounded-2xl border border-slate-300 px-3.5 py-2.5 text-sm text-[#111317] placeholder:text-slate-400 focus:border-[#111317] focus:ring-2 focus:ring-[#D4F63C] focus:outline-none"
             />
           </div>
 
@@ -982,14 +1089,14 @@ function SubmitTaskModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+              className="px-5 py-2.5 rounded-full text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-extrabold text-[#111317] bg-[#D4F63C] hover:bg-[#C2E82E] transition-all shadow-sm disabled:opacity-50"
             >
               {submitting ? (
                 <>

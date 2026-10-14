@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   Plus, Trash2, X, Users, CheckCircle2, Clock, AlertCircle, Calendar,
   ChevronDown, ChevronUp, ChevronRight, UserPlus, ClipboardList, Save,
-  Edit, Loader2, ExternalLink, FileText, BarChart3, CheckSquare
+  Edit, Loader2, ExternalLink, FileText, BarChart3, CheckSquare,
+  ArrowUpRight, Sparkles
 } from "lucide-react";
 
 const API_URL = (import.meta as any).env?.VITE_API_URL || "http://localhost:3001";
@@ -23,19 +24,19 @@ function GithubIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
 
 function statusBadge(status: string) {
   const map: Record<string, string> = {
-    PENDING:     "bg-amber-100 text-amber-700",
-    IN_PROGRESS: "bg-blue-100 text-blue-700",
-    COMPLETED:   "bg-emerald-100 text-emerald-700",
-    CANCELLED:   "bg-slate-100 text-slate-500",
+    PENDING:     "bg-[#F1F9D4] text-[#1F2E05] border border-[#D4F63C]/80 font-bold",
+    IN_PROGRESS: "bg-[#111317] text-[#D4F63C] border border-[#111317] font-bold",
+    COMPLETED:   "bg-[#D4F63C] text-[#111317] border border-[#c5e830] font-black",
+    CANCELLED:   "bg-slate-100 text-slate-500 border border-slate-200 font-medium",
   };
-  return map[status] ?? "bg-slate-100 text-slate-600";
+  return map[status] ?? "bg-slate-100 text-slate-600 border border-slate-200 font-medium";
 }
 
 function statusIcon(status: string) {
-  if (status === "COMPLETED")   return <CheckCircle2 className="h-3.5 w-3.5" />;
-  if (status === "IN_PROGRESS") return <Clock className="h-3.5 w-3.5" />;
-  if (status === "CANCELLED")   return <AlertCircle className="h-3.5 w-3.5" />;
-  return <Clock className="h-3.5 w-3.5" />;
+  if (status === "COMPLETED")   return <CheckCircle2 className="h-3.5 w-3.5 text-[#111317]" />;
+  if (status === "IN_PROGRESS") return <Clock className="h-3.5 w-3.5 text-[#D4F63C]" />;
+  if (status === "CANCELLED")   return <AlertCircle className="h-3.5 w-3.5 text-slate-400" />;
+  return <Clock className="h-3.5 w-3.5 text-[#1F2E05]" />;
 }
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -157,59 +158,130 @@ export function TeamsView() {
   const globalProgress = globalTotalTasks > 0 ? Math.round((globalCompletedTasks / globalTotalTasks) * 100) : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h3 className="text-2xl font-bold text-slate-800">Team Management</h3>
-          <p className="text-sm text-slate-500 mt-0.5">
+          {/* Breadcrumb pills */}
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-[#F1F9D4] text-[#1F2E05] border border-[#D4F63C]/80">
+              <Sparkles className="h-3 w-3 text-[#111317]" />
+              Team Management
+            </span>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-white border border-slate-200 text-slate-600">
+              Operations & Sprints
+            </span>
+          </div>
+          <h2 className="text-3xl font-extrabold text-[#111317] tracking-tight">Team Management</h2>
+          <p className="text-sm text-slate-500 mt-1 max-w-2xl leading-relaxed">
             Monitor team progress dashboards, milestones, and deliverables submitted across all academy teams.
           </p>
         </div>
         <button
           onClick={() => setShowCreateTeam(true)}
-          className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 shadow-sm transition-all"
+          className="inline-flex items-center gap-2 rounded-full bg-[#D4F63C] text-[#111317] hover:bg-[#C2E82E] px-5 py-2.5 text-xs font-black shadow-sm transition-all"
         >
           <Plus className="h-4 w-4" /> Create Team
         </button>
       </div>
 
-      {/* Global Overview Bar */}
+      {/* Global Overview Bento Grid */}
       {teams.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-          <div className="p-2 border-r border-slate-100 last:border-0">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Teams</span>
-            <div className="text-xl font-extrabold text-slate-900 mt-0.5">{teams.length}</div>
-            <p className="text-[11px] text-slate-400">{globalTotalStudents} students enrolled</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Card 1: Total Teams */}
+          <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+            <div className="flex items-start justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Teams</span>
+              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
+                <Users className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="my-2">
+              <div className="text-3xl font-black text-[#111317] tracking-tight">{teams.length}</div>
+              <p className="text-xs text-slate-400 mt-1">{globalTotalStudents} students enrolled</p>
+            </div>
+            <div className="pt-1">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F1F9D4] text-[#1F2E05]">
+                {teams.filter(t => t.isActive).length} Active
+              </span>
+            </div>
           </div>
-          <div className="p-2 border-r border-slate-100 last:border-0">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Academy Progress</span>
-            <div className="text-xl font-extrabold text-indigo-600 mt-0.5">{globalProgress}%</div>
-            <p className="text-[11px] text-slate-400">{globalCompletedTasks}/{globalTotalTasks} milestones</p>
+
+          {/* Card 2: Academy Progress */}
+          <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+            <div className="flex items-start justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Academy Progress</span>
+              <div className="w-8 h-8 rounded-full bg-[#F1F9D4] flex items-center justify-center text-[#111317]">
+                <ArrowUpRight className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="my-2">
+              <div className="text-3xl font-black text-[#111317] tracking-tight">{globalProgress}%</div>
+              <div className="mt-2 w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-[#D4F63C] h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${globalProgress}%` }}
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-between text-xs pt-1">
+              <span className="text-slate-400">Milestones Done</span>
+              <span className="text-xs font-bold text-[#111317]">{globalCompletedTasks}/{globalTotalTasks}</span>
+            </div>
           </div>
-          <div className="p-2 border-r border-slate-100 last:border-0">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Tasks</span>
-            <div className="text-xl font-extrabold text-slate-900 mt-0.5">{globalTotalTasks}</div>
-            <p className="text-[11px] text-slate-400">{globalCompletedTasks} completed</p>
+
+          {/* Card 3: Total Tasks */}
+          <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+            <div className="flex items-start justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Milestones</span>
+              <div className="w-8 h-8 rounded-full bg-[#D4F63C] flex items-center justify-center text-[#111317]">
+                <CheckSquare className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="my-2">
+              <div className="text-3xl font-black text-[#111317] tracking-tight">{globalTotalTasks}</div>
+              <p className="text-xs text-slate-400 mt-1">{globalCompletedTasks} tasks finished</p>
+            </div>
+            <div className="pt-1">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#111317] text-[#D4F63C]">
+                Tracked
+              </span>
+            </div>
           </div>
-          <div className="p-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">GitHub Deliverables</span>
-            <div className="text-xl font-extrabold text-emerald-600 mt-0.5">{globalSubmissions}</div>
-            <p className="text-[11px] text-slate-400">Code repositories submitted</p>
+
+          {/* Card 4: Submissions */}
+          <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+            <div className="flex items-start justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Code Deliverables</span>
+              <div className="w-8 h-8 rounded-full bg-[#111317] flex items-center justify-center text-[#D4F63C]">
+                <Clock className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="my-2">
+              <div className="text-3xl font-black text-[#111317] tracking-tight">{globalSubmissions}</div>
+              <p className="text-xs text-slate-400 mt-1">GitHub repositories submitted</p>
+            </div>
+            <div className="pt-1">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F1F9D4] text-[#1F2E05]">
+                Verified Deliverables
+              </span>
+            </div>
           </div>
         </div>
       )}
 
       {teams.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-slate-200 rounded-2xl bg-white text-center">
-          <div className="bg-indigo-50 p-4 rounded-2xl mb-4">
-            <Users className="h-10 w-10 text-indigo-400" />
+        <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-slate-200 rounded-[28px] bg-white text-center">
+          <div className="bg-[#F1F9D4] text-[#111317] p-4 rounded-full mb-4 border border-[#D4F63C]">
+            <Users className="h-8 w-8" />
           </div>
-          <h4 className="text-lg font-semibold text-slate-700 mb-1">No teams yet</h4>
-          <p className="text-sm text-slate-400 mb-6">Create your first team to start assigning students and tracking milestones.</p>
+          <h4 className="text-lg font-bold text-[#111317] mb-1">No teams yet</h4>
+          <p className="text-sm text-slate-400 mb-6 max-w-sm">
+            Create your first team to start assigning students and tracking milestones.
+          </p>
           <button
             onClick={() => setShowCreateTeam(true)}
-            className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+            className="inline-flex items-center gap-2 rounded-full bg-[#D4F63C] text-[#111317] hover:bg-[#C2E82E] px-5 py-2.5 text-xs font-black shadow-sm"
           >
             <Plus className="h-4 w-4" /> Create Team
           </button>
@@ -298,21 +370,21 @@ function TeamCard({
   const progressPct = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden transition-all">
+    <div className="bg-white rounded-[28px] border border-slate-200/80 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] overflow-hidden transition-all">
       {/* Team Header / Summary */}
       <div
         className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50/60 transition-colors"
         onClick={onToggle}
       >
         <div className="flex items-center gap-4 min-w-0">
-          <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl flex-shrink-0">
-            <Users className="h-6 w-6" />
+          <div className="p-3 bg-[#111317] text-[#D4F63C] rounded-2xl flex-shrink-0 shadow-xs">
+            <Users className="h-5 w-5" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h4 className="font-bold text-slate-800 text-base truncate">{team.name}</h4>
-              <span className={`inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full ${team.isActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
-                {team.isActive ? "Active" : "Inactive"}
+              <h4 className="font-extrabold text-[#111317] text-base truncate">{team.name}</h4>
+              <span className={`inline-block px-3 py-0.5 text-xs font-bold rounded-full border ${team.isActive ? "bg-[#D4F63C] text-[#111317] border-[#CEF23F]" : "bg-slate-100 text-slate-500 border-slate-200"}`}>
+                {team.isActive ? "● Active Team" : "Inactive"}
               </span>
             </div>
             {team.description && <p className="text-xs text-slate-400 mt-0.5 truncate">{team.description}</p>}
@@ -321,44 +393,46 @@ function TeamCard({
 
         <div className="flex items-center gap-4 flex-shrink-0">
           <div className="hidden sm:flex items-center gap-4 text-xs text-slate-500">
-            <span className="flex items-center gap-1.5"><Users className="h-4 w-4" />{team.members.length} students</span>
-            <span className="flex items-center gap-1.5"><ClipboardList className="h-4 w-4" />{completedTasks}/{totalTasks} tasks</span>
+            <span className="flex items-center gap-1.5 font-semibold"><Users className="h-3.5 w-3.5 text-slate-400" />{team.members.length} students</span>
+            <span className="flex items-center gap-1.5 font-semibold"><ClipboardList className="h-3.5 w-3.5 text-slate-400" />{completedTasks}/{totalTasks} tasks</span>
 
             {/* Mini Progress Bar on Card Header */}
             <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
               <div className="w-20 bg-slate-100 rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-indigo-600 h-2 rounded-full transition-all duration-500"
+                  className="bg-[#D4F63C] h-2 rounded-full transition-all duration-500"
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
-              <span className="text-xs font-bold text-indigo-600 w-8 text-right">{progressPct}%</span>
+              <span className="text-xs font-extrabold text-[#111317] w-8 text-right">{progressPct}%</span>
             </div>
           </div>
 
           <button
             onClick={e => { e.stopPropagation(); onDeleteTeam(); }}
             title="Delete team"
-            className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            className="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3.5 w-3.5" />
           </button>
-          {expanded ? <ChevronDown className="h-5 w-5 text-slate-400" /> : <ChevronRight className="h-5 w-5 text-slate-400" />}
+          <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center transition-colors">
+            {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </div>
         </div>
       </div>
 
       {/* Expanded Team Body */}
       {expanded && (
-        <div className="border-t border-slate-100 px-6 py-5 bg-slate-50/40 space-y-4">
+        <div className="border-t border-slate-100 px-6 py-5 bg-slate-50/50 space-y-5">
           {/* View Mode Tabs: Progress Dashboard vs Manage Members & Tasks */}
           <div className="flex items-center justify-between pb-3 border-b border-slate-200/80 gap-3 flex-wrap">
-            <div className="flex items-center gap-1.5 bg-slate-200/70 p-1 rounded-xl text-xs font-semibold">
+            <div className="flex items-center gap-1 bg-slate-200/70 p-1 rounded-full text-xs font-semibold">
               <button
                 onClick={() => setActiveTab("dashboard")}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
+                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full transition-all ${
                   activeTab === "dashboard"
-                    ? "bg-white text-indigo-700 shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#111317] text-[#D4F63C] font-extrabold shadow-sm"
+                    : "text-slate-600 hover:text-slate-900 font-bold"
                 }`}
               >
                 <BarChart3 className="h-3.5 w-3.5" />
@@ -366,10 +440,10 @@ function TeamCard({
               </button>
               <button
                 onClick={() => setActiveTab("members")}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all ${
+                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full transition-all ${
                   activeTab === "members"
-                    ? "bg-white text-indigo-700 shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#111317] text-[#D4F63C] font-extrabold shadow-sm"
+                    : "text-slate-600 hover:text-slate-900 font-bold"
                 }`}
               >
                 <Users className="h-3.5 w-3.5" />
@@ -381,7 +455,7 @@ function TeamCard({
               {activeTab === "dashboard" && (
                 <button
                   onClick={() => setActiveTab("members")}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-indigo-600 bg-white border border-slate-200 hover:border-indigo-200 rounded-xl px-3 py-1.5 transition-colors shadow-sm"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#111317] hover:bg-slate-100 bg-white border border-slate-200 rounded-full px-4 py-1.5 transition-colors shadow-xs"
                 >
                   Manage Tasks & Students
                   <ChevronRight className="h-3 w-3" />
@@ -391,7 +465,7 @@ function TeamCard({
               {activeTab === "members" && (
                 <button
                   onClick={onAddMember}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 border border-indigo-200 hover:bg-indigo-50 bg-white rounded-xl px-3 py-1.5 transition-colors shadow-sm"
+                  className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#111317] hover:bg-[#D4F63C] bg-[#F1F9D4] border border-[#D4F63C] rounded-full px-4 py-1.5 transition-colors shadow-xs"
                 >
                   <UserPlus className="h-3.5 w-3.5" /> Add Student
                 </button>
@@ -480,16 +554,16 @@ function TeamProgressDashboard({
       {/* KPI Cards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* Card 1: Team Progress */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm relative overflow-hidden">
+        <div className="bg-white rounded-[24px] border border-slate-200/90 p-4 shadow-xs relative overflow-hidden flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
               Team Completion
             </span>
-            <span className="text-lg font-extrabold text-indigo-600">{progressPct}%</span>
+            <span className="text-xl font-black text-[#111317]">{progressPct}%</span>
           </div>
           <div className="mt-2.5 w-full bg-slate-100 rounded-full h-2 overflow-hidden">
             <div
-              className="bg-indigo-600 h-2 rounded-full transition-all duration-500"
+              className="bg-[#D4F63C] h-2 rounded-full transition-all duration-500"
               style={{ width: `${progressPct}%` }}
             />
           </div>
@@ -499,37 +573,37 @@ function TeamProgressDashboard({
         </div>
 
         {/* Card 2: In Progress */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm flex items-center gap-3.5">
-          <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl shrink-0">
-            <Clock className="h-5 w-5" />
+        <div className="bg-white rounded-[24px] border border-slate-200/90 p-4 shadow-xs flex items-center gap-3.5">
+          <div className="p-3 bg-[#111317] text-[#D4F63C] rounded-full shrink-0">
+            <Clock className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">In Progress</p>
-            <h5 className="text-xl font-bold text-slate-900">{inProgressTasks}</h5>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">In Progress</p>
+            <h5 className="text-xl font-black text-[#111317]">{inProgressTasks}</h5>
             <p className="text-xs text-slate-400">Active tasks in flight</p>
           </div>
         </div>
 
         {/* Card 3: Pending Tasks */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm flex items-center gap-3.5">
-          <div className="p-2.5 bg-amber-50 text-amber-600 rounded-xl shrink-0">
-            <AlertCircle className="h-5 w-5" />
+        <div className="bg-white rounded-[24px] border border-slate-200/90 p-4 shadow-xs flex items-center gap-3.5">
+          <div className="p-3 bg-[#F1F9D4] text-[#111317] rounded-full shrink-0 border border-[#D4F63C]">
+            <AlertCircle className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Pending</p>
-            <h5 className="text-xl font-bold text-slate-900">{pendingTasks}</h5>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pending</p>
+            <h5 className="text-xl font-black text-[#111317]">{pendingTasks}</h5>
             <p className="text-xs text-slate-400">Waiting to be started</p>
           </div>
         </div>
 
         {/* Card 4: Deliverables Submitted */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm flex items-center gap-3.5">
-          <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl shrink-0">
-            <CheckCircle2 className="h-5 w-5" />
+        <div className="bg-white rounded-[24px] border border-slate-200/90 p-4 shadow-xs flex items-center gap-3.5">
+          <div className="p-3 bg-[#D4F63C] text-[#111317] rounded-full shrink-0">
+            <CheckCircle2 className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Submissions</p>
-            <h5 className="text-xl font-bold text-slate-900">{submittedTasksList.length}</h5>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Submissions</p>
+            <h5 className="text-xl font-black text-[#111317]">{submittedTasksList.length}</h5>
             <p className="text-xs text-slate-400">GitHub deliverables submitted</p>
           </div>
         </div>
@@ -537,41 +611,41 @@ function TeamProgressDashboard({
 
       {/* Multi-Segment Milestone Bar */}
       {totalTasks > 0 && (
-        <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm space-y-2">
+        <div className="bg-white rounded-[24px] border border-slate-200/90 p-4 shadow-xs space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-slate-700">Team Milestone Distribution</span>
-            <span className="text-slate-400">{totalTasks} total tasks</span>
+            <span className="font-extrabold text-[#111317]">Team Milestone Distribution</span>
+            <span className="text-slate-400 font-semibold">{totalTasks} total tasks</span>
           </div>
 
-          <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden flex">
+          <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
             <div
               style={{ width: `${progressPct}%` }}
               title={`Completed: ${completedTasks} (${progressPct}%)`}
-              className="bg-emerald-500 h-full transition-all duration-300"
+              className="bg-[#D4F63C] h-full transition-all duration-300"
             />
             <div
               style={{ width: `${inProgressPct}%` }}
               title={`In Progress: ${inProgressTasks} (${inProgressPct}%)`}
-              className="bg-blue-500 h-full transition-all duration-300"
+              className="bg-[#111317] h-full transition-all duration-300"
             />
             <div
               style={{ width: `${pendingPct}%` }}
               title={`Pending: ${pendingTasks} (${pendingPct}%)`}
-              className="bg-amber-400 h-full transition-all duration-300"
+              className="bg-[#F1F9D4] h-full transition-all duration-300"
             />
           </div>
 
           <div className="flex items-center gap-4 text-xs pt-1 flex-wrap">
-            <div className="flex items-center gap-1.5 text-slate-600">
-              <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 inline-block" />
+            <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#D4F63C] inline-block border border-slate-300" />
               <span>Completed ({completedTasks})</span>
             </div>
-            <div className="flex items-center gap-1.5 text-slate-600">
-              <span className="h-2.5 w-2.5 rounded-full bg-blue-500 inline-block" />
+            <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#111317] inline-block" />
               <span>In Progress ({inProgressTasks})</span>
             </div>
-            <div className="flex items-center gap-1.5 text-slate-600">
-              <span className="h-2.5 w-2.5 rounded-full bg-amber-400 inline-block" />
+            <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#F1F9D4] inline-block border border-[#D4F63C]" />
               <span>Pending ({pendingTasks})</span>
             </div>
           </div>
@@ -581,15 +655,15 @@ function TeamProgressDashboard({
       {/* Grid: Member Progress Matrix & Team Deliverables Stream */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Left: Teammates Progress Matrix (7 Cols) */}
-        <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm space-y-3">
+        <div className="lg:col-span-7 bg-white rounded-[24px] border border-slate-200/90 p-5 shadow-xs space-y-3">
           <div className="flex items-center justify-between pb-2 border-b border-slate-100">
             <h5 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
-              <Users className="h-4 w-4 text-indigo-600" />
+              <Users className="h-4 w-4 text-[#111317]" />
               Member Progress Matrix
             </h5>
             <button
               onClick={onSwitchToMembers}
-              className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold"
+              className="text-xs text-[#111317] hover:underline font-bold"
             >
               View Detailed Tasks →
             </button>
@@ -741,49 +815,52 @@ function MemberCard({
   const done = member.tasks.filter(t => t.status === "COMPLETED").length;
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-[24px] border border-slate-200/90 shadow-xs overflow-hidden">
       <div
-        className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-slate-50 transition-colors"
+        className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-slate-50/70 transition-colors"
         onClick={onToggle}
       >
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm uppercase flex-shrink-0">
+          <div className="h-9 w-9 rounded-full bg-[#111317] text-[#D4F63C] flex items-center justify-center font-extrabold text-xs uppercase flex-shrink-0 shadow-xs">
             {member.student.name.charAt(0)}
           </div>
           <div>
-            <div className="font-medium text-slate-800 text-sm">{member.student.name}</div>
-            <div className="text-xs text-slate-400">{member.student.email} · {member.student.studentId}</div>
+            <div className="font-bold text-[#111317] text-sm">{member.student.name}</div>
+            <div className="text-xs text-slate-400 font-mono">{member.student.email} · {member.student.studentId}</div>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500 hidden sm:block">{done}/{member.tasks.length} tasks done</span>
+          <span className="text-xs font-bold text-slate-500 hidden sm:block bg-slate-100 px-3 py-1 rounded-full">{done}/{member.tasks.length} tasks done</span>
           <button
             onClick={e => { e.stopPropagation(); onRemove(); }}
-            className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            title="Remove student"
+            className="w-7 h-7 rounded-full bg-slate-100 text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors"
           >
             <X className="h-3.5 w-3.5" />
           </button>
-          {expanded ? <ChevronDown className="h-4 w-4 text-slate-400" /> : <ChevronRight className="h-4 w-4 text-slate-400" />}
+          <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center">
+            {expanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+          </div>
         </div>
       </div>
 
       {expanded && (
-        <div className="border-t border-slate-100 px-4 py-3 bg-slate-50/60 space-y-2">
+        <div className="border-t border-slate-100 px-5 py-4 bg-slate-50/50 space-y-3">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Assigned Tasks & Deliverables</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Assigned Tasks & Deliverables</span>
             <button
               onClick={onAddTask}
-              className="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-800 border border-indigo-200 hover:bg-indigo-50 rounded-lg px-2.5 py-1 transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#111317] hover:bg-[#D4F63C] bg-[#F1F9D4] border border-[#D4F63C] rounded-full px-3.5 py-1.5 transition-colors shadow-xs"
             >
               <Plus className="h-3.5 w-3.5" /> Add Task
             </button>
           </div>
 
           {member.tasks.length === 0 && (
-            <p className="text-xs text-slate-400 py-2 text-center">No tasks assigned yet for this student.</p>
+            <p className="text-xs text-slate-400 py-3 text-center italic">No tasks assigned yet for this student.</p>
           )}
 
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {[...member.tasks]
               .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
               .map(task => (
@@ -815,30 +892,30 @@ function TaskRow({
   const isLongDescription = Boolean(task.description && (task.description.length > 120 || task.description.includes("\n")));
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200/90 p-3.5 shadow-sm space-y-2.5 hover:border-slate-300 transition-colors">
+    <div className="bg-white rounded-[20px] border border-slate-200/90 p-4 shadow-xs space-y-3 hover:border-slate-300 transition-colors">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1.5 min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={onCycle}
               title="Click to cycle status"
-              className={`inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full font-semibold cursor-pointer hover:opacity-80 transition-opacity ${statusBadge(task.status)}`}
+              className={`inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full font-bold cursor-pointer hover:opacity-85 transition-opacity ${statusBadge(task.status)}`}
             >
               {statusIcon(task.status)}
               {task.status.replace("_", " ")}
             </button>
-            <h5 className="text-sm font-semibold text-slate-800">{task.title}</h5>
+            <h5 className="text-sm font-bold text-[#111317]">{task.title}</h5>
           </div>
           {task.description && (
             <div>
               {!expanded ? (
                 <div className="space-y-1">
-                  <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">{task.description}</p>
+                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{task.description}</p>
                   {isLongDescription && (
                     <button
                       type="button"
                       onClick={() => setExpanded(true)}
-                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#111317] hover:underline transition-colors"
                     >
                       <span>Show full description</span>
                       <ChevronDown className="h-3 w-3" />
@@ -846,12 +923,12 @@ function TaskRow({
                   )}
                 </div>
               ) : (
-                <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200/60 space-y-1.5 mt-1">
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1.5 mt-1">
                   <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">{task.description}</p>
                   <button
                     type="button"
                     onClick={() => setExpanded(false)}
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-slate-700 transition-colors"
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-[#111317] transition-colors"
                   >
                     <span>Minimize</span>
                     <ChevronUp className="h-3 w-3" />
@@ -862,15 +939,15 @@ function TaskRow({
           )}
         </div>
 
-        <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
           {task.createdAt && (
-            <span className="text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+            <span className="text-xs font-semibold text-slate-500 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full inline-flex items-center gap-1">
               <Calendar className="h-3 w-3 text-slate-400" />
               Assigned {new Date(task.createdAt).toLocaleDateString()}
             </span>
           )}
           {task.dueDate && (
-            <span className="text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+            <span className="text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full inline-flex items-center gap-1">
               <Clock className="h-3 w-3 text-slate-400" />
               Due {new Date(task.dueDate).toLocaleDateString()}
             </span>
@@ -878,14 +955,14 @@ function TaskRow({
           <button
             onClick={onEdit}
             title="Edit task"
-            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors"
+            className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:text-[#111317] hover:bg-slate-200 flex items-center justify-center transition-colors"
           >
             <Edit className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={onDelete}
             title="Delete task"
-            className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            className="w-7 h-7 rounded-full bg-slate-100 text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
@@ -896,13 +973,13 @@ function TaskRow({
       <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
         {/* Admin Reference Link */}
         <div className="flex items-center gap-1.5">
-          <span className="font-semibold text-slate-400 uppercase tracking-wider text-[10px]">Reference Link:</span>
+          <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">Reference Link:</span>
           {task.taskUrl ? (
             <a
               href={task.taskUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800 font-semibold bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded transition-colors break-all"
+              className="inline-flex items-center gap-1 text-[#111317] hover:underline font-bold bg-[#F1F9D4] border border-[#D4F63C] px-3 py-0.5 rounded-full transition-colors break-all"
             >
               <ExternalLink className="h-3 w-3" />
               <span>{task.taskUrl.length > 35 ? task.taskUrl.slice(0, 32) + "..." : task.taskUrl}</span>
@@ -921,17 +998,17 @@ function TaskRow({
                   href={task.submissionUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded transition-colors"
+                  className="inline-flex items-center gap-1.5 font-bold text-[#111317] bg-white hover:bg-[#F1F9D4] border border-[#D4F63C] px-3 py-1 rounded-full transition-colors shadow-xs"
                 >
                   <GithubIcon className="h-3.5 w-3.5" />
                   <span>GitHub Code</span>
-                  <ExternalLink className="h-2.5 w-2.5" />
+                  <ExternalLink className="h-2.5 w-2.5 text-slate-400" />
                 </a>
               )}
               {task.submissionContent && (
                 <button
                   onClick={onViewSubmission}
-                  className="inline-flex items-center gap-1 text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 font-medium px-2 py-0.5 rounded transition-colors"
+                  className="inline-flex items-center gap-1 text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 font-bold px-3 py-1 rounded-full transition-colors"
                 >
                   <FileText className="h-3 w-3" />
                   View Notes
@@ -951,12 +1028,12 @@ function TaskRow({
 
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-5">
-          <h3 className="text-lg font-bold text-slate-800">{title}</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-lg transition-colors">
-            <X className="h-5 w-5" />
+    <div className="fixed inset-0 bg-[#111317]/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-[32px] p-7 w-full max-w-lg shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
+          <h3 className="text-lg font-black text-[#111317]">{title}</h3>
+          <button onClick={onClose} className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:text-[#111317] hover:bg-slate-200 flex items-center justify-center transition-colors">
+            <X className="h-4 w-4" />
           </button>
         </div>
         {children}
@@ -978,11 +1055,11 @@ function Field({ label, required, children }: { label: string; required?: boolea
 
 function ModalFooter({ onCancel, saving, label }: { onCancel: () => void; saving: boolean; label: string }) {
   return (
-    <div className="flex justify-end gap-3 pt-2 border-t border-slate-100 mt-2">
-      <button type="button" onClick={onCancel} className="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 rounded-xl">
+    <div className="flex justify-end gap-3 pt-3 border-t border-slate-100 mt-3">
+      <button type="button" onClick={onCancel} className="px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-full transition-colors">
         Cancel
       </button>
-      <button type="submit" disabled={saving} className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 rounded-xl flex items-center gap-2">
+      <button type="submit" disabled={saving} className="px-6 py-2.5 text-xs font-black text-[#111317] bg-[#D4F63C] hover:bg-[#C2E82E] disabled:opacity-60 rounded-full shadow-sm transition-all flex items-center gap-2">
         {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
         {label}
       </button>
@@ -990,7 +1067,7 @@ function ModalFooter({ onCancel, saving, label }: { onCancel: () => void; saving
   );
 }
 
-const inputCls = "w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-shadow";
+const inputCls = "w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-sm text-[#111317] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#D4F63C] focus:border-[#111317] transition-all";
 
 // ─── Create Team Modal ────────────────────────────────────────────────────────
 
@@ -1208,9 +1285,9 @@ function SubmissionDetailsModal({
   return (
     <Modal title="Student Deliverable Submission" onClose={onClose}>
       <div className="space-y-4">
-        <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-          <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Task Title</div>
-          <div className="text-sm font-bold text-slate-800">{task.title}</div>
+        <div className="p-4 bg-slate-50 rounded-[20px] border border-slate-200/80 space-y-1">
+          <div className="text-[11px] font-black uppercase tracking-wider text-slate-400">Task Title</div>
+          <div className="text-sm font-bold text-[#111317]">{task.title}</div>
           {task.submittedAt && (
             <p className="text-xs text-slate-500">
               Submitted on: {new Date(task.submittedAt).toLocaleString()}
@@ -1227,11 +1304,11 @@ function SubmissionDetailsModal({
               href={task.submissionUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 hover:text-emerald-950 font-semibold text-sm w-full break-all"
+              className="inline-flex items-center gap-2 p-3 bg-white hover:bg-[#F1F9D4] border border-[#D4F63C] rounded-full text-[#111317] font-bold text-xs w-full break-all transition-colors shadow-xs"
             >
               <GithubIcon className="h-4 w-4 shrink-0" />
               <span className="flex-1">{task.submissionUrl}</span>
-              <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+              <ExternalLink className="h-3.5 w-3.5 shrink-0 text-slate-400" />
             </a>
           </div>
         )}
@@ -1241,7 +1318,7 @@ function SubmissionDetailsModal({
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               Student's Description of What They Did
             </label>
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-sm text-[#111317] leading-relaxed whitespace-pre-wrap">
               {task.submissionContent}
             </div>
           </div>
@@ -1256,7 +1333,7 @@ function SubmissionDetailsModal({
               href={task.taskUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+              className="inline-flex items-center gap-1.5 text-xs text-[#111317] font-bold bg-[#F1F9D4] border border-[#D4F63C] px-3.5 py-1.5 rounded-full hover:bg-[#D4F63C] transition-colors"
             >
               <ExternalLink className="h-3.5 w-3.5" />
               <span>{task.taskUrl}</span>
@@ -1264,10 +1341,10 @@ function SubmissionDetailsModal({
           </div>
         )}
 
-        <div className="flex justify-end pt-2 border-t border-slate-100">
+        <div className="flex justify-end pt-3 border-t border-slate-100">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+            className="px-6 py-2.5 rounded-full text-xs font-black text-[#111317] bg-[#D4F63C] hover:bg-[#C2E82E] transition-all shadow-sm"
           >
             Close
           </button>

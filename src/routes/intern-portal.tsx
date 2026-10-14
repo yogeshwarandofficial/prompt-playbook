@@ -86,38 +86,38 @@ function InterPortal() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f4f7f6] font-sans">
+    <div className="min-h-screen flex flex-col bg-[#EFF2F6] font-sans">
       {/* Sleek Top Navbar */}
-      <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
+      <header className="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-md border-b border-slate-200/80 transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-4">
             {/* Left: Brand Logo */}
             <div className="flex items-center gap-3 shrink-0">
-              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-700 to-violet-600 flex items-center justify-center text-white font-black font-orbitron shadow-md shadow-indigo-500/20 text-base">
-                I
+              <div className="h-9 w-9 rounded-2xl bg-[#111317] text-[#D4F63C] flex items-center justify-center font-black shadow-sm text-sm border border-black">
+                ⌘
               </div>
               <div className="flex flex-col">
-                <span className="text-base font-extrabold tracking-tight text-slate-900 leading-tight">
+                <span className="text-base font-black tracking-tight text-[#111317] leading-tight">
                   INFYNUX
                 </span>
-                <span className="text-[11px] font-medium text-slate-500 leading-tight">
-                  Intern Portal
+                <span className="text-[11px] font-bold text-slate-400 leading-tight">
+                  Intern Platform
                 </span>
               </div>
             </div>
 
-            {/* Center: Sleek Dark Capsule Navigation */}
-            <nav className="hidden md:flex items-center bg-[#131622] px-2 py-1.5 rounded-full shadow-md shadow-black/10 border border-slate-800/80">
+            {/* Center: Sleek Black Capsule Navigation */}
+            <nav className="hidden md:flex items-center bg-[#111317] px-2 py-1.5 rounded-full shadow-md shadow-black/10 border border-slate-900">
               {NAV_ITEMS.map((item) => {
                 const isActive = currentView === item.id;
                 return (
                   <button
                     key={item.id}
                     onClick={() => setCurrentView(item.id as ViewState)}
-                    className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                       isActive
-                        ? "bg-[#5B50E6] text-white shadow-sm"
-                        : "text-slate-300 hover:text-white hover:bg-white/5"
+                        ? "bg-[#D4F63C] text-[#111317] shadow-sm font-extrabold"
+                        : "text-slate-300 hover:text-white hover:bg-white/10"
                     }`}
                   >
                     {item.label}
@@ -130,10 +130,10 @@ function InterPortal() {
             <div className="flex items-center gap-3 shrink-0">
               <div className="hidden sm:flex items-center gap-2.5 pr-1">
                 <div className="text-right">
-                  <p className="text-xs font-semibold text-slate-800 leading-none">{session.name}</p>
+                  <p className="text-xs font-bold text-[#111317] leading-none">{session.name}</p>
                   <p className="text-[10px] text-slate-400 mt-0.5 font-mono">{session.studentId}</p>
                 </div>
-                <div className="h-8 w-8 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 font-bold uppercase text-xs shadow-sm">
+                <div className="h-9 w-9 rounded-full bg-[#111317] text-[#D4F63C] flex items-center justify-center font-black uppercase text-xs shadow-sm">
                   {session.name.charAt(0)}
                 </div>
               </div>
@@ -141,7 +141,7 @@ function InterPortal() {
               <button
                 onClick={handleLogout}
                 title="Logout"
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-rose-500 bg-white border border-rose-200 hover:bg-rose-50 hover:border-rose-300 transition-all shadow-sm"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-xs"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 <span>Logout</span>
@@ -150,10 +150,10 @@ function InterPortal() {
               {/* Mobile Menu Toggle Button */}
               <button
                 type="button"
-                className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg md:hidden"
+                className="p-2 text-[#111317] hover:bg-slate-100 rounded-full md:hidden"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
               >
-                {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
             </div>
           </div>
