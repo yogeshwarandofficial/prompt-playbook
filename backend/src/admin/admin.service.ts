@@ -189,46 +189,62 @@ export class AdminService {
   }
 
   async getDashboardStats() {
-    const [
-      totalStudents,
-      activeStudents,
-      activeCourses,
-      activeProjects,
-      inProgressAssignments,
-      pendingSubmissions,
-      completedInternships,
-      pendingApplications,
-      activeBatches,
-      scheduledInterviews,
-      issuedCertificates,
-    ] = await Promise.all([
-      this.prisma.user.count({ where: { role: 'STUDENT' } }),
-      this.prisma.user.count({ where: { role: 'STUDENT', isActive: true } }),
-      this.prisma.course.count({ where: { isActive: true } }),
-      this.prisma.project.count({ where: { status: 'ACTIVE' } }),
-      this.prisma.studentProject.count({ where: { status: 'IN_PROGRESS' } }),
-      this.prisma.submission.count({
-        where: { status: { in: ['SUBMITTED', 'UNDER_REVIEW'] } },
-      }),
-      this.prisma.studentProject.count({ where: { status: 'COMPLETED' } }),
-      this.prisma.application.count({ where: { status: 'PENDING' } }),
-      this.prisma.batch.count({ where: { status: 'ACTIVE' } }),
-      this.prisma.interview.count({ where: { status: 'SCHEDULED' } }),
-      this.prisma.certificate.count({ where: { status: 'ACTIVE' } }),
-    ]);
-    return {
-      totalStudents,
-      activeStudents,
-      activeCourses,
-      activeProjects,
-      inProgressAssignments,
-      pendingSubmissions,
-      completedInternships,
-      pendingApplications,
-      activeBatches,
-      scheduledInterviews,
-      issuedCertificates,
-    };
+    try {
+      // Execute in small batches to preserve database connection slots
+      const [totalStudents, activeStudents, activeCourses, activeProjects] =
+        await Promise.all([
+          this.prisma.user.count({ where: { role: 'STUDENT' } }),
+          this.prisma.user.count({ where: { role: 'STUDENT', isActive: true } }),
+          this.prisma.course.count({ where: { isActive: true } }),
+          this.prisma.project.count({ where: { status: 'ACTIVE' } }),
+        ]);
+
+      const [inProgressAssignments, pendingSubmissions, completedInternships] =
+        await Promise.all([
+          this.prisma.studentProject.count({ where: { status: 'IN_PROGRESS' } }),
+          this.prisma.submission.count({
+            where: { status: { in: ['SUBMITTED', 'UNDER_REVIEW'] } },
+          }),
+          this.prisma.studentProject.count({ where: { status: 'COMPLETED' } }),
+        ]);
+
+      const [pendingApplications, activeBatches, scheduledInterviews, issuedCertificates] =
+        await Promise.all([
+          this.prisma.application.count({ where: { status: 'PENDING' } }),
+          this.prisma.batch.count({ where: { status: 'ACTIVE' } }),
+          this.prisma.interview.count({ where: { status: 'SCHEDULED' } }),
+          this.prisma.certificate.count({ where: { status: 'ACTIVE' } }),
+        ]);
+
+      return {
+        totalStudents,
+        activeStudents,
+        activeCourses,
+        activeProjects,
+        inProgressAssignments,
+        pendingSubmissions,
+        completedInternships,
+        pendingApplications,
+        activeBatches,
+        scheduledInterviews,
+        issuedCertificates,
+      };
+    } catch (err) {
+      console.warn('Dashboard stats query error, returning baseline stats:', err);
+      return {
+        totalStudents: 0,
+        activeStudents: 0,
+        activeCourses: 0,
+        activeProjects: 0,
+        inProgressAssignments: 0,
+        pendingSubmissions: 0,
+        completedInternships: 0,
+        pendingApplications: 0,
+        activeBatches: 0,
+        scheduledInterviews: 0,
+        issuedCertificates: 0,
+      };
+    }
   }
 
   async assignCourseToStudent(studentId: string, courseId: string) {
