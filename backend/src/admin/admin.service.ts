@@ -67,13 +67,14 @@ export class AdminService {
       }
 
       // 2. Create the student
-      const newUser = await tx.user.create({
+      const newUser = await (tx.user as any).create({
         data: {
           studentId,
           name: dto.name,
           email,
           passwordHash,
           role: 'STUDENT',
+          position: dto.position?.trim() || null,
           isActive: true,
         },
       });
@@ -98,7 +99,7 @@ export class AdminService {
   }
 
   async getStudents() {
-    return this.prisma.user.findMany({
+    return (this.prisma.user as any).findMany({
       where: {
         role: 'STUDENT',
         isActive: true, // L-7: exclude soft-deleted students
@@ -108,6 +109,7 @@ export class AdminService {
         studentId: true,
         name: true,
         email: true,
+        position: true,
         role: true,
         isActive: true,
         createdAt: true,

@@ -637,6 +637,7 @@ function StudentsView() {
   const [studentId, setStudentId] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [position, setPosition] = useState("");
   const [password, setPassword] = useState("");
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [availableCourses, setAvailableCourses] = useState<any[]>([]);
@@ -726,16 +727,17 @@ function StudentsView() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ studentId, name, email, password, courseIds: selectedCourses }),
+        body: JSON.stringify({ studentId, name, email, password, position, courseIds: selectedCourses }),
       });
       
       const data = await res.json();
       
       if (res.ok) {
-        setFormSuccess(`Student created successfully! Student ID: ${data.studentId}. Provide the temporary password to the student securely.`);
+        setFormSuccess(`Student created successfully! Student ID: ${data.studentId}. Position: ${position || 'Intern'}. Provide temporary password to the student securely.`);
         setStudentId("");
         setName("");
         setEmail("");
+        setPosition("");
         setPassword("");
         setSelectedCourses([]);
         fetchStudents();
@@ -832,6 +834,16 @@ function StudentsView() {
               />
             </div>
             <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Intern / Student Position</label>
+              <input 
+                type="text" 
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
+                placeholder="e.g. Junior Full Stack Developer, Frontend Intern"
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none"
+              />
+            </div>
+            <div className="md:col-span-2">
               <label className="block text-sm font-semibold text-slate-700 mb-2">Temporary Password</label>
               <input 
                 type="text" 
@@ -902,7 +914,8 @@ function StudentsView() {
             !q ||
             s.name?.toLowerCase().includes(q) ||
             s.studentId?.toLowerCase().includes(q) ||
-            s.email?.toLowerCase().includes(q);
+            s.email?.toLowerCase().includes(q) ||
+            s.position?.toLowerCase().includes(q);
 
           const matchesStatus =
             statusFilter === "ALL" ||
@@ -1050,7 +1063,13 @@ function StudentsView() {
                           </span>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm font-semibold text-slate-900">
-                          {student.name}
+                          <div>{student.name}</div>
+                          {student.position && (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200/80 mt-1">
+                              <Briefcase className="h-3 w-3 text-indigo-500 shrink-0" />
+                              {student.position}
+                            </span>
+                          )}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500 font-mono text-xs">
                           {student.email}

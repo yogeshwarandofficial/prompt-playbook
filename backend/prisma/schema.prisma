@@ -23,6 +23,7 @@ model User {
   domainId         String?
   graduationYear   Int?
   phone            String?
+  position         String?
   specializationId String?
   reviewsGiven     Review[]
   courses          StudentCourse[]

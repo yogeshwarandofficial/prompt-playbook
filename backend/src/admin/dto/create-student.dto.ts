@@ -29,6 +29,11 @@ export class CreateStudentDto {
   password: string;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  position?: string;
+
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   courseIds?: string[];
