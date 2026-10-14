@@ -23,7 +23,7 @@ import {
   Briefcase,
   ClipboardList,
   Plus, Edit, ListChecks, UserCheck, ChevronUp, ChevronDown, Trash2, Eye, ArrowLeft, ExternalLink, MessageSquare, Check, XCircle,
-  Target, Map
+  Target, Map, Bell, Share2, Sparkles
 } from "lucide-react";
 import { createSeoHead } from "@/lib/seo";
 
@@ -87,77 +87,125 @@ function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f4f7f6] font-sans">
-      {/* Sleek Top Navbar */}
-      <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
+    <div className="min-h-screen flex flex-col bg-[#EFF2F6] font-sans">
+      {/* Exact Navbar Design matching the reference screenshot */}
+      <header className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-xl border-b border-slate-200/70 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between gap-4">
-            {/* Left: Brand Logo */}
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-700 to-violet-600 flex items-center justify-center text-white font-black font-orbitron shadow-md shadow-indigo-500/20 text-base">
-                I
+          <div className="flex h-16 items-center justify-between gap-3">
+            {/* Left: Brand Cluster Logo & Navigation Tabs */}
+            <div className="flex items-center gap-3 lg:gap-5 min-w-0">
+              {/* Spoke Cluster Logo Icon matching reference */}
+              <div className="flex items-center gap-2.5 shrink-0">
+                <div className="h-10 w-10 rounded-full bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-[#111317]">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="4" r="2" fill="currentColor" />
+                    <circle cx="12" cy="20" r="2" fill="currentColor" />
+                    <circle cx="4" cy="12" r="2" fill="currentColor" />
+                    <circle cx="20" cy="12" r="2" fill="currentColor" />
+                    <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+                    <path d="M12 6v4M12 14v4M6 12h4M14 12h4" />
+                  </svg>
+                </div>
+                <div className="hidden sm:flex flex-col">
+                  <span className="text-sm font-black tracking-tight text-[#111317] leading-tight">
+                    INFYNUX
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase leading-none">
+                    Admin Suite
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-base font-extrabold tracking-tight text-slate-900 leading-tight">
-                  INFYNUX
-                </span>
-                <span className="text-[11px] font-medium text-slate-500 leading-tight">
-                  Admin Dashboard
-                </span>
-              </div>
+
+              {/* Exact Pill Navigation Cluster */}
+              <nav className="hidden lg:flex items-center gap-1.5 p-1 rounded-full bg-slate-100/70 border border-slate-200/60 max-w-xl xl:max-w-3xl overflow-x-auto no-scrollbar">
+                {ADMIN_NAV_ITEMS.map((item) => {
+                  const isActive = currentView === item.id;
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setCurrentView(item.id);
+                        setSidebarOpen(false);
+                      }}
+                      className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all shrink-0 ${
+                        isActive
+                          ? "bg-[#111317] text-white font-bold shadow-sm"
+                          : "bg-white/80 hover:bg-white text-slate-700 hover:text-[#111317] font-semibold border border-slate-200/80 shadow-xs"
+                      }`}
+                    >
+                      <Icon className={`h-3.5 w-3.5 ${isActive ? "text-[#34D399]" : "text-slate-500"}`} />
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
+              </nav>
             </div>
 
-            {/* Center: Sleek Dark Capsule Navigation */}
-            <nav className="hidden lg:flex items-center bg-[#131622] px-2 py-1.5 rounded-full shadow-md shadow-black/10 border border-slate-800/80 max-w-2xl xl:max-w-3xl overflow-x-auto no-scrollbar">
-              {ADMIN_NAV_ITEMS.map((item) => {
-                const isActive = currentView === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      setCurrentView(item.id);
-                      setSidebarOpen(false);
-                    }}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-                      isActive
-                        ? "bg-[#5B50E6] text-white shadow-sm"
-                        : "text-slate-300 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                );
-              })}
-            </nav>
-
-            {/* Right: User Profile & Logout */}
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="hidden sm:flex items-center gap-2.5 pr-1">
-                <div className="text-right">
-                  <p className="text-xs font-semibold text-slate-800 leading-none">{session.name}</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider font-mono">{session.role}</p>
+            {/* Right: Teammates / Admin stack, Live Portal Pill, Notification Circle & Profile */}
+            <div className="flex items-center gap-2.5 shrink-0">
+              {/* Overlapping Avatar Stack matching screenshot */}
+              <div className="hidden xl:flex items-center -space-x-2 pl-1">
+                <div className="h-8 w-8 rounded-full bg-slate-800 text-white font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs">
+                  A
                 </div>
-                <div className="h-8 w-8 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 font-bold uppercase text-xs shadow-sm">
-                  {session.name.charAt(0)}
+                <div className="h-8 w-8 rounded-full bg-[#0D7A53] text-white font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs">
+                  M
+                </div>
+                <div className="h-8 w-8 rounded-full bg-[#111317] text-slate-200 font-extrabold text-[11px] flex items-center justify-center ring-2 ring-white shadow-xs">
+                  +4
                 </div>
               </div>
 
+              {/* Live Portal Pill Link */}
+              <a
+                href="/intern-portal"
+                target="_blank"
+                rel="noreferrer"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200/90 hover:bg-slate-50 hover:text-[#111317] transition-all shadow-xs"
+              >
+                <Share2 className="h-3.5 w-3.5 text-slate-500" />
+                <span>Student Portal</span>
+              </a>
+
+              {/* Circular Bell */}
+              <button
+                type="button"
+                title="Notifications"
+                className="relative w-9 h-9 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 hover:text-[#111317] hover:bg-slate-50 transition-all shadow-xs"
+              >
+                <Bell className="h-4 w-4" />
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span>
+              </button>
+
+              {/* Admin Profile */}
+              <div className="flex items-center gap-2 pl-1">
+                <div className="h-9 w-9 rounded-full bg-[#111317] text-[#34D399] font-extrabold flex items-center justify-center text-xs ring-2 ring-[#0D7A53]/30 shadow-sm uppercase">
+                  {session.name.charAt(0)}
+                </div>
+                <div className="hidden sm:block text-left">
+                  <p className="text-xs font-bold text-[#111317] leading-none">{session.name}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider font-mono">{session.role}</p>
+                </div>
+              </div>
+
+              {/* Logout Button */}
               <button
                 onClick={handleLogout}
                 title="Logout"
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-rose-500 bg-white border border-rose-200 hover:bg-rose-50 hover:border-rose-300 transition-all shadow-sm"
+                className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-xs"
               >
                 <LogOut className="h-3.5 w-3.5" />
-                <span>Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
 
               {/* Mobile Menu Toggle Button */}
               <button
                 type="button"
-                className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg lg:hidden"
+                className="p-2 text-[#111317] hover:bg-slate-100 rounded-full lg:hidden"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
               >
-                {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
             </div>
           </div>
@@ -168,6 +216,7 @@ function AdminDashboard() {
           <div className="lg:hidden border-t border-slate-200 bg-[#131622] px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
             {ADMIN_NAV_ITEMS.map((item) => {
               const isActive = currentView === item.id;
+              const Icon = item.icon;
               return (
                 <button
                   key={item.id}
@@ -175,12 +224,13 @@ function AdminDashboard() {
                     setCurrentView(item.id);
                     setSidebarOpen(false);
                   }}
-                  className={`flex w-full items-center justify-between px-4 py-2.5 rounded-full text-xs font-semibold transition-all ${
+                  className={`flex w-full items-center gap-2.5 px-4 py-2.5 rounded-full text-xs font-semibold transition-all ${
                     isActive
-                      ? "bg-[#5B50E6] text-white"
+                      ? "bg-[#0D7A53] text-white font-bold"
                       : "text-slate-300 hover:text-white hover:bg-white/5"
                   }`}
                 >
+                  <Icon className={`h-4 w-4 ${isActive ? "text-white" : "text-slate-400"}`} />
                   <span>{item.label}</span>
                 </button>
               );
@@ -191,17 +241,17 @@ function AdminDashboard() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        <header>
-          <h2 className="text-2xl font-bold leading-7 text-slate-900 sm:truncate sm:text-3xl sm:tracking-tight">
-            {currentView === 'dashboard' && 'Admin Dashboard'}
-            {currentView === 'students' && 'Student Management'}
-            {currentView === 'courses' && 'Course Management'}
-            {currentView === 'events' && 'Event Management'}
-            {currentView === 'projects' && 'Project Management'}
-            {currentView === 'submissions' && 'Submission Reviews'}
-            {currentView === 'teams' && 'Team Management'}
-          </h2>
-        </header>
+        {currentView !== 'teams' && currentView !== 'dashboard' && (
+          <header>
+            <h2 className="text-2xl font-bold leading-7 text-slate-900 sm:truncate sm:text-3xl sm:tracking-tight">
+              {currentView === 'students' && 'Student Management'}
+              {currentView === 'courses' && 'Course Management'}
+              {currentView === 'events' && 'Event Management'}
+              {currentView === 'projects' && 'Project Management'}
+              {currentView === 'submissions' && 'Submission Reviews'}
+            </h2>
+          </header>
+        )}
 
         {currentView === 'dashboard' && <DashboardView />}
         {currentView === 'domains' && <DomainsView />}

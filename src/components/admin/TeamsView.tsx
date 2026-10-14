@@ -24,19 +24,19 @@ function GithubIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
 
 function statusBadge(status: string) {
   const map: Record<string, string> = {
-    PENDING:     "bg-[#F1F9D4] text-[#1F2E05] border border-[#D4F63C]/80 font-bold",
-    IN_PROGRESS: "bg-[#111317] text-[#D4F63C] border border-[#111317] font-bold",
-    COMPLETED:   "bg-[#D4F63C] text-[#111317] border border-[#c5e830] font-black",
+    PENDING:     "bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30 font-bold",
+    IN_PROGRESS: "bg-[#111317] text-[#34D399] border border-[#111317] font-bold",
+    COMPLETED:   "bg-[#0D7A53] text-white border border-[#0A6B48] font-bold",
     CANCELLED:   "bg-slate-100 text-slate-500 border border-slate-200 font-medium",
   };
   return map[status] ?? "bg-slate-100 text-slate-600 border border-slate-200 font-medium";
 }
 
 function statusIcon(status: string) {
-  if (status === "COMPLETED")   return <CheckCircle2 className="h-3.5 w-3.5 text-[#111317]" />;
-  if (status === "IN_PROGRESS") return <Clock className="h-3.5 w-3.5 text-[#D4F63C]" />;
+  if (status === "COMPLETED")   return <CheckCircle2 className="h-3.5 w-3.5 text-white" />;
+  if (status === "IN_PROGRESS") return <Clock className="h-3.5 w-3.5 text-[#34D399]" />;
   if (status === "CANCELLED")   return <AlertCircle className="h-3.5 w-3.5 text-slate-400" />;
-  return <Clock className="h-3.5 w-3.5 text-[#1F2E05]" />;
+  return <Clock className="h-3.5 w-3.5 text-[#064E3B]" />;
 }
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -164,11 +164,11 @@ export function TeamsView() {
         <div>
           {/* Breadcrumb pills */}
           <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-[#F1F9D4] text-[#1F2E05] border border-[#D4F63C]/80">
-              <Sparkles className="h-3 w-3 text-[#111317]" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30 shadow-xs">
+              <Sparkles className="h-3.5 w-3.5 text-[#0D7A53]" />
               Team Management
             </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-white border border-slate-200 text-slate-600">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/80 backdrop-blur-md border border-slate-200 text-slate-600 shadow-xs">
               Operations & Sprints
             </span>
           </div>
@@ -179,17 +179,17 @@ export function TeamsView() {
         </div>
         <button
           onClick={() => setShowCreateTeam(true)}
-          className="inline-flex items-center gap-2 rounded-full bg-[#D4F63C] text-[#111317] hover:bg-[#C2E82E] px-5 py-2.5 text-xs font-black shadow-sm transition-all"
+          className="inline-flex items-center gap-2 rounded-full bg-[#0D7A53] text-white hover:bg-[#0A6B48] px-5 py-2.5 text-xs font-bold shadow-sm shadow-[#0D7A53]/25 transition-all"
         >
           <Plus className="h-4 w-4" /> Create Team
         </button>
       </div>
 
-      {/* Global Overview Bento Grid */}
+      {/* Global Overview Bento Grid: Frosted Glass Cards */}
       {teams.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Card 1: Total Teams */}
-          <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+          <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
             <div className="flex items-start justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Teams</span>
               <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
@@ -201,17 +201,17 @@ export function TeamsView() {
               <p className="text-xs text-slate-400 mt-1">{globalTotalStudents} students enrolled</p>
             </div>
             <div className="pt-1">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F1F9D4] text-[#1F2E05]">
+              <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/20">
                 {teams.filter(t => t.isActive).length} Active
               </span>
             </div>
           </div>
 
           {/* Card 2: Academy Progress */}
-          <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+          <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
             <div className="flex items-start justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Academy Progress</span>
-              <div className="w-8 h-8 rounded-full bg-[#F1F9D4] flex items-center justify-center text-[#111317]">
+              <div className="w-8 h-8 rounded-full bg-[#E6F7F0] flex items-center justify-center text-[#0D7A53]">
                 <ArrowUpRight className="h-4 w-4" />
               </div>
             </div>
@@ -219,22 +219,24 @@ export function TeamsView() {
               <div className="text-3xl font-black text-[#111317] tracking-tight">{globalProgress}%</div>
               <div className="mt-2 w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-[#D4F63C] h-2 rounded-full transition-all duration-500"
+                  className="bg-[#0D7A53] h-2 rounded-full transition-all duration-500"
                   style={{ width: `${globalProgress}%` }}
                 />
               </div>
             </div>
             <div className="flex items-center justify-between text-xs pt-1">
               <span className="text-slate-400">Milestones Done</span>
-              <span className="text-xs font-bold text-[#111317]">{globalCompletedTasks}/{globalTotalTasks}</span>
+              <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/20">
+                {globalCompletedTasks}/{globalTotalTasks}
+              </span>
             </div>
           </div>
 
           {/* Card 3: Total Tasks */}
-          <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+          <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
             <div className="flex items-start justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Milestones</span>
-              <div className="w-8 h-8 rounded-full bg-[#D4F63C] flex items-center justify-center text-[#111317]">
+              <div className="w-8 h-8 rounded-full bg-[#E6F7F0] flex items-center justify-center text-[#0D7A53]">
                 <CheckSquare className="h-4 w-4" />
               </div>
             </div>
@@ -243,17 +245,17 @@ export function TeamsView() {
               <p className="text-xs text-slate-400 mt-1">{globalCompletedTasks} tasks finished</p>
             </div>
             <div className="pt-1">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#111317] text-[#D4F63C]">
+              <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-[#111317] text-[#34D399]">
                 Tracked
               </span>
             </div>
           </div>
 
           {/* Card 4: Submissions */}
-          <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+          <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
             <div className="flex items-start justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Code Deliverables</span>
-              <div className="w-8 h-8 rounded-full bg-[#111317] flex items-center justify-center text-[#D4F63C]">
+              <div className="w-8 h-8 rounded-full bg-[#111317] flex items-center justify-center text-[#34D399]">
                 <Clock className="h-4 w-4" />
               </div>
             </div>
@@ -262,7 +264,7 @@ export function TeamsView() {
               <p className="text-xs text-slate-400 mt-1">GitHub repositories submitted</p>
             </div>
             <div className="pt-1">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F1F9D4] text-[#1F2E05]">
+              <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/20">
                 Verified Deliverables
               </span>
             </div>
@@ -271,8 +273,8 @@ export function TeamsView() {
       )}
 
       {teams.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-slate-200 rounded-[28px] bg-white text-center">
-          <div className="bg-[#F1F9D4] text-[#111317] p-4 rounded-full mb-4 border border-[#D4F63C]">
+        <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-slate-200 rounded-[28px] bg-white/80 backdrop-blur-xl text-center">
+          <div className="bg-[#E6F7F0] text-[#0D7A53] p-4 rounded-full mb-4 border border-[#0D7A53]/30">
             <Users className="h-8 w-8" />
           </div>
           <h4 className="text-lg font-bold text-[#111317] mb-1">No teams yet</h4>
@@ -281,7 +283,7 @@ export function TeamsView() {
           </p>
           <button
             onClick={() => setShowCreateTeam(true)}
-            className="inline-flex items-center gap-2 rounded-full bg-[#D4F63C] text-[#111317] hover:bg-[#C2E82E] px-5 py-2.5 text-xs font-black shadow-sm"
+            className="inline-flex items-center gap-2 rounded-full bg-[#0D7A53] text-white hover:bg-[#0A6B48] px-5 py-2.5 text-xs font-bold shadow-sm shadow-[#0D7A53]/25"
           >
             <Plus className="h-4 w-4" /> Create Team
           </button>
@@ -370,20 +372,20 @@ function TeamCard({
   const progressPct = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   return (
-    <div className="bg-white rounded-[28px] border border-slate-200/80 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] overflow-hidden transition-all">
+    <div className="bg-white/80 backdrop-blur-xl rounded-[28px] border border-white/90 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] overflow-hidden transition-all">
       {/* Team Header / Summary */}
       <div
         className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50/60 transition-colors"
         onClick={onToggle}
       >
         <div className="flex items-center gap-4 min-w-0">
-          <div className="p-3 bg-[#111317] text-[#D4F63C] rounded-2xl flex-shrink-0 shadow-xs">
+          <div className="p-3 bg-[#111317] text-[#34D399] rounded-2xl flex-shrink-0 shadow-xs">
             <Users className="h-5 w-5" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2.5 flex-wrap">
               <h4 className="font-extrabold text-[#111317] text-base truncate">{team.name}</h4>
-              <span className={`inline-block px-3 py-0.5 text-xs font-bold rounded-full border ${team.isActive ? "bg-[#D4F63C] text-[#111317] border-[#CEF23F]" : "bg-slate-100 text-slate-500 border-slate-200"}`}>
+              <span className={`inline-block px-3 py-0.5 text-xs font-bold rounded-full border ${team.isActive ? "bg-[#0D7A53] text-white border-transparent" : "bg-slate-100 text-slate-500 border-slate-200"}`}>
                 {team.isActive ? "● Active Team" : "Inactive"}
               </span>
             </div>
@@ -400,7 +402,7 @@ function TeamCard({
             <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
               <div className="w-20 bg-slate-100 rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-[#D4F63C] h-2 rounded-full transition-all duration-500"
+                  className="bg-[#0D7A53] h-2 rounded-full transition-all duration-500"
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
@@ -431,8 +433,8 @@ function TeamCard({
                 onClick={() => setActiveTab("dashboard")}
                 className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full transition-all ${
                   activeTab === "dashboard"
-                    ? "bg-[#111317] text-[#D4F63C] font-extrabold shadow-sm"
-                    : "text-slate-600 hover:text-slate-900 font-bold"
+                    ? "bg-[#111317] text-white font-extrabold shadow-sm"
+                    : "text-slate-600 hover:text-[#111317] font-semibold"
                 }`}
               >
                 <BarChart3 className="h-3.5 w-3.5" />
@@ -442,8 +444,8 @@ function TeamCard({
                 onClick={() => setActiveTab("members")}
                 className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full transition-all ${
                   activeTab === "members"
-                    ? "bg-[#111317] text-[#D4F63C] font-extrabold shadow-sm"
-                    : "text-slate-600 hover:text-slate-900 font-bold"
+                    ? "bg-[#111317] text-white font-extrabold shadow-sm"
+                    : "text-slate-600 hover:text-[#111317] font-semibold"
                 }`}
               >
                 <Users className="h-3.5 w-3.5" />
@@ -465,7 +467,7 @@ function TeamCard({
               {activeTab === "members" && (
                 <button
                   onClick={onAddMember}
-                  className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#111317] hover:bg-[#D4F63C] bg-[#F1F9D4] border border-[#D4F63C] rounded-full px-4 py-1.5 transition-colors shadow-xs"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#064E3B] hover:bg-[#0D7A53] hover:text-white bg-[#E6F7F0] border border-[#0D7A53]/30 rounded-full px-4 py-1.5 transition-colors shadow-xs"
                 >
                   <UserPlus className="h-3.5 w-3.5" /> Add Student
                 </button>
@@ -554,7 +556,7 @@ function TeamProgressDashboard({
       {/* KPI Cards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* Card 1: Team Progress */}
-        <div className="bg-white rounded-[24px] border border-slate-200/90 p-4 shadow-xs relative overflow-hidden flex flex-col justify-between">
+        <div className="bg-white/90 backdrop-blur-md rounded-[24px] border border-slate-200/90 p-4 shadow-xs relative overflow-hidden flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
               Team Completion
@@ -563,7 +565,7 @@ function TeamProgressDashboard({
           </div>
           <div className="mt-2.5 w-full bg-slate-100 rounded-full h-2 overflow-hidden">
             <div
-              className="bg-[#D4F63C] h-2 rounded-full transition-all duration-500"
+              className="bg-[#0D7A53] h-2 rounded-full transition-all duration-500"
               style={{ width: `${progressPct}%` }}
             />
           </div>
@@ -573,8 +575,8 @@ function TeamProgressDashboard({
         </div>
 
         {/* Card 2: In Progress */}
-        <div className="bg-white rounded-[24px] border border-slate-200/90 p-4 shadow-xs flex items-center gap-3.5">
-          <div className="p-3 bg-[#111317] text-[#D4F63C] rounded-full shrink-0">
+        <div className="bg-white/90 backdrop-blur-md rounded-[24px] border border-slate-200/90 p-4 shadow-xs flex items-center gap-3.5">
+          <div className="p-3 bg-[#111317] text-[#34D399] rounded-full shrink-0">
             <Clock className="h-4 w-4" />
           </div>
           <div>
@@ -585,8 +587,8 @@ function TeamProgressDashboard({
         </div>
 
         {/* Card 3: Pending Tasks */}
-        <div className="bg-white rounded-[24px] border border-slate-200/90 p-4 shadow-xs flex items-center gap-3.5">
-          <div className="p-3 bg-[#F1F9D4] text-[#111317] rounded-full shrink-0 border border-[#D4F63C]">
+        <div className="bg-white/90 backdrop-blur-md rounded-[24px] border border-slate-200/90 p-4 shadow-xs flex items-center gap-3.5">
+          <div className="p-3 bg-[#E6F7F0] text-[#064E3B] rounded-full shrink-0 border border-[#0D7A53]/30">
             <AlertCircle className="h-4 w-4" />
           </div>
           <div>
@@ -597,8 +599,8 @@ function TeamProgressDashboard({
         </div>
 
         {/* Card 4: Deliverables Submitted */}
-        <div className="bg-white rounded-[24px] border border-slate-200/90 p-4 shadow-xs flex items-center gap-3.5">
-          <div className="p-3 bg-[#D4F63C] text-[#111317] rounded-full shrink-0">
+        <div className="bg-white/90 backdrop-blur-md rounded-[24px] border border-slate-200/90 p-4 shadow-xs flex items-center gap-3.5">
+          <div className="p-3 bg-[#0D7A53] text-white rounded-full shrink-0">
             <CheckCircle2 className="h-4 w-4" />
           </div>
           <div>
@@ -611,7 +613,7 @@ function TeamProgressDashboard({
 
       {/* Multi-Segment Milestone Bar */}
       {totalTasks > 0 && (
-        <div className="bg-white rounded-[24px] border border-slate-200/90 p-4 shadow-xs space-y-2">
+        <div className="bg-white/90 backdrop-blur-md rounded-[24px] border border-slate-200/90 p-4 shadow-xs space-y-2">
           <div className="flex items-center justify-between text-xs">
             <span className="font-extrabold text-[#111317]">Team Milestone Distribution</span>
             <span className="text-slate-400 font-semibold">{totalTasks} total tasks</span>
@@ -621,7 +623,7 @@ function TeamProgressDashboard({
             <div
               style={{ width: `${progressPct}%` }}
               title={`Completed: ${completedTasks} (${progressPct}%)`}
-              className="bg-[#D4F63C] h-full transition-all duration-300"
+              className="bg-[#0D7A53] h-full transition-all duration-300"
             />
             <div
               style={{ width: `${inProgressPct}%` }}
@@ -631,13 +633,13 @@ function TeamProgressDashboard({
             <div
               style={{ width: `${pendingPct}%` }}
               title={`Pending: ${pendingTasks} (${pendingPct}%)`}
-              className="bg-[#F1F9D4] h-full transition-all duration-300"
+              className="bg-[#E6F7F0] h-full transition-all duration-300"
             />
           </div>
 
           <div className="flex items-center gap-4 text-xs pt-1 flex-wrap">
             <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#D4F63C] inline-block border border-slate-300" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[#0D7A53] inline-block border border-slate-300" />
               <span>Completed ({completedTasks})</span>
             </div>
             <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
@@ -645,7 +647,7 @@ function TeamProgressDashboard({
               <span>In Progress ({inProgressTasks})</span>
             </div>
             <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#F1F9D4] inline-block border border-[#D4F63C]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[#E6F7F0] inline-block border border-[#0D7A53]/30" />
               <span>Pending ({pendingTasks})</span>
             </div>
           </div>
@@ -821,7 +823,7 @@ function MemberCard({
         onClick={onToggle}
       >
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-full bg-[#111317] text-[#D4F63C] flex items-center justify-center font-extrabold text-xs uppercase flex-shrink-0 shadow-xs">
+          <div className="h-9 w-9 rounded-full bg-[#111317] text-[#34D399] flex items-center justify-center font-extrabold text-xs uppercase flex-shrink-0 shadow-xs">
             {member.student.name.charAt(0)}
           </div>
           <div>
@@ -850,7 +852,7 @@ function MemberCard({
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Assigned Tasks & Deliverables</span>
             <button
               onClick={onAddTask}
-              className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#111317] hover:bg-[#D4F63C] bg-[#F1F9D4] border border-[#D4F63C] rounded-full px-3.5 py-1.5 transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#064E3B] hover:bg-[#0D7A53] hover:text-white bg-[#E6F7F0] border border-[#0D7A53]/30 rounded-full px-3.5 py-1.5 transition-colors shadow-xs"
             >
               <Plus className="h-3.5 w-3.5" /> Add Task
             </button>
@@ -979,9 +981,9 @@ function TaskRow({
               href={task.taskUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[#111317] hover:underline font-bold bg-[#F1F9D4] border border-[#D4F63C] px-3 py-0.5 rounded-full transition-colors break-all"
+              className="inline-flex items-center gap-1 text-[#064E3B] hover:underline font-bold bg-[#E6F7F0] hover:bg-[#d5f3e4] border border-[#0D7A53]/30 px-3 py-0.5 rounded-full transition-colors break-all"
             >
-              <ExternalLink className="h-3 w-3" />
+              <ExternalLink className="h-3 w-3 text-[#0D7A53]" />
               <span>{task.taskUrl.length > 35 ? task.taskUrl.slice(0, 32) + "..." : task.taskUrl}</span>
             </a>
           ) : (
@@ -998,9 +1000,9 @@ function TaskRow({
                   href={task.submissionUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 font-bold text-[#111317] bg-white hover:bg-[#F1F9D4] border border-[#D4F63C] px-3 py-1 rounded-full transition-colors shadow-xs"
+                  className="inline-flex items-center gap-1.5 font-bold text-[#064E3B] bg-white hover:bg-[#E6F7F0] border border-[#0D7A53]/30 px-3 py-1 rounded-full transition-colors shadow-xs"
                 >
-                  <GithubIcon className="h-3.5 w-3.5" />
+                  <GithubIcon className="h-3.5 w-3.5 text-[#0D7A53]" />
                   <span>GitHub Code</span>
                   <ExternalLink className="h-2.5 w-2.5 text-slate-400" />
                 </a>
@@ -1059,7 +1061,7 @@ function ModalFooter({ onCancel, saving, label }: { onCancel: () => void; saving
       <button type="button" onClick={onCancel} className="px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-full transition-colors">
         Cancel
       </button>
-      <button type="submit" disabled={saving} className="px-6 py-2.5 text-xs font-black text-[#111317] bg-[#D4F63C] hover:bg-[#C2E82E] disabled:opacity-60 rounded-full shadow-sm transition-all flex items-center gap-2">
+      <button type="submit" disabled={saving} className="px-6 py-2.5 text-xs font-bold text-white bg-[#0D7A53] hover:bg-[#0A6B48] disabled:opacity-60 rounded-full shadow-sm shadow-[#0D7A53]/20 transition-all flex items-center gap-2">
         {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
         {label}
       </button>
@@ -1067,7 +1069,7 @@ function ModalFooter({ onCancel, saving, label }: { onCancel: () => void; saving
   );
 }
 
-const inputCls = "w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-sm text-[#111317] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#D4F63C] focus:border-[#111317] transition-all";
+const inputCls = "w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-sm text-[#111317] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0D7A53] focus:border-[#0D7A53] transition-all";
 
 // ─── Create Team Modal ────────────────────────────────────────────────────────
 
@@ -1304,9 +1306,9 @@ function SubmissionDetailsModal({
               href={task.submissionUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 p-3 bg-white hover:bg-[#F1F9D4] border border-[#D4F63C] rounded-full text-[#111317] font-bold text-xs w-full break-all transition-colors shadow-xs"
+              className="inline-flex items-center gap-2 p-3 bg-white hover:bg-[#E6F7F0] border border-[#0D7A53]/30 rounded-full text-[#064E3B] font-bold text-xs w-full break-all transition-colors shadow-xs"
             >
-              <GithubIcon className="h-4 w-4 shrink-0" />
+              <GithubIcon className="h-4 w-4 shrink-0 text-[#0D7A53]" />
               <span className="flex-1">{task.submissionUrl}</span>
               <ExternalLink className="h-3.5 w-3.5 shrink-0 text-slate-400" />
             </a>
@@ -1333,7 +1335,7 @@ function SubmissionDetailsModal({
               href={task.taskUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-[#111317] font-bold bg-[#F1F9D4] border border-[#D4F63C] px-3.5 py-1.5 rounded-full hover:bg-[#D4F63C] transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs text-[#064E3B] font-bold bg-[#E6F7F0] border border-[#0D7A53]/30 px-3.5 py-1.5 rounded-full hover:bg-[#0D7A53] hover:text-white transition-colors"
             >
               <ExternalLink className="h-3.5 w-3.5" />
               <span>{task.taskUrl}</span>
@@ -1344,7 +1346,7 @@ function SubmissionDetailsModal({
         <div className="flex justify-end pt-3 border-t border-slate-100">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-full text-xs font-black text-[#111317] bg-[#D4F63C] hover:bg-[#C2E82E] transition-all shadow-sm"
+            className="px-6 py-2.5 rounded-full text-xs font-bold text-white bg-[#0D7A53] hover:bg-[#0A6B48] transition-all shadow-sm shadow-[#0D7A53]/20"
           >
             Close
           </button>
