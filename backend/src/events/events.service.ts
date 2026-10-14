@@ -7,19 +7,44 @@ import { PrismaService } from '../prisma/prisma.service';
 export class EventsService {
   constructor(private prisma: PrismaService) {}
 
-  create(createEventDto: CreateEventDto) {
+  private async pruneCompletedEvents() {
+    try {
+      const now = new Date();
+      // For any event whose date has passed, remove extra details from DB:
+      // only retain title, date, link (where), clearing imageUrl and description
+      await this.prisma.event.updateMany({
+        where: {
+          date: { lt: now },
+          OR: [
+            { imageUrl: { not: null } },
+            { description: { not: '' } },
+          ],
+        },
+        data: {
+          imageUrl: null,
+          description: '',
+        },
+      });
+    } catch (err) {
+      console.warn('Completed events pruning warning:', err);
+    }
+  }
+
+  async create(createEventDto: CreateEventDto) {
     return this.prisma.event.create({
       data: createEventDto,
     });
   }
 
-  findAll() {
+  async findAll() {
+    await this.pruneCompletedEvents();
     return this.prisma.event.findMany({
       orderBy: { date: 'desc' },
     });
   }
 
   async findOne(id: string) {
+    await this.pruneCompletedEvents();
     const event = await this.prisma.event.findUnique({
       where: { id },
     });
@@ -30,6 +55,7 @@ export class EventsService {
   }
 
   async findBySlug(slug: string) {
+    await this.pruneCompletedEvents();
     const event = await this.prisma.event.findUnique({
       where: { slug },
     });
@@ -39,14 +65,14 @@ export class EventsService {
     return event;
   }
 
-  update(id: string, updateEventDto: UpdateEventDto) {
+  async update(id: string, updateEventDto: UpdateEventDto) {
     return this.prisma.event.update({
       where: { id },
       data: updateEventDto,
     });
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     return this.prisma.event.delete({
       where: { id },
     });

@@ -136,7 +136,7 @@ function EventDetailsPage() {
                 })}
               </h1>
               <p className="text-base min-[375px]:text-lg sm:text-xl text-[#8B96A8] font-medium leading-relaxed max-w-2xl">
-                {event.description}
+                {event.description || "Tech event and workshop conducted by Infynux Academy."}
               </p>
             </div>
 
@@ -179,10 +179,16 @@ function EventDetailsPage() {
 
             {/* CTA */}
             <div className="pt-4 sm:pt-6 flex items-center">
-              <a href={event.link || "#"} target="_blank" rel="noreferrer" className="w-full sm:w-auto h-14 min-h-[48px] px-8 inline-flex items-center justify-center gap-3 bg-[#8DFF32] text-[#05070B] text-sm sm:text-base font-extrabold rounded-full hover:bg-white transition-all transform hover:-translate-y-1 shadow-[0_0_20px_rgba(141,255,50,0.2)] hover:shadow-[0_0_30px_rgba(141,255,50,0.4)]">
-                Register for Event
-                <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
-              </a>
+              {new Date(event.date).getTime() < new Date().getTime() ? (
+                <div className="w-full sm:w-auto h-14 min-h-[48px] px-8 inline-flex items-center justify-center gap-3 bg-slate-800 text-slate-300 text-sm sm:text-base font-bold rounded-full border border-slate-700 cursor-default">
+                  Event Completed
+                </div>
+              ) : (
+                <a href={event.link || "#"} target="_blank" rel="noreferrer" className="w-full sm:w-auto h-14 min-h-[48px] px-8 inline-flex items-center justify-center gap-3 bg-[#8DFF32] text-[#05070B] text-sm sm:text-base font-extrabold rounded-full hover:bg-white transition-all transform hover:-translate-y-1 shadow-[0_0_20px_rgba(141,255,50,0.2)] hover:shadow-[0_0_30px_rgba(141,255,50,0.4)]">
+                  Register for Event
+                  <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
+                </a>
+              )}
             </div>
           </div>
 
@@ -191,14 +197,24 @@ function EventDetailsPage() {
             <div className="absolute inset-0 bg-[#8DFF32]/20 blur-[50px] rounded-full animate-[pulseGlow_3s_ease-in-out_infinite_alternate] pointer-events-none"></div>
             
             <div className="transition-transform duration-500 hover:rotate-y-[-5deg] hover:rotate-x-[2deg] hover:scale-[1.02] relative z-10 bg-white/5 backdrop-blur-xl p-2 sm:p-3 rounded-3xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)] border border-white/10">
-              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#0B1220] group">
-                <img src={event.imageUrl || "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200"} alt={event.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
+              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#0B1220] group flex items-center justify-center">
+                {event.imageUrl ? (
+                  <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-slate-900 to-black">
+                    <Calendar className="w-12 h-12 text-[#8DFF32]/60 mb-2" />
+                    <span className="text-white font-bold text-base">{event.title}</span>
+                    <span className="text-xs text-[#8DFF32] mt-1 font-semibold">Conducted Event</span>
+                  </div>
+                )}
                 
-                <div className="absolute inset-0 bg-gradient-to-t from-[#05070B] via-transparent to-transparent opacity-90"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#05070B] via-transparent to-transparent opacity-90 pointer-events-none"></div>
                 
-                <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+                <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between pointer-events-none">
                   <div>
-                    <p className="text-[#8DFF32] font-bold text-[10px] sm:text-xs uppercase tracking-widest mb-1 shadow-black drop-shadow-md">Exclusive Event</p>
+                    <p className="text-[#8DFF32] font-bold text-[10px] sm:text-xs uppercase tracking-widest mb-1 shadow-black drop-shadow-md">
+                      {new Date(event.date).getTime() < new Date().getTime() ? "Past Event" : "Exclusive Event"}
+                    </p>
                     <p className="text-white font-extrabold text-lg sm:text-xl shadow-black drop-shadow-md leading-tight">{event.title}</p>
                   </div>
                 </div>
@@ -218,7 +234,7 @@ function EventDetailsPage() {
               About the Event
             </h2>
             <div className="prose prose-invert max-w-none text-sm sm:text-base text-[#8B96A8] leading-relaxed">
-              <p>{event.description}</p>
+              <p>{event.description || "This event was conducted by Infynux Academy. Details and recordings have been archived."}</p>
               
               <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-start gap-3 hover:bg-white/10 transition-colors">

@@ -155,245 +155,64 @@ function InterPortal() {
       {/* Exact Navbar Design matching the reference with company logo and interactive controls */}
       <header className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-xl border-b border-slate-200/70 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between gap-3">
-            {/* Left: Official Company Logo & Navigation Tabs */}
-            <div className="flex items-center gap-3 lg:gap-5 min-w-0">
-              {/* Company Logo Container */}
-              <div className="flex items-center gap-2.5 shrink-0">
-                <div className="h-10 px-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center">
-                  <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-7 w-auto object-contain" />
-                </div>
-                <div className="hidden sm:flex flex-col">
-                  <span className="text-sm font-black tracking-tight text-[#111317] leading-tight">
-                    INFYNUX
-                  </span>
-                  <span className="text-[10px] font-bold text-[#0D7A53] tracking-wider uppercase leading-none">
-                    Student Portal
-                  </span>
-                </div>
+          <div className="flex h-16 items-center justify-between gap-3 sm:gap-4">
+            {/* 1. Official Company Logo */}
+            <div className="flex items-center gap-2.5 shrink-0">
+              <div className="h-10 px-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center">
+                <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-7 w-auto object-contain" />
               </div>
-
-              {/* Exact Pill Navigation Cluster */}
-              <nav className="hidden md:flex items-center gap-1.5 p-1 rounded-full bg-slate-100/70 border border-slate-200/60">
-                {NAV_ITEMS.map((item) => {
-                  const isActive = currentView === item.id;
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => setCurrentView(item.id as ViewState)}
-                      className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all ${
-                        isActive
-                          ? "bg-[#111317] text-white font-bold shadow-sm"
-                          : "bg-white/80 hover:bg-white text-slate-700 hover:text-[#111317] font-semibold border border-slate-200/80 shadow-xs"
-                      }`}
-                    >
-                      <Icon className={`h-3.5 w-3.5 ${isActive ? "text-[#34D399]" : "text-slate-500"}`} />
-                      <span>{item.label}</span>
-                    </button>
-                  );
-                })}
-              </nav>
+              <div className="hidden sm:flex flex-col">
+                <span className="text-sm font-black tracking-tight text-[#111317] leading-tight">
+                  INFYNUX
+                </span>
+                <span className="text-[10px] font-bold text-[#0D7A53] tracking-wider uppercase leading-none">
+                  Student Portal
+                </span>
+              </div>
             </div>
 
-            {/* Right: Functional Teammates Stack, Share Modal, Notification Center & Profile */}
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-              {/* 1. Functional Dynamic Teammate Avatar Stack */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowTeamPopover(!showTeamPopover);
-                    setShowNotifications(false);
-                    setShowShareModal(false);
-                  }}
-                  title={teamData ? `Team ${teamData.name} (${teamData.members.length} members)` : "View Team Members"}
-                  className="flex items-center -space-x-2 p-1 rounded-full hover:bg-slate-100/80 transition-colors cursor-pointer group"
-                >
-                  {teamData && teamData.members.length > 0 ? (
-                    <>
-                      {teamData.members.slice(0, 3).map((member, idx) => (
-                        <div
-                          key={member.id}
-                          title={member.name}
-                          className={`h-8 w-8 rounded-full ${
-                            idx === 0
-                              ? "bg-[#111317] text-[#34D399]"
-                              : idx === 1
-                              ? "bg-[#0D7A53] text-white"
-                              : "bg-emerald-700 text-white"
-                          } font-extrabold text-xs flex items-center justify-center ring-2 ring-white shadow-xs uppercase`}
-                        >
-                          {member.name.charAt(0)}
-                        </div>
-                      ))}
-                      {teamData.members.length > 3 && (
-                        <div className="h-8 w-8 rounded-full bg-[#111317] text-slate-200 font-extrabold text-[11px] flex items-center justify-center ring-2 ring-white shadow-xs">
-                          +{teamData.members.length - 3}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="h-8 px-2.5 rounded-full bg-white border border-slate-200 text-slate-600 text-xs font-semibold flex items-center gap-1.5 shadow-xs">
-                      <Users className="h-3.5 w-3.5 text-[#0D7A53]" />
-                      <span className="hidden lg:inline text-[11px] font-bold">My Team</span>
-                    </div>
-                  )}
-                </button>
+            {/* 2. Expanded Navbar Navigation */}
+            <nav className="hidden md:flex items-center gap-1.5 p-1 rounded-full bg-slate-100/70 border border-slate-200/60 flex-1 min-w-0 max-w-4xl overflow-x-auto no-scrollbar mx-2">
+              {NAV_ITEMS.map((item) => {
+                const isActive = currentView === item.id;
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setCurrentView(item.id as ViewState)}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all shrink-0 ${
+                      isActive
+                        ? "bg-[#111317] text-white font-bold shadow-sm"
+                        : "bg-white/80 hover:bg-white text-slate-700 hover:text-[#111317] font-semibold border border-slate-200/80 shadow-xs"
+                    }`}
+                  >
+                    <Icon className={`h-3.5 w-3.5 ${isActive ? "text-[#34D399]" : "text-slate-500"}`} />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
 
-                {/* Team Members Popover Dropdown */}
-                {showTeamPopover && (
-                  <div className="absolute right-0 mt-2 w-72 rounded-[24px] bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)] p-4 z-50">
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                      <div>
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Team Members</div>
-                        <div className="text-sm font-extrabold text-[#111317]">{teamData ? teamData.name : "Your Team"}</div>
-                      </div>
-                      <button
-                        onClick={() => setShowTeamPopover(false)}
-                        className="w-6 h-6 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-
-                    <div className="mt-3 space-y-2 max-h-56 overflow-y-auto">
-                      {teamData && teamData.members.length > 0 ? (
-                        teamData.members.map((member) => {
-                          const isSelf = member.studentId === session.studentId;
-                          return (
-                            <div key={member.id} className="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-[#E6F7F0]/60 transition-colors">
-                              <div className="flex items-center gap-2.5">
-                                <div className="h-7 w-7 rounded-full bg-[#111317] text-[#34D399] font-bold text-xs flex items-center justify-center uppercase">
-                                  {member.name.charAt(0)}
-                                </div>
-                                <div>
-                                  <div className="text-xs font-bold text-[#111317] flex items-center gap-1.5">
-                                    <span>{member.name}</span>
-                                    {isSelf && (
-                                      <span className="text-[9px] font-extrabold bg-[#0D7A53] text-white px-1.5 py-0.2 rounded-full">YOU</span>
-                                    )}
-                                  </div>
-                                  <div className="text-[10px] text-slate-400 font-mono">{member.studentId}</div>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })
-                      ) : (
-                        <p className="text-xs text-slate-400 py-3 text-center">No teammates assigned yet.</p>
-                      )}
-                    </div>
-
-                    <div className="mt-3 pt-2 border-t border-slate-100">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setCurrentView('team');
-                          setShowTeamPopover(false);
-                        }}
-                        className="w-full py-1.5 rounded-full text-xs font-bold bg-[#0D7A53] hover:bg-[#0A6B48] text-white text-center transition-colors"
-                      >
-                        Open Team Workspace
-                      </button>
-                    </div>
-                  </div>
-                )}
+            {/* Right: Our Name, Notification Center & Logout */}
+            <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+              {/* Our Name & Student ID */}
+              <div className="flex items-center gap-2 pl-1">
+                <div className="h-9 w-9 rounded-full bg-[#111317] text-[#34D399] font-extrabold flex items-center justify-center text-xs ring-2 ring-[#0D7A53]/30 shadow-sm uppercase shrink-0">
+                  {session.name.charAt(0)}
+                </div>
+                <div className="hidden sm:block text-left">
+                  <p className="text-xs font-bold text-[#111317] leading-none whitespace-nowrap">{session.name}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5 font-mono">{session.studentId}</p>
+                </div>
               </div>
 
-              {/* 2. Functional Shared Pill Button */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleCopyShareLink();
-                    setShowShareModal(!showShareModal);
-                    setShowNotifications(false);
-                    setShowTeamPopover(false);
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200/90 hover:bg-slate-50 hover:text-[#111317] transition-all shadow-xs"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="h-3.5 w-3.5 text-[#0D7A53]" />
-                      <span className="text-[#0D7A53]">Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Share2 className="h-3.5 w-3.5 text-slate-500" />
-                      <span>Shared</span>
-                    </>
-                  )}
-                </button>
-
-                {/* Share Dropdown Modal */}
-                {showShareModal && (
-                  <div className="absolute right-0 mt-2 w-80 rounded-[24px] bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)] p-4 z-50">
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                      <div>
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Share Workspace</div>
-                        <div className="text-sm font-extrabold text-[#111317]">Share Dashboard Link</div>
-                      </div>
-                      <button
-                        onClick={() => setShowShareModal(false)}
-                        className="w-6 h-6 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-
-                    <p className="text-xs text-slate-500 mt-2">
-                      Copy link to your current dashboard view or invite teammates to review progress.
-                    </p>
-
-                    <div className="mt-3 flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
-                      <input
-                        type="text"
-                        readOnly
-                        value={typeof window !== 'undefined' ? window.location.href : 'https://infynuxacademy.in/intern-portal'}
-                        className="bg-transparent text-[11px] font-mono text-slate-700 w-full px-2 focus:outline-none"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleCopyShareLink}
-                        className="px-3 py-1 bg-[#111317] text-white rounded-xl text-xs font-bold hover:bg-[#0D7A53] transition-colors shrink-0 flex items-center gap-1"
-                      >
-                        {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                        <span>{copied ? "Copied" : "Copy"}</span>
-                      </button>
-                    </div>
-
-                    <div className="mt-3 flex items-center justify-around pt-2 border-t border-slate-100 text-xs">
-                      <a
-                        href={`https://wa.me/?text=${encodeURIComponent(`Check out our Infynux Academy Team Workspace: ${typeof window !== 'undefined' ? window.location.href : ''}`)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-3 py-1 rounded-full bg-[#E6F7F0] text-[#064E3B] font-bold hover:bg-[#d5f3e4] transition-colors"
-                      >
-                        WhatsApp
-                      </a>
-                      <a
-                        href={`mailto:?subject=${encodeURIComponent("Infynux Academy Team Workspace")}&body=${encodeURIComponent(`Here is the link: ${typeof window !== 'undefined' ? window.location.href : ''}`)}`}
-                        className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition-colors"
-                      >
-                        Email
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* 3. Functional Notification Bell */}
+              {/* Functional Notification Bell */}
               <div className="relative">
                 <button
                   type="button"
                   title="Notifications"
-                  onClick={() => {
-                    setShowNotifications(!showNotifications);
-                    setShowShareModal(false);
-                    setShowTeamPopover(false);
-                  }}
-                  className="relative w-9 h-9 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 hover:text-[#111317] hover:bg-slate-50 transition-all shadow-xs cursor-pointer"
+                  onClick={() => setShowNotifications(!showNotifications)}
+                  className="relative w-9 h-9 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 hover:text-[#111317] hover:bg-slate-50 transition-all shadow-xs cursor-pointer shrink-0"
                 >
                   <Bell className="h-4 w-4" />
                   {unreadCount > 0 && (
@@ -468,22 +287,11 @@ function InterPortal() {
                 )}
               </div>
 
-              {/* Profile Avatar & Info */}
-              <div className="flex items-center gap-2 pl-1">
-                <div className="h-9 w-9 rounded-full bg-[#111317] text-white font-extrabold flex items-center justify-center text-xs ring-2 ring-[#0D7A53]/30 shadow-sm uppercase">
-                  {session.name.charAt(0)}
-                </div>
-                <div className="hidden xl:block text-left">
-                  <p className="text-xs font-bold text-[#111317] leading-none">{session.name}</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5 font-mono">{session.studentId}</p>
-                </div>
-              </div>
-
               {/* Logout Button */}
               <button
                 onClick={handleLogout}
                 title="Logout"
-                className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-xs shrink-0"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Logout</span>

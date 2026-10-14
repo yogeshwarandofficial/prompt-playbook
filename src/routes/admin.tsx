@@ -91,102 +91,75 @@ function AdminDashboard() {
       {/* Exact Navbar Design matching the reference screenshot */}
       <header className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-xl border-b border-slate-200/70 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between gap-3">
-            {/* Left: Brand Cluster Logo & Navigation Tabs */}
-            <div className="flex items-center gap-3 lg:gap-5 min-w-0">
-              {/* Official Company Logo */}
-              <div className="flex items-center gap-2.5 shrink-0">
-                <div className="h-10 px-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center">
-                  <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-7 w-auto object-contain" />
-                </div>
-                <div className="hidden sm:flex flex-col">
-                  <span className="text-sm font-black tracking-tight text-[#111317] leading-tight">
-                    INFYNUX
-                  </span>
-                  <span className="text-[10px] font-bold text-[#0D7A53] tracking-wider uppercase leading-none">
-                    Admin Suite
-                  </span>
-                </div>
+          <div className="flex h-16 items-center justify-between gap-3 sm:gap-4">
+            {/* 1. Official Company Logo */}
+            <div className="flex items-center gap-2.5 shrink-0">
+              <div className="h-10 px-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center">
+                <img src="/INfynux-Logo 1.png" alt="Infynux Academy Logo" className="h-7 w-auto object-contain" />
               </div>
-
-              {/* Exact Pill Navigation Cluster */}
-              <nav className="hidden lg:flex items-center gap-1.5 p-1 rounded-full bg-slate-100/70 border border-slate-200/60 max-w-xl xl:max-w-3xl overflow-x-auto no-scrollbar">
-                {ADMIN_NAV_ITEMS.map((item) => {
-                  const isActive = currentView === item.id;
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        setCurrentView(item.id);
-                        setSidebarOpen(false);
-                      }}
-                      className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all shrink-0 ${
-                        isActive
-                          ? "bg-[#111317] text-white font-bold shadow-sm"
-                          : "bg-white/80 hover:bg-white text-slate-700 hover:text-[#111317] font-semibold border border-slate-200/80 shadow-xs"
-                      }`}
-                    >
-                      <Icon className={`h-3.5 w-3.5 ${isActive ? "text-[#34D399]" : "text-slate-500"}`} />
-                      <span>{item.label}</span>
-                    </button>
-                  );
-                })}
-              </nav>
+              <div className="hidden sm:flex flex-col">
+                <span className="text-sm font-black tracking-tight text-[#111317] leading-tight">
+                  INFYNUX
+                </span>
+                <span className="text-[10px] font-bold text-[#0D7A53] tracking-wider uppercase leading-none">
+                  Admin Suite
+                </span>
+              </div>
             </div>
 
-            {/* Right: Teammates / Admin stack, Live Portal Pill, Notification Circle & Profile */}
-            <div className="flex items-center gap-2.5 shrink-0">
-              {/* Overlapping Avatar Stack matching screenshot */}
-              <div className="hidden xl:flex items-center -space-x-2 pl-1">
-                <div className="h-8 w-8 rounded-full bg-slate-800 text-white font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs">
-                  A
+            {/* 2. Expanded Navbar Navigation */}
+            <nav className="hidden lg:flex items-center gap-1.5 p-1 rounded-full bg-slate-100/70 border border-slate-200/60 flex-1 min-w-0 max-w-4xl overflow-x-auto no-scrollbar mx-2">
+              {ADMIN_NAV_ITEMS.map((item) => {
+                const isActive = currentView === item.id;
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setCurrentView(item.id);
+                      setSidebarOpen(false);
+                    }}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all shrink-0 ${
+                      isActive
+                        ? "bg-[#111317] text-white font-bold shadow-sm"
+                        : "bg-white/80 hover:bg-white text-slate-700 hover:text-[#111317] font-semibold border border-slate-200/80 shadow-xs"
+                    }`}
+                  >
+                    <Icon className={`h-3.5 w-3.5 ${isActive ? "text-[#34D399]" : "text-slate-500"}`} />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* 3. Right: Our Name, Notification Bell, Logout */}
+            <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+              {/* Our Name & Role */}
+              <div className="flex items-center gap-2">
+                <div className="h-9 w-9 rounded-full bg-[#111317] text-[#34D399] font-extrabold flex items-center justify-center text-xs ring-2 ring-[#0D7A53]/30 shadow-sm uppercase shrink-0">
+                  {session.name.charAt(0)}
                 </div>
-                <div className="h-8 w-8 rounded-full bg-[#0D7A53] text-white font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs">
-                  M
-                </div>
-                <div className="h-8 w-8 rounded-full bg-[#111317] text-slate-200 font-extrabold text-[11px] flex items-center justify-center ring-2 ring-white shadow-xs">
-                  +4
+                <div className="hidden md:block text-left">
+                  <p className="text-xs font-bold text-[#111317] leading-none whitespace-nowrap">{session.name}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider font-mono">{session.role}</p>
                 </div>
               </div>
 
-              {/* Live Portal Pill Link */}
-              <a
-                href="/intern-portal"
-                target="_blank"
-                rel="noreferrer"
-                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200/90 hover:bg-slate-50 hover:text-[#111317] transition-all shadow-xs"
-              >
-                <Share2 className="h-3.5 w-3.5 text-slate-500" />
-                <span>Student Portal</span>
-              </a>
-
-              {/* Circular Bell */}
+              {/* Notification Bell */}
               <button
                 type="button"
                 title="Notifications"
-                className="relative w-9 h-9 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 hover:text-[#111317] hover:bg-slate-50 transition-all shadow-xs"
+                className="relative w-9 h-9 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 hover:text-[#111317] hover:bg-slate-50 transition-all shadow-xs shrink-0 cursor-pointer"
               >
                 <Bell className="h-4 w-4" />
                 <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span>
               </button>
 
-              {/* Admin Profile */}
-              <div className="flex items-center gap-2 pl-1">
-                <div className="h-9 w-9 rounded-full bg-[#111317] text-[#34D399] font-extrabold flex items-center justify-center text-xs ring-2 ring-[#0D7A53]/30 shadow-sm uppercase">
-                  {session.name.charAt(0)}
-                </div>
-                <div className="hidden sm:block text-left">
-                  <p className="text-xs font-bold text-[#111317] leading-none">{session.name}</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider font-mono">{session.role}</p>
-                </div>
-              </div>
-
               {/* Logout Button */}
               <button
                 onClick={handleLogout}
                 title="Logout"
-                className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-xs shrink-0"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Logout</span>
