@@ -4,16 +4,15 @@ import { getSession, signOut, type AdminSession } from "@/lib/auth";
 import { 
   LogOut, 
   LayoutDashboard, 
-  BookOpen, 
-  CheckSquare, 
   Briefcase, 
   UploadCloud, 
-  BarChart, 
   Award,
+  Users,
   Menu,
   X
 } from "lucide-react";
 import { createSeoHead } from "@/lib/seo";
+import { StudentTeamView } from "@/components/intern-portal/StudentTeamView";
 
 export const Route = createFileRoute("/intern-portal")({
   head: () => createSeoHead({
@@ -25,17 +24,14 @@ export const Route = createFileRoute("/intern-portal")({
   component: InterPortal,
 });
 
-type ViewState = 'dashboard' | 'learning' | 'tasks' | 'projects' | 'submissions' | 'progress' | 'certificate';
-
+type ViewState = 'dashboard' | 'team' | 'projects' | 'submissions' | 'certificate';
 
 const NAV_ITEMS = [
-  { label: "Dashboard", id: 'dashboard', icon: LayoutDashboard, active: true },
-  { label: "Learning", id: 'learning', icon: BookOpen, active: false },
-  { label: "Tasks", id: 'tasks', icon: CheckSquare, active: false },
-  { label: "Projects", id: 'projects', icon: Briefcase, active: true },
-  { label: "Submissions", id: 'submissions', icon: UploadCloud, active: true },
-  { label: "Progress", id: 'progress', icon: BarChart, active: false },
-  { label: "Certificate", id: 'certificate', icon: Award, active: true },
+  { label: "Dashboard", id: 'dashboard', icon: LayoutDashboard },
+  { label: "Team", id: 'team', icon: Users },
+  { label: "Projects", id: 'projects', icon: Briefcase },
+  { label: "Submissions", id: 'submissions', icon: UploadCloud },
+  { label: "Certificate", id: 'certificate', icon: Award },
 ];
 
 function InterPortal() {
@@ -90,77 +86,108 @@ function InterPortal() {
   }
 
   return (
-    <div className="flex h-screen bg-[#0A0A0A] overflow-hidden font-sans">
-      
-      {/* Mobile Sidebar */}
-      {sidebarOpen && (
-        <div className="relative z-50 lg:hidden">
-          <div className="fixed inset-0 bg-[#0A0A0A]/80 backdrop-blur-sm transition-opacity" onClick={() => setSidebarOpen(false)} />
-          <div className="fixed inset-y-0 left-0 flex w-72 flex-col bg-[#0A0A0A] pb-4 shadow-xl text-white">
-            <div className="flex h-16 shrink-0 items-center justify-between px-6 border-b border-white/10">
-              <span className="text-lg font-bold font-orbitron tracking-wide text-white">Infynux <span className="text-emerald-400">Academy</span></span>
-              <button type="button" className="-m-2.5 p-2.5 text-slate-400 hover:text-white" onClick={() => setSidebarOpen(false)}>
-                <span className="sr-only">Close sidebar</span>
-                <X className="h-6 w-6" aria-hidden="true" />
-              </button>
+    <div className="min-h-screen flex flex-col bg-[#f4f7f6] font-sans">
+      {/* Sleek Top Navbar */}
+      <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between gap-4">
+            {/* Left: Brand Logo */}
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-700 to-violet-600 flex items-center justify-center text-white font-black font-orbitron shadow-md shadow-indigo-500/20 text-base">
+                I
+              </div>
+              <div className="flex flex-col">
+                <span className="text-base font-extrabold tracking-tight text-slate-900 leading-tight">
+                  INFYNUX
+                </span>
+                <span className="text-[11px] font-medium text-slate-500 leading-tight">
+                  Intern Portal
+                </span>
+              </div>
             </div>
-            <SidebarNav 
-              handleLogout={handleLogout}
-              currentView={currentView}
-              setCurrentView={setCurrentView}
-            />
-          </div>
-        </div>
-      )}
 
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:w-64 lg:flex-col bg-[#0A0A0A] flex-shrink-0 text-white">
-        <div className="flex h-16 shrink-0 items-center px-6">
-          <span className="text-xl font-bold font-orbitron tracking-wide text-white mt-4">Infynux <span className="text-emerald-400">Academy</span></span>
-        </div>
-        <SidebarNav 
-          handleLogout={handleLogout}
-          currentView={currentView}
-          setCurrentView={setCurrentView}
-        />
-      </aside>
+            {/* Center: Sleek Dark Capsule Navigation */}
+            <nav className="hidden md:flex items-center bg-[#131622] px-2 py-1.5 rounded-full shadow-md shadow-black/10 border border-slate-800/80">
+              {NAV_ITEMS.map((item) => {
+                const isActive = currentView === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setCurrentView(item.id as ViewState)}
+                    className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                      isActive
+                        ? "bg-[#5B50E6] text-white shadow-sm"
+                        : "text-slate-300 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
+            </nav>
 
-      {/* Main Container (Curvy Inner Bar) */}
-      <div className="flex flex-1 flex-col overflow-hidden bg-[#f4f7f6] lg:rounded-tl-[2rem] lg:rounded-bl-[2rem] lg:my-2 lg:mr-2 shadow-2xl relative">
-        
-        {/* Header inside the curvy area */}
-        <header className="flex h-16 shrink-0 items-center gap-x-4 border-b border-slate-200/60 bg-white/80 px-4 sm:gap-x-6 sm:px-6 lg:px-8 backdrop-blur-md">
-          <button
-            type="button"
-            className="-m-2.5 p-2.5 text-slate-700 lg:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <span className="sr-only">Open sidebar</span>
-            <Menu className="h-6 w-6" aria-hidden="true" />
-          </button>
-          
-          <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 items-center justify-between">
-            <h1 className="text-sm font-bold text-slate-900 uppercase tracking-widest font-orbitron lg:hidden">
-              Intern Portal
-            </h1>
-            <div className="hidden lg:block"></div>
-            
-            <div className="flex items-center gap-x-4 lg:gap-x-6">
-              <div className="flex items-center gap-3">
-                <div className="text-right hidden sm:block">
-                  <p className="text-sm font-semibold text-slate-900 leading-none">{session.name}</p>
-                  <p className="text-xs text-slate-500 mt-1">{session.studentId}</p>
+            {/* Right: User Profile & Logout */}
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="hidden sm:flex items-center gap-2.5 pr-1">
+                <div className="text-right">
+                  <p className="text-xs font-semibold text-slate-800 leading-none">{session.name}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5 font-mono">{session.studentId}</p>
                 </div>
-                <div className="h-9 w-9 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-700 font-bold uppercase text-sm shadow-inner">
+                <div className="h-8 w-8 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 font-bold uppercase text-xs shadow-sm">
                   {session.name.charAt(0)}
                 </div>
               </div>
+
+              <button
+                onClick={handleLogout}
+                title="Logout"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-rose-500 bg-white border border-rose-200 hover:bg-rose-50 hover:border-rose-300 transition-all shadow-sm"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                <span>Logout</span>
+              </button>
+
+              {/* Mobile Menu Toggle Button */}
+              <button
+                type="button"
+                className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg md:hidden"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
             </div>
           </div>
-        </header>
+        </div>
 
-        <main className="flex-1 overflow-y-auto bg-[#f4f7f6] p-4 sm:p-6 lg:p-8">
-          <div className="mx-auto max-w-5xl space-y-8">
+        {/* Mobile Navigation Dropdown */}
+        {sidebarOpen && (
+          <div className="md:hidden border-t border-slate-200 bg-[#131622] px-4 py-3 space-y-1">
+            {NAV_ITEMS.map((item) => {
+              const isActive = currentView === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setCurrentView(item.id as ViewState);
+                    setSidebarOpen(false);
+                  }}
+                  className={`flex w-full items-center justify-between px-4 py-2.5 rounded-full text-xs font-semibold transition-all ${
+                    isActive
+                      ? "bg-[#5B50E6] text-white"
+                      : "text-slate-300 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </header>
+
+      {/* Main Container */}
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+        <div className="space-y-8">
             
             <header>
               <h2 className="text-2xl font-bold leading-7 text-slate-900 sm:truncate sm:text-3xl sm:tracking-tight">
@@ -245,6 +272,10 @@ function InterPortal() {
               </>
             )}
 
+            {currentView === 'team' && (
+              <StudentTeamView session={session} />
+            )}
+
             {currentView === 'projects' && (
               <ProjectsView />
             )}
@@ -258,68 +289,7 @@ function InterPortal() {
             )}
 
           </div>
-        </main>
-      </div>
-    </div>
-  );
-}
-
-function SidebarNav({ 
-  handleLogout,
-  currentView,
-  setCurrentView
-}: { 
-  handleLogout: () => void,
-  currentView?: string,
-  setCurrentView?: (v: any) => void
-}) {
-  return (
-    <div className="flex grow flex-col gap-y-5 overflow-y-auto px-4 py-6">
-      <nav className="flex flex-1 flex-col">
-        <ul role="list" className="flex flex-1 flex-col gap-y-7">
-          <li>
-            <ul role="list" className="space-y-1">
-              {NAV_ITEMS.map((item) => (
-                <li key={item.label}>
-                  <button
-                    type="button"
-                    disabled={!item.active}
-                    onClick={() => { if(item.active && setCurrentView) setCurrentView(item.id) }}
-                    className={`group flex w-full items-center gap-x-3 rounded-lg p-3 text-sm font-medium transition-all ${
-                      currentView === item.id && item.active
-                        ? "bg-[#1E50FF] text-white shadow-sm"
-                        : "text-slate-400 hover:bg-white/5 hover:text-white disabled:opacity-40 disabled:hover:bg-transparent disabled:cursor-not-allowed"
-                    }`}
-                  >
-                    <item.icon
-                      className={`h-5 w-5 shrink-0 ${
-                        item.active ? "text-white" : "text-slate-500 group-hover:text-slate-300"
-                      }`}
-                      aria-hidden="true"
-                    />
-                    {item.label}
-                    {!item.active && (
-                      <span className="ml-auto text-[10px] uppercase tracking-wider font-bold bg-white/10 text-white/60 px-2 py-0.5 rounded-full">
-                        Soon
-                      </span>
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </li>
-          
-          <li className="mt-auto">
-            <button
-              onClick={handleLogout}
-              className="group flex w-full items-center gap-x-3 rounded-lg p-3 text-sm font-medium text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors"
-            >
-              <LogOut className="h-5 w-5 shrink-0 text-slate-500 group-hover:text-red-400" aria-hidden="true" />
-              Logout
-            </button>
-          </li>
-        </ul>
-      </nav>
+      </main>
     </div>
   );
 }

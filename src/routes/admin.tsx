@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { DomainsView } from "../components/admin/DomainsView";
 import { BatchesView } from "../components/admin/BatchesView";
+import { TeamsView } from "../components/admin/TeamsView";
 
 import { ApplicationsView } from "../components/admin/ApplicationsView";
 import { InterviewsView } from "../components/admin/InterviewsView";
@@ -36,7 +37,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminDashboard,
 });
 
-type ViewState = 'dashboard' | 'applications' | 'mentors' | 'students' | 'batches' | 'domains' | 'courses' | 'events' | 'projects' | 'interviews' | 'certificates' | 'analytics' | 'submissions';
+type ViewState = 'dashboard' | 'applications' | 'mentors' | 'students' | 'batches' | 'domains' | 'courses' | 'events' | 'projects' | 'interviews' | 'certificates' | 'analytics' | 'submissions' | 'teams';
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -69,214 +70,154 @@ function AdminDashboard() {
     );
   }
 
+  const ADMIN_NAV_ITEMS: { id: ViewState; label: string; icon: any }[] = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'teams', label: 'Teams', icon: Users },
+    { id: 'applications', label: 'Applications', icon: UserPlus },
+    { id: 'students', label: 'Students', icon: Users },
+    { id: 'mentors', label: 'Mentors', icon: UserCheck },
+    { id: 'domains', label: 'Domains', icon: CheckCircle2 },
+    { id: 'batches', label: 'Batches', icon: Briefcase },
+    { id: 'projects', label: 'Projects', icon: Briefcase },
+    { id: 'courses', label: 'Courses', icon: BookOpen },
+    { id: 'events', label: 'Events', icon: BookOpen },
+    { id: 'submissions', label: 'Submissions', icon: ListChecks },
+    { id: 'interviews', label: 'Interviews', icon: MessageSquare },
+    { id: 'certificates', label: 'Certificates', icon: CheckCircle2 },
+  ];
+
   return (
-    <div className="flex h-screen bg-[#0A0A0A] overflow-hidden font-sans">
-      
-      {/* Mobile Sidebar */}
-      {sidebarOpen && (
-        <div className="relative z-50 lg:hidden">
-          <div className="fixed inset-0 bg-[#0A0A0A]/80 backdrop-blur-sm transition-opacity" onClick={() => setSidebarOpen(false)} />
-          <div className="fixed inset-y-0 left-0 flex w-72 flex-col bg-[#0A0A0A] pb-4 shadow-xl text-white">
-            <div className="flex h-16 shrink-0 items-center justify-between px-6 border-b border-white/10">
-              <span className="text-lg font-bold font-orbitron tracking-wide text-white">Academy<span className="text-indigo-400">Admin</span></span>
-              <button type="button" className="-m-2.5 p-2.5 text-slate-400 hover:text-white" onClick={() => setSidebarOpen(false)}>
-                <span className="sr-only">Close sidebar</span>
-                <X className="h-6 w-6" aria-hidden="true" />
-              </button>
+    <div className="min-h-screen flex flex-col bg-[#f4f7f6] font-sans">
+      {/* Sleek Top Navbar */}
+      <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between gap-4">
+            {/* Left: Brand Logo */}
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-700 to-violet-600 flex items-center justify-center text-white font-black font-orbitron shadow-md shadow-indigo-500/20 text-base">
+                I
+              </div>
+              <div className="flex flex-col">
+                <span className="text-base font-extrabold tracking-tight text-slate-900 leading-tight">
+                  INFYNUX
+                </span>
+                <span className="text-[11px] font-medium text-slate-500 leading-tight">
+                  Admin Dashboard
+                </span>
+              </div>
             </div>
-            <SidebarNav 
-              handleLogout={handleLogout} 
-              currentView={currentView} 
-              setCurrentView={setCurrentView} 
-            />
-          </div>
-        </div>
-      )}
 
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:w-64 lg:flex-col bg-[#0A0A0A] flex-shrink-0 text-white">
-        <div className="flex h-16 shrink-0 items-center px-6">
-          <span className="text-xl font-bold font-orbitron tracking-wide text-white mt-4">Academy<span className="text-indigo-400">Admin</span></span>
-        </div>
-        <SidebarNav 
-          handleLogout={handleLogout} 
-          currentView={currentView} 
-          setCurrentView={setCurrentView} 
-        />
-      </aside>
+            {/* Center: Sleek Dark Capsule Navigation */}
+            <nav className="hidden lg:flex items-center bg-[#131622] px-2 py-1.5 rounded-full shadow-md shadow-black/10 border border-slate-800/80 max-w-2xl xl:max-w-3xl overflow-x-auto no-scrollbar">
+              {ADMIN_NAV_ITEMS.map((item) => {
+                const isActive = currentView === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setCurrentView(item.id);
+                      setSidebarOpen(false);
+                    }}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                      isActive
+                        ? "bg-[#5B50E6] text-white shadow-sm"
+                        : "text-slate-300 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
+            </nav>
 
-      {/* Main Container */}
-      <div className="flex flex-1 flex-col overflow-hidden bg-[#f4f7f6] lg:rounded-tl-[2.5rem] lg:rounded-bl-[2.5rem] lg:my-2 lg:mr-2 shadow-2xl relative">
-        
-        {/* Header */}
-        <header className="flex h-16 shrink-0 items-center gap-x-4 border-b border-slate-200/60 bg-white/80 px-4 sm:gap-x-6 sm:px-6 lg:px-8 backdrop-blur-md">
-          <button
-            type="button"
-            className="-m-2.5 p-2.5 text-slate-700 lg:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <span className="sr-only">Open sidebar</span>
-            <Menu className="h-6 w-6" aria-hidden="true" />
-          </button>
-          
-          <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 items-center justify-between">
-            <h1 className="text-sm font-bold text-slate-900 uppercase tracking-widest font-orbitron lg:hidden">
-              Admin
-            </h1>
-            <div className="hidden lg:block"></div>
-            
-            <div className="flex items-center gap-x-4 lg:gap-x-6">
-              <div className="flex items-center gap-3">
-                <div className="text-right hidden sm:block">
-                  <p className="text-sm font-semibold text-slate-900 leading-none">{session.name}</p>
-                  <p className="text-xs text-slate-500 mt-1">{session.role}</p>
+            {/* Right: User Profile & Logout */}
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="hidden sm:flex items-center gap-2.5 pr-1">
+                <div className="text-right">
+                  <p className="text-xs font-semibold text-slate-800 leading-none">{session.name}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider font-mono">{session.role}</p>
                 </div>
-                <div className="h-9 w-9 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-700 font-bold uppercase text-sm shadow-inner">
+                <div className="h-8 w-8 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 font-bold uppercase text-xs shadow-sm">
                   {session.name.charAt(0)}
                 </div>
               </div>
+
+              <button
+                onClick={handleLogout}
+                title="Logout"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-rose-500 bg-white border border-rose-200 hover:bg-rose-50 hover:border-rose-300 transition-all shadow-sm"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                <span>Logout</span>
+              </button>
+
+              {/* Mobile Menu Toggle Button */}
+              <button
+                type="button"
+                className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg lg:hidden"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
             </div>
           </div>
+        </div>
+
+        {/* Mobile Navigation Dropdown */}
+        {sidebarOpen && (
+          <div className="lg:hidden border-t border-slate-200 bg-[#131622] px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
+            {ADMIN_NAV_ITEMS.map((item) => {
+              const isActive = currentView === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setCurrentView(item.id);
+                    setSidebarOpen(false);
+                  }}
+                  className={`flex w-full items-center justify-between px-4 py-2.5 rounded-full text-xs font-semibold transition-all ${
+                    isActive
+                      ? "bg-[#5B50E6] text-white"
+                      : "text-slate-300 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </header>
+
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        <header>
+          <h2 className="text-2xl font-bold leading-7 text-slate-900 sm:truncate sm:text-3xl sm:tracking-tight">
+            {currentView === 'dashboard' && 'Admin Dashboard'}
+            {currentView === 'students' && 'Student Management'}
+            {currentView === 'courses' && 'Course Management'}
+            {currentView === 'events' && 'Event Management'}
+            {currentView === 'projects' && 'Project Management'}
+            {currentView === 'submissions' && 'Submission Reviews'}
+            {currentView === 'teams' && 'Team Management'}
+          </h2>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-[#f4f7f6] p-4 sm:p-6 lg:p-8">
-          <div className="mx-auto max-w-5xl space-y-8">
-            
-            <header>
-              <h2 className="text-2xl font-bold leading-7 text-slate-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                {currentView === 'dashboard' && 'Admin Dashboard'}
-                {currentView === 'students' && 'Student Management'}
-                {currentView === 'courses' && 'Course Management'}
-                {currentView === 'events' && 'Event Management'}
-                {currentView === 'projects' && 'Project Management'}
-                {currentView === 'submissions' && 'Submission Reviews'}
-              </h2>
-            </header>
-
-            {currentView === 'dashboard' && (
-              <DashboardView />
-            )}
-
-            
-            {currentView === 'domains' && <DomainsView />}
-            {currentView === 'batches' && <BatchesView />}
-
-            {currentView === 'applications' && <ApplicationsView />}
-            {currentView === 'mentors' && <div className="p-8 text-center text-slate-500">Mentors view coming soon</div>}
-            {currentView === 'interviews' && <InterviewsView />}
-            {currentView === 'certificates' && <CertificatesView />}
-            {currentView === 'analytics' && <div className="p-8 text-center text-slate-500">Analytics view coming soon</div>}
-
-            {currentView === 'students' && (
-              <StudentsView />
-            )}
-
-            {currentView === 'courses' && (
-              <CoursesView />
-            )}
-
-            {currentView === 'events' && (
-              <EventsView />
-            )}
-
-            {currentView === 'projects' && (
-              <ProjectsView />
-            )}
-
-            {currentView === 'submissions' && (
-              <SubmissionsView />
-            )}
-
-          </div>
-        </main>
-      </div>
-    </div>
-  );
-}
-
-function SidebarNav({ 
-  handleLogout, 
-  currentView, 
-  setCurrentView 
-}: { 
-  handleLogout: () => void,
-  currentView: ViewState,
-  setCurrentView: (view: ViewState) => void
-}) {
-  const NavItem = ({ view, icon: Icon, label }: { view: ViewState, icon: any, label: string }) => (
-    <li>
-      <button
-        type="button"
-        onClick={() => setCurrentView(view)}
-        className={`group flex w-full items-center gap-x-3 rounded-lg p-2.5 text-sm font-medium transition-all ${
-          currentView === view
-            ? "bg-indigo-600 text-white shadow-sm"
-            : "text-slate-400 hover:bg-white/5 hover:text-white"
-        }`}
-      >
-        <Icon className={`h-5 w-5 shrink-0 ${currentView === view ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`} />
-        {label}
-      </button>
-    </li>
-  );
-
-  return (
-    <div className="flex grow flex-col gap-y-5 overflow-y-auto px-4 py-6">
-      <nav className="flex flex-1 flex-col">
-        <ul role="list" className="flex flex-1 flex-col gap-y-6">
-          <li>
-            <ul role="list" className="space-y-1">
-              <NavItem view="dashboard" icon={LayoutDashboard} label="Dashboard" />
-            </ul>
-          </li>
-          
-          <li>
-            <div className="text-xs font-semibold leading-6 text-slate-500 uppercase tracking-wider mb-2 px-2">People</div>
-            <ul role="list" className="space-y-1">
-              <NavItem view="applications" icon={UserPlus} label="Applications" />
-              <NavItem view="students" icon={Users} label="Students" />
-              <NavItem view="mentors" icon={UserCheck} label="Mentors" />
-            </ul>
-          </li>
-          
-          <li>
-            <div className="text-xs font-semibold leading-6 text-slate-500 uppercase tracking-wider mb-2 px-2">Academy</div>
-            <ul role="list" className="space-y-1">
-              <NavItem view="domains" icon={CheckCircle2} label="Domains" />
-              <NavItem view="batches" icon={Briefcase} label="Batches" />
-            </ul>
-          </li>
-          
-          <li>
-            <div className="text-xs font-semibold leading-6 text-slate-500 uppercase tracking-wider mb-2 px-2">Content</div>
-            <ul role="list" className="space-y-1">
-
-              <NavItem view="projects" icon={Briefcase} label="Projects" />
-              <NavItem view="courses" icon={BookOpen} label="Courses" />
-              <NavItem view="events" icon={BookOpen} label="Events" />
-            </ul>
-          </li>
-          
-          <li>
-            <div className="text-xs font-semibold leading-6 text-slate-500 uppercase tracking-wider mb-2 px-2">Evaluation</div>
-            <ul role="list" className="space-y-1">
-              <NavItem view="submissions" icon={ListChecks} label="Submissions" />
-              <NavItem view="interviews" icon={MessageSquare} label="Interviews" />
-              <NavItem view="certificates" icon={CheckCircle2} label="Certificates" />
-            </ul>
-          </li>
-
-          <li className="mt-auto pt-6">
-            <button
-              onClick={handleLogout}
-              className="group flex w-full items-center gap-x-3 rounded-lg p-3 text-sm font-medium text-slate-400 hover:bg-white/5 hover:text-white transition-all"
-            >
-              <LogOut className="h-5 w-5 shrink-0 text-slate-500 group-hover:text-slate-300" />
-              Logout
-            </button>
-          </li>
-        </ul>
-      </nav>
+        {currentView === 'dashboard' && <DashboardView />}
+        {currentView === 'domains' && <DomainsView />}
+        {currentView === 'batches' && <BatchesView />}
+        {currentView === 'applications' && <ApplicationsView />}
+        {currentView === 'mentors' && <div className="p-8 text-center text-slate-500">Mentors view coming soon</div>}
+        {currentView === 'interviews' && <InterviewsView />}
+        {currentView === 'certificates' && <CertificatesView />}
+        {currentView === 'analytics' && <div className="p-8 text-center text-slate-500">Analytics view coming soon</div>}
+        {currentView === 'students' && <StudentsView />}
+        {currentView === 'teams' && <TeamsView />}
+        {currentView === 'courses' && <CoursesView />}
+        {currentView === 'events' && <EventsView />}
+        {currentView === 'projects' && <ProjectsView />}
+        {currentView === 'submissions' && <SubmissionsView />}
+      </main>
     </div>
   );
 }

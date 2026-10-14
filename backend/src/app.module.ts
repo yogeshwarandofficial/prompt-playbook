@@ -23,6 +23,7 @@ import { AutomatedReviewModule } from './automated-review/automated-review.modul
 import { EmailModule } from './email/email.module';
 import { ContactModule } from './contact/contact.module';
 import { NewsletterModule } from './newsletter/newsletter.module';
+import { TeamsModule } from './teams/teams.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     EmailModule,
     ContactModule,
     NewsletterModule,
+    TeamsModule,
   ],
   controllers: [],
   providers: [],

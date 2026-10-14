@@ -5,5 +5,7 @@ async function main() {
   const student = await prisma.user.findFirst({ where: { role: 'STUDENT' } });
   console.log('Admin:', admin ? admin.studentId : 'None');
   console.log('Student:', student ? student.id : 'None');
+  const teams = await prisma.team.findMany();
+  console.log('Teams query successful, total teams:', teams.length);
 }
 main().catch(console.error).finally(() => prisma.$disconnect());
