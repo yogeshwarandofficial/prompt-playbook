@@ -64,6 +64,11 @@ export class AdminController {
     return this.adminService.getDashboardStats();
   }
 
+  @Get('notifications')
+  getNotifications() {
+    return this.adminService.getAdminNotifications();
+  }
+
   @Post('students/:studentId/courses')
   assignCourse(
     @Param('studentId') studentId: string,

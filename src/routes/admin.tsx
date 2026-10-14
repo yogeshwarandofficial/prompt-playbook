@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { DomainsView } from "../components/admin/DomainsView";
 import { BatchesView } from "../components/admin/BatchesView";
@@ -23,7 +23,7 @@ import {
   Briefcase,
   ClipboardList,
   Plus, Edit, ListChecks, UserCheck, ChevronUp, ChevronDown, Trash2, Eye, ArrowLeft, ExternalLink, MessageSquare, Check, XCircle,
-  Target, Map, Bell, Share2, Sparkles, RefreshCw, Search, ChevronLeft
+  Target, Map, Bell, Share2, Sparkles, RefreshCw, Search, ChevronLeft, Loader2
 } from "lucide-react";
 import { createSeoHead } from "@/lib/seo";
 
@@ -37,7 +37,20 @@ export const Route = createFileRoute("/admin")({
   component: AdminDashboard,
 });
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+
 type ViewState = 'dashboard' | 'applications' | 'mentors' | 'students' | 'batches' | 'domains' | 'courses' | 'events' | 'projects' | 'interviews' | 'certificates' | 'analytics' | 'submissions' | 'teams';
+
+interface AdminNotification {
+  id: string;
+  title: string;
+  desc: string;
+  time: string;
+  timestamp: string;
+  type: 'application' | 'submission' | 'team' | 'interview' | 'system';
+  linkView: ViewState;
+  read: boolean;
+}
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -46,19 +59,72 @@ function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
 
-  // Notification center state
+  // Live Notification center state
   const [showNotifications, setShowNotifications] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(4);
-  const [notifications, setNotifications] = useState([
-    { id: 1, title: "New Candidate Applications", desc: "5 new internship applicants awaiting review.", time: "10m ago", read: false },
-    { id: 2, title: "Pending Sprint Submissions", desc: "3 code deliverables submitted for review.", time: "1h ago", read: false },
-    { id: 3, title: "Mentor Mock Interviews", desc: "2 student interviews scheduled for today.", time: "3h ago", read: false },
-    { id: 4, title: "System Status Update", desc: "Database connections pooled and nominal.", time: "4h ago", read: false },
-  ]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [notifications, setNotifications] = useState<AdminNotification[]>([]);
+
+  const fetchNotifications = useCallback(async () => {
+    try {
+      setNotificationsLoading(true);
+      const res = await fetch(`${API_URL}/api/admin/notifications`, {
+        credentials: "include",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const rawList: AdminNotification[] = data.notifications || [];
+        let storedReadIds: string[] = [];
+        try {
+          storedReadIds = JSON.parse(
+            localStorage.getItem("admin_read_notification_ids") || "[]"
+          );
+        } catch {}
+        const readSet = new Set(storedReadIds);
+        const mapped = rawList.map((n) => ({
+          ...n,
+          read: n.read || readSet.has(n.id),
+        }));
+        setNotifications(mapped);
+        setUnreadCount(mapped.filter((n) => !n.read).length);
+      }
+    } catch (err) {
+      console.warn("Failed to fetch admin notifications:", err);
+    } finally {
+      setNotificationsLoading(false);
+    }
+  }, []);
 
   const handleMarkAllNotificationsRead = () => {
+    try {
+      const allIds = notifications.map((n) => n.id);
+      localStorage.setItem("admin_read_notification_ids", JSON.stringify(allIds));
+    } catch {}
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     setUnreadCount(0);
+  };
+
+  const handleNotificationClick = (item: AdminNotification) => {
+    try {
+      const storedReadIds: string[] = JSON.parse(
+        localStorage.getItem("admin_read_notification_ids") || "[]"
+      );
+      if (!storedReadIds.includes(item.id)) {
+        storedReadIds.push(item.id);
+        localStorage.setItem(
+          "admin_read_notification_ids",
+          JSON.stringify(storedReadIds)
+        );
+      }
+    } catch {}
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === item.id ? { ...n, read: true } : n))
+    );
+    setUnreadCount((prev) => Math.max(0, prev - 1));
+    setShowNotifications(false);
+    if (item.linkView) {
+      setCurrentView(item.linkView);
+    }
   };
 
   useEffect(() => {
@@ -68,9 +134,15 @@ function AdminDashboard() {
       } else {
         setSession(s);
         setLoading(false);
+        fetchNotifications();
       }
     });
-  }, [navigate]);
+
+    const interval = setInterval(() => {
+      fetchNotifications();
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [navigate, fetchNotifications]);
 
   const handleLogout = async () => {
     await signOut();
@@ -165,7 +237,11 @@ function AdminDashboard() {
                 <button
                   type="button"
                   title="Notifications"
-                  onClick={() => setShowNotifications(!showNotifications)}
+                  onClick={() => {
+                    const next = !showNotifications;
+                    setShowNotifications(next);
+                    if (next) fetchNotifications();
+                  }}
                   className="relative w-9 h-9 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 hover:text-[#111317] hover:bg-slate-50 transition-all shadow-xs shrink-0 cursor-pointer"
                 >
                   <Bell className="h-4 w-4" />
@@ -180,13 +256,25 @@ function AdminDashboard() {
                     <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-extrabold text-[#111317]">Notifications</span>
-                        {unreadCount > 0 && (
+                        {unreadCount > 0 ? (
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30">
                             {unreadCount} new
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-500">
+                            Up to date
                           </span>
                         )}
                       </div>
                       <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => fetchNotifications()}
+                          title="Refresh notifications"
+                          className="p-1 rounded-full text-slate-400 hover:text-[#0D7A53] hover:bg-slate-100 transition-colors"
+                        >
+                          <RefreshCw className={`h-3 w-3 ${notificationsLoading ? "animate-spin text-[#0D7A53]" : ""}`} />
+                        </button>
                         {unreadCount > 0 && (
                           <button
                             type="button"
@@ -205,37 +293,87 @@ function AdminDashboard() {
                       </div>
                     </div>
 
-                    <div className="mt-3 space-y-2.5 max-h-72 overflow-y-auto">
-                      {notifications.map((item) => (
-                        <div
-                          key={item.id}
-                          className={`p-3 rounded-2xl border transition-colors ${
-                            !item.read
-                              ? "bg-[#E6F7F0]/40 border-[#0D7A53]/30"
-                              : "bg-slate-50/70 border-slate-200/60"
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <span className="text-xs font-bold text-[#111317]">{item.title}</span>
-                            <span className="text-[10px] text-slate-400 whitespace-nowrap">{item.time}</span>
-                          </div>
-                          <p className="text-xs text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
+                    <div className="mt-3 space-y-2.5 max-h-80 overflow-y-auto no-scrollbar">
+                      {notificationsLoading && notifications.length === 0 ? (
+                        <div className="py-8 flex flex-col items-center justify-center text-slate-400 gap-2">
+                          <Loader2 className="h-5 w-5 animate-spin text-[#0D7A53]" />
+                          <p className="text-xs">Fetching live notifications...</p>
                         </div>
-                      ))}
+                      ) : notifications.length === 0 ? (
+                        <div className="py-8 text-center text-slate-400">
+                          <CheckCircle2 className="h-7 w-7 mx-auto text-[#0D7A53] mb-1.5 opacity-70" />
+                          <p className="text-xs font-bold text-slate-700">All caught up!</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">No pending candidates, submissions, or deliverables.</p>
+                        </div>
+                      ) : (
+                        notifications.map((item) => (
+                          <div
+                            key={item.id}
+                            onClick={() => handleNotificationClick(item)}
+                            className={`p-3 rounded-2xl border transition-all cursor-pointer group text-left ${
+                              !item.read
+                                ? "bg-[#E6F7F0]/40 hover:bg-[#E6F7F0]/70 border-[#0D7A53]/30 shadow-xs"
+                                : "bg-slate-50/70 hover:bg-slate-100/80 border-slate-200/60"
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                <span
+                                  className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md border shrink-0 ${
+                                    item.type === 'application'
+                                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                      : item.type === 'submission'
+                                      ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                      : item.type === 'team'
+                                      ? 'bg-purple-50 text-purple-700 border-purple-200'
+                                      : item.type === 'interview'
+                                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                      : 'bg-slate-100 text-slate-600 border-slate-200'
+                                  }`}
+                                >
+                                  {item.type}
+                                </span>
+                                <span className="text-xs font-bold text-[#111317] group-hover:text-[#0D7A53] transition-colors truncate">
+                                  {item.title}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                <span className="text-[10px] text-slate-400 whitespace-nowrap">{item.time}</span>
+                                {!item.read && (
+                                  <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53] shrink-0" />
+                                )}
+                              </div>
+                            </div>
+                            <p className="text-xs text-slate-600 mt-1 leading-relaxed line-clamp-2">{item.desc}</p>
+                          </div>
+                        ))
+                      )}
                     </div>
 
-                    <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                      <span className="text-slate-400 text-[11px]">Admin Operations</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setCurrentView('applications');
-                          setShowNotifications(false);
-                        }}
-                        className="text-[#0D7A53] font-bold hover:underline text-xs"
-                      >
-                        View Applications →
-                      </button>
+                    <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+                      <span className="text-slate-400 text-[11px] font-medium">Quick Operations</span>
+                      <div className="flex items-center gap-2.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCurrentView('applications');
+                            setShowNotifications(false);
+                          }}
+                          className="text-[#0D7A53] font-bold hover:underline text-[11px]"
+                        >
+                          Applications →
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCurrentView('teams');
+                            setShowNotifications(false);
+                          }}
+                          className="text-slate-600 font-bold hover:underline text-[11px]"
+                        >
+                          Teams →
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
