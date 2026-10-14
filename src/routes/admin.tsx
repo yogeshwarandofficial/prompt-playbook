@@ -23,7 +23,7 @@ import {
   Briefcase,
   ClipboardList,
   Plus, Edit, ListChecks, UserCheck, ChevronUp, ChevronDown, Trash2, Eye, ArrowLeft, ExternalLink, MessageSquare, Check, XCircle,
-  Target, Map, Bell, Share2, Sparkles, RefreshCw, Search, ChevronLeft, Loader2
+  Target, Map, Bell, Share2, Sparkles, RefreshCw, Search, ChevronLeft, ChevronRight, Loader2
 } from "lucide-react";
 import { createSeoHead } from "@/lib/seo";
 
@@ -224,11 +224,11 @@ function AdminDashboard() {
               {/* Our Name & Role */}
               <div className="flex items-center gap-2">
                 <div className="h-9 w-9 rounded-full bg-[#111317] text-[#34D399] font-extrabold flex items-center justify-center text-xs ring-2 ring-[#0D7A53]/30 shadow-sm uppercase shrink-0">
-                  {session.name.charAt(0)}
+                  {(session.name || "A").charAt(0)}
                 </div>
                 <div className="hidden md:block text-left">
-                  <p className="text-xs font-bold text-[#111317] leading-none whitespace-nowrap">{session.name}</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider font-mono">{session.role}</p>
+                  <p className="text-xs font-bold text-[#111317] leading-none whitespace-nowrap">{session.name || "Admin"}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider font-mono">{session.role || "ADMIN"}</p>
                 </div>
               </div>
 

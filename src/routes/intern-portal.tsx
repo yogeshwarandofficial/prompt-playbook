@@ -158,11 +158,11 @@ function InterPortal() {
               {/* Our Name & Student ID */}
               <div className="flex items-center gap-2 pl-1">
                 <div className="h-9 w-9 rounded-full bg-[#111317] text-[#34D399] font-extrabold flex items-center justify-center text-xs ring-2 ring-[#0D7A53]/30 shadow-sm uppercase shrink-0">
-                  {session.name.charAt(0)}
+                  {(session.name || "S").charAt(0)}
                 </div>
                 <div className="hidden sm:block text-left">
-                  <p className="text-xs font-bold text-[#111317] leading-none whitespace-nowrap">{session.name}</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5 font-mono">{session.studentId}</p>
+                  <p className="text-xs font-bold text-[#111317] leading-none whitespace-nowrap">{session.name || "Student"}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5 font-mono">{session.studentId || "ID"}</p>
                 </div>
               </div>
 
