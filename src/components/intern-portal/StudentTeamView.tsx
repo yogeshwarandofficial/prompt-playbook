@@ -82,11 +82,11 @@ interface Team {
 function statusBadge(status: string) {
   switch (status) {
     case "COMPLETED":
-      return "bg-[#D4F63C] text-[#111317] border border-[#c5e830] font-black";
+      return "bg-[#0D7A53] text-white border border-[#0A6B48] font-bold shadow-xs";
     case "IN_PROGRESS":
-      return "bg-[#111317] text-[#D4F63C] border border-[#111317] font-bold";
+      return "bg-[#111317] text-[#34D399] border border-[#111317] font-bold";
     case "PENDING":
-      return "bg-[#F1F9D4] text-[#222E03] border border-[#D4F63C]/80 font-bold";
+      return "bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30 font-bold";
     case "CANCELLED":
       return "bg-slate-100 text-slate-500 border border-slate-200 font-medium";
     default:
@@ -95,10 +95,10 @@ function statusBadge(status: string) {
 }
 
 function statusIcon(status: string) {
-  if (status === "COMPLETED") return <CheckCircle2 className="h-3.5 w-3.5 text-[#111317]" />;
-  if (status === "IN_PROGRESS") return <Clock className="h-3.5 w-3.5 text-[#D4F63C]" />;
+  if (status === "COMPLETED") return <CheckCircle2 className="h-3.5 w-3.5 text-white" />;
+  if (status === "IN_PROGRESS") return <Clock className="h-3.5 w-3.5 text-[#34D399]" />;
   if (status === "CANCELLED") return <AlertCircle className="h-3.5 w-3.5 text-slate-400" />;
-  return <Clock className="h-3.5 w-3.5 text-[#222E03]" />;
+  return <Clock className="h-3.5 w-3.5 text-[#064E3B]" />;
 }
 
 export function StudentTeamView({ session }: { session: any }) {
@@ -161,7 +161,7 @@ export function StudentTeamView({ session }: { session: any }) {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-slate-400 gap-3">
-        <Loader2 className="animate-spin h-8 w-8 text-indigo-600" />
+        <Loader2 className="animate-spin h-8 w-8 text-[#0D7A53]" />
         <p className="text-sm font-medium">Loading your team workspace...</p>
       </div>
     );
@@ -178,8 +178,8 @@ export function StudentTeamView({ session }: { session: any }) {
           </p>
         </div>
 
-        <div className="overflow-hidden rounded-[28px] bg-white border border-slate-200/80 p-12 text-center shadow-sm">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#F1F9D4] text-[#111317] border border-[#D4F63C] mb-6">
+        <div className="overflow-hidden rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-12 text-center shadow-[0_8px_32px_0_rgba(0,0,0,0.04)]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#E6F7F0] text-[#0D7A53] border border-[#0D7A53]/30 mb-6">
             <Users className="h-8 w-8" />
           </div>
           <h4 className="text-xl font-bold text-[#111317]">No Team Assigned Yet</h4>
@@ -234,13 +234,13 @@ export function StudentTeamView({ session }: { session: any }) {
       {/* Top Header & Breadcrumbs / Team Switcher */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          {/* Breadcrumb pill tags */}
+          {/* Breadcrumb pill tags matching screenshot */}
           <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-[#F1F9D4] text-[#1F2E05] border border-[#D4F63C]/80">
-              <Sparkles className="h-3 w-3 text-[#111317]" />
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30 shadow-xs">
+              <Sparkles className="h-3.5 w-3.5 text-[#0D7A53]" />
               Team Workspace
             </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-white border border-slate-200 text-slate-600">
+            <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold bg-white/80 backdrop-blur-md border border-slate-200 text-slate-600 shadow-xs">
               Active Sprint
             </span>
           </div>
@@ -250,9 +250,9 @@ export function StudentTeamView({ session }: { session: any }) {
               {currentTeam.name}
             </h2>
             <span
-              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
+              className={`inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold ${
                 currentTeam.isActive
-                  ? "bg-[#D4F63C] text-[#111317] border border-[#CEF23F]"
+                  ? "bg-[#0D7A53] text-white shadow-xs"
                   : "bg-slate-100 text-slate-600 border border-slate-200"
               }`}
             >
@@ -270,7 +270,7 @@ export function StudentTeamView({ session }: { session: any }) {
         {/* Action Controls / Team Switcher */}
         <div className="flex items-center gap-3">
           {teams.length > 1 && (
-            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
+            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-slate-200/90 shadow-xs">
               <span className="text-xs font-bold text-slate-500 pl-1">Team:</span>
               <select
                 value={currentTeam.id}
@@ -290,22 +290,22 @@ export function StudentTeamView({ session }: { session: any }) {
             type="button"
             onClick={fetchTeams}
             title="Refresh team data"
-            className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-[#111317] hover:text-[#D4F63C] hover:border-[#111317] transition-all shadow-sm"
+            className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-[#111317] hover:text-[#34D399] hover:border-[#111317] transition-all shadow-xs"
           >
             <ArrowUpRight className="h-4 w-4" />
           </button>
         </div>
       </div>
 
-      {/* Bento Grid: 4 Modern Metric Cards */}
+      {/* Bento Grid: 4 Frosted Glass Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Team Progress */}
-        <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+        {/* Card 1: Team Progress (Frosted Glass Card) */}
+        <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-start justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Team Progress
             </span>
-            <div className="w-8 h-8 rounded-full bg-[#F1F9D4] flex items-center justify-center text-[#111317]">
+            <div className="w-8 h-8 rounded-full bg-[#E6F7F0] flex items-center justify-center text-[#0D7A53]">
               <ArrowUpRight className="h-4 w-4" />
             </div>
           </div>
@@ -315,21 +315,21 @@ export function StudentTeamView({ session }: { session: any }) {
             </div>
             <div className="mt-3 w-full bg-slate-100 rounded-full h-2 overflow-hidden">
               <div
-                className="bg-[#D4F63C] h-2 rounded-full transition-all duration-500"
+                className="bg-[#0D7A53] h-2 rounded-full transition-all duration-500"
                 style={{ width: `${currentTeam.progressPercentage}%` }}
               />
             </div>
           </div>
           <div className="flex items-center justify-between text-xs">
-            <span className="text-slate-400">Milestones Done</span>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F1F9D4] text-[#1F2E05]">
+            <span className="text-slate-400 font-medium">Milestones Done</span>
+            <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/20">
               {currentTeam.completedTasks}/{currentTeam.totalTasks}
             </span>
           </div>
         </div>
 
-        {/* Card 2: Teammates */}
-        <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+        {/* Card 2: Teammates (Frosted Glass Card) */}
+        <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-start justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Teammates
@@ -346,30 +346,30 @@ export function StudentTeamView({ session }: { session: any }) {
           </div>
           {/* Avatar stack matching reference design */}
           <div className="flex items-center -space-x-2 pt-1">
-            {currentTeam.members.slice(0, 4).map((m, idx) => (
+            {currentTeam.members.slice(0, 4).map((m) => (
               <div
                 key={m.id}
                 title={m.student.name}
-                className="h-8 w-8 rounded-full bg-[#111317] text-[#D4F63C] font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-sm"
+                className="h-8 w-8 rounded-full bg-[#111317] text-[#34D399] font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs"
               >
                 {m.student.name.charAt(0).toUpperCase()}
               </div>
             ))}
             {currentTeam.members.length > 4 && (
-              <div className="h-8 w-8 rounded-full bg-[#D4F63C] text-[#111317] font-extrabold text-[11px] flex items-center justify-center ring-2 ring-white shadow-sm">
+              <div className="h-8 w-8 rounded-full bg-[#0D7A53] text-white font-extrabold text-[11px] flex items-center justify-center ring-2 ring-white shadow-xs">
                 +{currentTeam.members.length - 4}
               </div>
             )}
           </div>
         </div>
 
-        {/* Card 3: My Assigned Tasks */}
-        <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+        {/* Card 3: My Assigned Tasks (Frosted Glass Card) */}
+        <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-start justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
               My Tasks
             </span>
-            <div className="w-8 h-8 rounded-full bg-[#D4F63C] flex items-center justify-center text-[#111317]">
+            <div className="w-8 h-8 rounded-full bg-[#0D7A53] flex items-center justify-center text-white">
               <CheckSquare className="h-4 w-4" />
             </div>
           </div>
@@ -381,22 +381,22 @@ export function StudentTeamView({ session }: { session: any }) {
             <p className="text-xs text-slate-400 mt-1">Tasks completed by you</p>
           </div>
           <div className="flex items-center gap-1.5 pt-1">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#111317] text-[#D4F63C]">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#111317] text-[#34D399]">
               {currentTeam.myTasks.filter((t) => t.status === "IN_PROGRESS").length} Active
             </span>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F1F9D4] text-[#1F2E05]">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/20">
               {currentTeam.myTasks.filter((t) => t.status === "PENDING").length} Pending
             </span>
           </div>
         </div>
 
-        {/* Card 4: Team In-Progress Sprints */}
-        <div className="rounded-[28px] bg-white border border-slate-200/80 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+        {/* Card 4: Team In-Progress Sprints (Frosted Glass Card) */}
+        <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-start justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Active Sprints
             </span>
-            <div className="w-8 h-8 rounded-full bg-[#111317] flex items-center justify-center text-[#D4F63C]">
+            <div className="w-8 h-8 rounded-full bg-[#111317] flex items-center justify-center text-[#34D399]">
               <Clock className="h-4 w-4" />
             </div>
           </div>
@@ -407,24 +407,24 @@ export function StudentTeamView({ session }: { session: any }) {
             <p className="text-xs text-slate-400 mt-1">In-flight across entire team</p>
           </div>
           <div className="flex items-center justify-between text-xs pt-1">
-            <span className="text-slate-400">Team Status</span>
-            <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-[#D4F63C] text-[#111317]">
+            <span className="text-slate-400 font-medium">Team Status</span>
+            <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-[#0D7A53] text-white">
               Live
             </span>
           </div>
         </div>
       </div>
 
-      {/* Main Content Layout: Tasks Bento (7 Cols) & Teammates Bento (5 Cols) */}
+      {/* Main Content Layout: Tasks Glass Bento (7 Cols) & Teammates Glass Bento (5 Cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
         {/* Left Column: My Assigned Tasks */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="rounded-[28px] bg-white border border-slate-200/80 p-6 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] space-y-5">
+          <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-6 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] space-y-5">
             {/* Header & Filter Capsules */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h3 className="text-xl font-bold text-[#111317] flex items-center gap-2">
-                  <ClipboardList className="h-5 w-5 text-[#111317]" />
+                  <ClipboardList className="h-5 w-5 text-[#0D7A53]" />
                   My Assigned Tasks
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -434,7 +434,7 @@ export function StudentTeamView({ session }: { session: any }) {
 
               {/* Capsule Filter Pills */}
               <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-full text-xs font-semibold">
+                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-full text-xs font-semibold border border-slate-200/60">
                   {(["ALL", "PENDING", "IN_PROGRESS", "COMPLETED"] as const).map((filter) => {
                     const isActive = taskFilter === filter;
                     return (
@@ -443,7 +443,7 @@ export function StudentTeamView({ session }: { session: any }) {
                         onClick={() => setTaskFilter(filter)}
                         className={`px-3 py-1.5 rounded-full transition-all ${
                           isActive
-                            ? "bg-[#111317] text-[#D4F63C] font-bold shadow-sm"
+                            ? "bg-[#111317] text-white font-bold shadow-sm"
                             : "text-slate-600 hover:text-slate-900"
                         }`}
                       >
@@ -463,7 +463,7 @@ export function StudentTeamView({ session }: { session: any }) {
                   <button
                     type="button"
                     onClick={toggleExpandAll}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-700 hover:text-[#111317] bg-white border border-slate-200 hover:border-slate-300 transition-colors shadow-sm"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-700 hover:text-[#111317] bg-white border border-slate-200 hover:border-slate-300 transition-colors shadow-xs"
                     title={allExpanded ? "Minimize all task descriptions" : "Expand all task descriptions"}
                   >
                     <ChevronsUpDown className="h-3.5 w-3.5 text-slate-400" />
@@ -476,7 +476,7 @@ export function StudentTeamView({ session }: { session: any }) {
             {/* Task Cards List */}
             {myFilteredTasks.length === 0 ? (
               <div className="rounded-[22px] border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center">
-                <div className="w-12 h-12 rounded-full bg-[#F1F9D4] flex items-center justify-center text-[#111317] mx-auto mb-3">
+                <div className="w-12 h-12 rounded-full bg-[#E6F7F0] flex items-center justify-center text-[#0D7A53] mx-auto mb-3">
                   <CheckSquare className="h-6 w-6" />
                 </div>
                 <h5 className="text-sm font-bold text-[#111317]">No tasks in this view</h5>
@@ -502,7 +502,7 @@ export function StudentTeamView({ session }: { session: any }) {
                   return (
                     <div
                       key={task.id}
-                      className="bg-slate-50/70 hover:bg-slate-50/90 rounded-[22px] border border-slate-200/90 p-5 shadow-sm transition-all space-y-3"
+                      className="bg-white/90 backdrop-blur-md rounded-[22px] border border-slate-200/90 p-5 shadow-xs transition-all space-y-3 hover:border-slate-300 hover:shadow-sm"
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="space-y-2 flex-1 min-w-0">
@@ -512,7 +512,7 @@ export function StudentTeamView({ session }: { session: any }) {
                               type="button"
                               onClick={() => toggleTaskExpand(task.id)}
                               title={isExpanded ? "Minimize details" : "Expand details"}
-                              className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-[#111317] hover:border-slate-300 transition-colors shadow-xs"
+                              className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-[#111317] hover:border-slate-300 transition-colors shadow-xs"
                             >
                               {isExpanded ? (
                                 <ChevronUp className="h-3.5 w-3.5" />
@@ -526,7 +526,7 @@ export function StudentTeamView({ session }: { session: any }) {
                               className={`text-base font-bold cursor-pointer transition-colors ${
                                 task.status === "COMPLETED"
                                   ? "line-through text-slate-400"
-                                  : "text-[#111317] hover:text-slate-700"
+                                  : "text-[#111317] hover:text-[#0D7A53]"
                               }`}
                             >
                               {task.title}
@@ -554,7 +554,7 @@ export function StudentTeamView({ session }: { session: any }) {
                                     <button
                                       type="button"
                                       onClick={() => toggleTaskExpand(task.id)}
-                                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#111317] hover:underline pt-0.5"
+                                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0D7A53] hover:underline pt-0.5"
                                     >
                                       <span>Read full description</span>
                                       <ChevronDown className="h-3 w-3" />
@@ -562,7 +562,7 @@ export function StudentTeamView({ session }: { session: any }) {
                                   )}
                                 </div>
                               ) : (
-                                <div className="bg-white rounded-2xl p-4 border border-slate-200/80 space-y-2 shadow-xs">
+                                <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/80 space-y-2 shadow-xs">
                                   <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400">
                                     <span>Task Requirements & Instructions</span>
                                     <button
@@ -585,7 +585,7 @@ export function StudentTeamView({ session }: { session: any }) {
                           {/* Meta: Assigned Date, Due Date & Reference Link */}
                           <div className="flex items-center gap-2.5 pt-1 flex-wrap text-xs">
                             {task.createdAt && (
-                              <span className="inline-flex items-center gap-1 font-semibold text-slate-500 bg-white px-2.5 py-1 rounded-full border border-slate-200">
+                              <span className="inline-flex items-center gap-1 font-semibold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">
                                 <Calendar className="h-3 w-3 text-slate-400" />
                                 Assigned: {new Date(task.createdAt).toLocaleDateString()}
                               </span>
@@ -596,7 +596,7 @@ export function StudentTeamView({ session }: { session: any }) {
                                 className={`inline-flex items-center gap-1 font-semibold px-2.5 py-1 rounded-full border ${
                                   isOverdue
                                     ? "bg-rose-50 text-rose-700 border-rose-200 font-bold"
-                                    : "bg-white text-slate-600 border-slate-200"
+                                    : "bg-slate-50 text-slate-600 border-slate-200"
                                 }`}
                               >
                                 <Clock className="h-3 w-3" />
@@ -611,16 +611,16 @@ export function StudentTeamView({ session }: { session: any }) {
                                 href={task.taskUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs text-[#111317] bg-[#F1F9D4] hover:bg-[#D4F63C] border border-[#D4F63C] font-bold px-3 py-1 rounded-full transition-colors"
+                                className="inline-flex items-center gap-1 text-xs text-[#064E3B] bg-[#E6F7F0] hover:bg-[#d5f3e4] border border-[#0D7A53]/30 font-bold px-3 py-1 rounded-full transition-colors"
                               >
-                                <ExternalLink className="h-3 w-3" />
+                                <ExternalLink className="h-3 w-3 text-[#0D7A53]" />
                                 Assigned Spec / Link
                               </a>
                             )}
                           </div>
                         </div>
 
-                        {/* Action Buttons: Pill-shaped CTA */}
+                        {/* Action Buttons: Pill-shaped CTA in Velvet Emerald */}
                         <div className="shrink-0 flex items-center gap-2">
                           {task.status === "PENDING" && (
                             <>
@@ -638,7 +638,7 @@ export function StudentTeamView({ session }: { session: any }) {
                               </button>
                               <button
                                 onClick={() => setSubmittingTask(task)}
-                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#D4F63C] text-[#111317] hover:bg-[#C2E82E] text-xs font-extrabold transition-all shadow-sm"
+                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0D7A53] hover:bg-[#0A6B48] text-white text-xs font-bold transition-all shadow-sm shadow-[#0D7A53]/20"
                               >
                                 <Send className="h-3.5 w-3.5" />
                                 Submit
@@ -649,7 +649,7 @@ export function StudentTeamView({ session }: { session: any }) {
                           {task.status === "IN_PROGRESS" && (
                             <button
                               onClick={() => setSubmittingTask(task)}
-                              className="inline-flex items-center gap-1.5 px-4.5 py-2 rounded-full bg-[#D4F63C] text-[#111317] hover:bg-[#C2E82E] text-xs font-extrabold transition-all shadow-sm"
+                              className="inline-flex items-center gap-1.5 px-4.5 py-2 rounded-full bg-[#0D7A53] hover:bg-[#0A6B48] text-white text-xs font-bold transition-all shadow-sm shadow-[#0D7A53]/20"
                             >
                               <Send className="h-3.5 w-3.5" />
                               Submit Work
@@ -658,7 +658,7 @@ export function StudentTeamView({ session }: { session: any }) {
                         </div>
                       </div>
 
-                      {/* Submitted Deliverable Details Card */}
+                      {/* Submitted Deliverable Details (Glass Card) */}
                       {(task.submissionUrl || task.submissionContent) && (() => {
                         const isSubExpanded = Boolean(expandedSubmissions[task.id]);
                         const isSubLong = Boolean(
@@ -667,18 +667,18 @@ export function StudentTeamView({ session }: { session: any }) {
                         );
 
                         return (
-                          <div className="mt-3 p-4 bg-[#F8FCEB] rounded-[20px] border border-[#D4F63C] space-y-2.5">
+                          <div className="mt-3 p-4 bg-gradient-to-br from-[#E6F7F0]/90 via-[#E6F7F0]/70 to-white/90 rounded-[20px] border border-[#0D7A53]/30 space-y-2.5 backdrop-blur-md">
                             <div
                               className="flex items-center justify-between text-xs cursor-pointer select-none"
                               onClick={() => toggleSubmissionExpand(task.id)}
                             >
-                              <span className="font-extrabold text-[#111317] flex items-center gap-2">
-                                <CheckCircle2 className="h-4 w-4 text-[#111317]" />
+                              <span className="font-extrabold text-[#064E3B] flex items-center gap-2">
+                                <CheckCircle2 className="h-4 w-4 text-[#0D7A53]" />
                                 Your Submitted Deliverable
                               </span>
                               <div className="flex items-center gap-2">
                                 {task.submittedAt && (
-                                  <span className="text-[11px] font-semibold text-slate-500">
+                                  <span className="text-[11px] font-semibold text-[#0D7A53]">
                                     Submitted: {new Date(task.submittedAt).toLocaleDateString()}
                                   </span>
                                 )}
@@ -689,7 +689,7 @@ export function StudentTeamView({ session }: { session: any }) {
                                       e.stopPropagation();
                                       toggleSubmissionExpand(task.id);
                                     }}
-                                    className="w-6 h-6 rounded-full bg-white border border-[#D4F63C] flex items-center justify-center text-[#111317] hover:bg-[#D4F63C] transition-colors"
+                                    className="w-6 h-6 rounded-full bg-white border border-[#0D7A53]/40 flex items-center justify-center text-[#0D7A53] hover:bg-[#0D7A53] hover:text-white transition-colors"
                                     title={isSubExpanded ? "Minimize submission details" : "Expand submission details"}
                                   >
                                     {isSubExpanded ? (
@@ -708,9 +708,9 @@ export function StudentTeamView({ session }: { session: any }) {
                                   href={task.submissionUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 text-xs font-bold text-[#111317] bg-white hover:bg-[#F1F9D4] border border-[#D4F63C] px-3.5 py-1.5 rounded-full transition-colors break-all shadow-xs"
+                                  className="inline-flex items-center gap-2 text-xs font-bold text-[#064E3B] bg-white hover:bg-[#E6F7F0] border border-[#0D7A53]/40 px-3.5 py-1.5 rounded-full transition-colors break-all shadow-xs"
                                 >
-                                  <GithubIcon className="h-3.5 w-3.5 shrink-0" />
+                                  <GithubIcon className="h-3.5 w-3.5 shrink-0 text-[#0D7A53]" />
                                   <span>{task.submissionUrl}</span>
                                   <ExternalLink className="h-3 w-3 shrink-0 text-slate-400" />
                                 </a>
@@ -728,7 +728,7 @@ export function StudentTeamView({ session }: { session: any }) {
                                       <button
                                         type="button"
                                         onClick={() => toggleSubmissionExpand(task.id)}
-                                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#111317] hover:underline transition-colors pt-0.5"
+                                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0D7A53] hover:underline transition-colors pt-0.5"
                                       >
                                         <span>Read full submission notes</span>
                                         <ChevronDown className="h-3 w-3" />
@@ -737,7 +737,7 @@ export function StudentTeamView({ session }: { session: any }) {
                                   </div>
                                 ) : (
                                   <div className="bg-white p-3.5 rounded-xl border border-slate-200/80 space-y-2">
-                                    <div className="flex items-center justify-between text-[11px] font-bold text-[#111317] uppercase tracking-wider">
+                                    <div className="flex items-center justify-between text-[11px] font-bold text-[#064E3B] uppercase tracking-wider">
                                       <span>Submitted Notes & Documentation</span>
                                       <button
                                         type="button"
@@ -766,13 +766,13 @@ export function StudentTeamView({ session }: { session: any }) {
           </div>
         </div>
 
-        {/* Right Column: Teammates Progress Bento Card (5 Cols) */}
+        {/* Right Column: Teammates Progress (Frosted Glass Bento Card) */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="rounded-[28px] bg-white border border-slate-200/80 p-6 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] space-y-4">
+          <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-6 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-bold text-[#111317] flex items-center gap-2">
-                  <Users className="h-5 w-5 text-[#111317]" />
+                  <Users className="h-5 w-5 text-[#0D7A53]" />
                   Teammates Progress
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -802,7 +802,7 @@ export function StudentTeamView({ session }: { session: any }) {
                 return (
                   <div
                     key={member.id}
-                    className="bg-slate-50/70 hover:bg-slate-50 rounded-[22px] border border-slate-200/90 p-4 shadow-xs transition-all"
+                    className="bg-white/90 backdrop-blur-md rounded-[22px] border border-slate-200/90 p-4 shadow-xs transition-all hover:border-slate-300"
                   >
                     <div
                       className="flex items-center justify-between cursor-pointer"
@@ -811,7 +811,7 @@ export function StudentTeamView({ session }: { session: any }) {
                       }
                     >
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-[#111317] text-[#D4F63C] font-extrabold text-sm flex items-center justify-center shadow-xs">
+                        <div className="h-10 w-10 rounded-full bg-[#111317] text-[#34D399] font-extrabold text-sm flex items-center justify-center shadow-xs">
                           {member.student.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
@@ -820,7 +820,7 @@ export function StudentTeamView({ session }: { session: any }) {
                               {member.student.name}
                             </span>
                             {isCurrentUser && (
-                              <span className="text-[10px] bg-[#F1F9D4] text-[#1F2E05] border border-[#D4F63C] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                              <span className="text-[10px] bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30 font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
                                 YOU
                               </span>
                             )}
@@ -840,7 +840,7 @@ export function StudentTeamView({ session }: { session: any }) {
                             {progress}% Done
                           </span>
                         </div>
-                        <div className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 shadow-xs">
+                        <div className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200/80 flex items-center justify-center text-slate-500 shadow-xs">
                           {isExpanded ? (
                             <ChevronDown className="h-3.5 w-3.5" />
                           ) : (
@@ -853,7 +853,7 @@ export function StudentTeamView({ session }: { session: any }) {
                     {/* Progress Bar */}
                     <div className="mt-3 w-full bg-slate-200/80 rounded-full h-1.5 overflow-hidden">
                       <div
-                        className="bg-[#D4F63C] h-1.5 rounded-full transition-all duration-300"
+                        className="bg-[#0D7A53] h-1.5 rounded-full transition-all duration-300"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
@@ -878,7 +878,7 @@ export function StudentTeamView({ session }: { session: any }) {
                             .map((t) => (
                             <div
                               key={t.id}
-                              className="bg-white p-3 rounded-xl border border-slate-200 text-xs space-y-1.5 shadow-xs"
+                              className="bg-slate-50/90 p-3 rounded-xl border border-slate-200 text-xs space-y-1.5 shadow-xs"
                             >
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2 min-w-0">
@@ -917,9 +917,9 @@ export function StudentTeamView({ session }: { session: any }) {
                                     href={t.submissionUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1.5 text-[11px] text-[#111317] hover:underline font-bold bg-[#F1F9D4] px-2.5 py-0.5 rounded-full border border-[#D4F63C]"
+                                    className="inline-flex items-center gap-1.5 text-[11px] text-[#064E3B] hover:underline font-bold bg-[#E6F7F0] px-2.5 py-0.5 rounded-full border border-[#0D7A53]/30"
                                   >
-                                    <GithubIcon className="h-3 w-3" />
+                                    <GithubIcon className="h-3 w-3 text-[#0D7A53]" />
                                     <span>View Code</span>
                                     <ExternalLink className="h-2.5 w-2.5 text-slate-500" />
                                   </a>
@@ -1002,11 +1002,11 @@ function SubmitTaskModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111317]/70 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-[32px] bg-white p-7 shadow-2xl border border-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111317]/70 backdrop-blur-md">
+      <div className="w-full max-w-lg rounded-[32px] bg-white/95 backdrop-blur-2xl p-7 shadow-2xl border border-white/80">
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-[#F1F9D4] text-[#111317] rounded-full border border-[#D4F63C]">
+            <div className="p-3 bg-[#E6F7F0] text-[#0D7A53] rounded-full border border-[#0D7A53]/30">
               <CheckCircle2 className="h-5 w-5" />
             </div>
             <div>
@@ -1023,7 +1023,7 @@ function SubmitTaskModal({
         </div>
 
         {/* Task Summary Banner */}
-        <div className="mt-4 p-4 bg-slate-50 rounded-[20px] border border-slate-200/80 space-y-1.5">
+        <div className="mt-4 p-4 bg-slate-50/80 rounded-[20px] border border-slate-200/80 space-y-1.5">
           <div className="text-[11px] font-black uppercase tracking-wider text-slate-400">Task Title</div>
           <div className="text-sm font-bold text-[#111317]">{task.title}</div>
           {task.description && (
@@ -1034,7 +1034,7 @@ function SubmitTaskModal({
               href={task.taskUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-[#111317] font-bold pt-1 hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs text-[#0D7A53] font-bold pt-1 hover:underline"
             >
               <ExternalLink className="h-3 w-3" /> View Assigned Spec / Reference Link
             </a>
@@ -1063,7 +1063,7 @@ function SubmitTaskModal({
                 value={submissionUrl}
                 onChange={(e) => setSubmissionUrl(e.target.value)}
                 placeholder="https://github.com/username/project or PR link"
-                className="w-full rounded-2xl border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-[#111317] placeholder:text-slate-400 focus:border-[#111317] focus:ring-2 focus:ring-[#D4F63C] focus:outline-none"
+                className="w-full rounded-2xl border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-[#111317] placeholder:text-slate-400 focus:border-[#0D7A53] focus:ring-2 focus:ring-[#0D7A53]/20 focus:outline-none bg-white"
               />
             </div>
             <p className="text-[11px] text-slate-400 mt-1">
@@ -1081,7 +1081,7 @@ function SubmitTaskModal({
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Explain your implementation, what was built, features added, files changed, or instructions for review..."
-              className="w-full rounded-2xl border border-slate-300 px-3.5 py-2.5 text-sm text-[#111317] placeholder:text-slate-400 focus:border-[#111317] focus:ring-2 focus:ring-[#D4F63C] focus:outline-none"
+              className="w-full rounded-2xl border border-slate-300 px-3.5 py-2.5 text-sm text-[#111317] placeholder:text-slate-400 focus:border-[#0D7A53] focus:ring-2 focus:ring-[#0D7A53]/20 focus:outline-none bg-white"
             />
           </div>
 
@@ -1096,7 +1096,7 @@ function SubmitTaskModal({
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-extrabold text-[#111317] bg-[#D4F63C] hover:bg-[#C2E82E] transition-all shadow-sm disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-white bg-[#0D7A53] hover:bg-[#0A6B48] transition-all shadow-sm shadow-[#0D7A53]/20 disabled:opacity-50"
             >
               {submitting ? (
                 <>

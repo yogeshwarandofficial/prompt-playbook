@@ -9,7 +9,10 @@ import {
   Award,
   Users,
   Menu,
-  X
+  X,
+  Share2,
+  Bell,
+  Sparkles
 } from "lucide-react";
 import { createSeoHead } from "@/lib/seo";
 import { StudentTeamView } from "@/components/intern-portal/StudentTeamView";
@@ -80,71 +83,121 @@ function InterPortal() {
   if (loading || !session) {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-50">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#0D7A53] border-t-transparent"></div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#EFF2F6] font-sans">
-      {/* Sleek Top Navbar */}
-      <header className="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-md border-b border-slate-200/80 transition-all">
+      {/* Exact Navbar Design matching the Behance reference */}
+      <header className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-xl border-b border-slate-200/70 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between gap-4">
-            {/* Left: Brand Logo */}
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="h-9 w-9 rounded-2xl bg-[#111317] text-[#D4F63C] flex items-center justify-center font-black shadow-sm text-sm border border-black">
-                ⌘
+          <div className="flex h-16 items-center justify-between gap-3">
+            {/* Left: Brand Cluster Logo & Navigation Tabs */}
+            <div className="flex items-center gap-4 lg:gap-6 min-w-0">
+              {/* Spoke Cluster Logo Icon matching screenshot */}
+              <div className="flex items-center gap-2.5 shrink-0">
+                <div className="h-10 w-10 rounded-full bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-[#111317]">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="4" r="2" fill="currentColor" />
+                    <circle cx="12" cy="20" r="2" fill="currentColor" />
+                    <circle cx="4" cy="12" r="2" fill="currentColor" />
+                    <circle cx="20" cy="12" r="2" fill="currentColor" />
+                    <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+                    <path d="M12 6v4M12 14v4M6 12h4M14 12h4" />
+                  </svg>
+                </div>
+                <div className="hidden sm:flex flex-col">
+                  <span className="text-sm font-black tracking-tight text-[#111317] leading-tight">
+                    INFYNUX
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase leading-none">
+                    Platform
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-base font-black tracking-tight text-[#111317] leading-tight">
-                  INFYNUX
-                </span>
-                <span className="text-[11px] font-bold text-slate-400 leading-tight">
-                  Intern Platform
-                </span>
-              </div>
+
+              {/* Exact Pill Navigation Cluster */}
+              <nav className="hidden md:flex items-center gap-1.5 p-1 rounded-full bg-slate-100/70 border border-slate-200/60">
+                {NAV_ITEMS.map((item) => {
+                  const isActive = currentView === item.id;
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setCurrentView(item.id as ViewState)}
+                      className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all ${
+                        isActive
+                          ? "bg-[#111317] text-white font-bold shadow-sm"
+                          : "bg-white/80 hover:bg-white text-slate-700 hover:text-[#111317] font-semibold border border-slate-200/80 shadow-xs"
+                      }`}
+                    >
+                      <Icon className={`h-3.5 w-3.5 ${isActive ? "text-[#34D399]" : "text-slate-500"}`} />
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
+              </nav>
             </div>
 
-            {/* Center: Sleek Black Capsule Navigation */}
-            <nav className="hidden md:flex items-center bg-[#111317] px-2 py-1.5 rounded-full shadow-md shadow-black/10 border border-slate-900">
-              {NAV_ITEMS.map((item) => {
-                const isActive = currentView === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setCurrentView(item.id as ViewState)}
-                    className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                      isActive
-                        ? "bg-[#D4F63C] text-[#111317] shadow-sm font-extrabold"
-                        : "text-slate-300 hover:text-white hover:bg-white/10"
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                );
-              })}
-            </nav>
-
-            {/* Right: User Profile & Logout */}
+            {/* Right: Teammates Pile, Shared Pill, Notification Circle & Profile */}
             <div className="flex items-center gap-3 shrink-0">
-              <div className="hidden sm:flex items-center gap-2.5 pr-1">
-                <div className="text-right">
+              {/* Overlapping Avatar Stack matching screenshot */}
+              <div className="hidden lg:flex items-center -space-x-2 pl-2">
+                <div className="h-8 w-8 rounded-full bg-slate-800 text-white font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs">
+                  A
+                </div>
+                <div className="h-8 w-8 rounded-full bg-[#0D7A53] text-white font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs">
+                  S
+                </div>
+                <div className="h-8 w-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs">
+                  K
+                </div>
+                <div className="h-8 w-8 rounded-full bg-[#111317] text-slate-200 font-extrabold text-[11px] flex items-center justify-center ring-2 ring-white shadow-xs">
+                  +6
+                </div>
+              </div>
+
+              {/* Pill Button: Shared / Team */}
+              <button
+                type="button"
+                onClick={() => setCurrentView('team')}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200/90 hover:bg-slate-50 hover:text-[#111317] transition-all shadow-xs"
+              >
+                <Share2 className="h-3.5 w-3.5 text-slate-500" />
+                <span>Shared</span>
+              </button>
+
+              {/* Circular Notification Bell Button */}
+              <button
+                type="button"
+                title="Notifications"
+                className="relative w-9 h-9 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 hover:text-[#111317] hover:bg-slate-50 transition-all shadow-xs"
+              >
+                <Bell className="h-4 w-4" />
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span>
+              </button>
+
+              {/* Profile Avatar & Info */}
+              <div className="flex items-center gap-2 pl-1">
+                <div className="h-9 w-9 rounded-full bg-[#111317] text-white font-extrabold flex items-center justify-center text-xs ring-2 ring-[#0D7A53]/30 shadow-sm uppercase">
+                  {session.name.charAt(0)}
+                </div>
+                <div className="hidden xl:block text-left">
                   <p className="text-xs font-bold text-[#111317] leading-none">{session.name}</p>
                   <p className="text-[10px] text-slate-400 mt-0.5 font-mono">{session.studentId}</p>
                 </div>
-                <div className="h-9 w-9 rounded-full bg-[#111317] text-[#D4F63C] flex items-center justify-center font-black uppercase text-xs shadow-sm">
-                  {session.name.charAt(0)}
-                </div>
               </div>
 
+              {/* Logout Button */}
               <button
                 onClick={handleLogout}
                 title="Logout"
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-xs"
+                className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-xs"
               >
                 <LogOut className="h-3.5 w-3.5" />
-                <span>Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
 
               {/* Mobile Menu Toggle Button */}
