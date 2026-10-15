@@ -125,6 +125,7 @@ export function StudentTeamView({ session }: { session: any }) {
   const [taskFilter, setTaskFilter] = useState<"ALL" | "PENDING" | "IN_PROGRESS" | "COMPLETED">("ALL");
   const [expandedTaskIds, setExpandedTaskIds] = useState<Record<string, boolean>>({});
   const [expandedSubmissions, setExpandedSubmissions] = useState<Record<string, boolean>>({});
+  const [activeSection, setActiveSection] = useState<"all" | "tasks" | "team">("all");
 
   const fetchTeams = useCallback(async () => {
     try {
@@ -436,13 +437,53 @@ export function StudentTeamView({ session }: { session: any }) {
         </div>
       </div>
 
-      {/* Main Content Layout: Tasks Glass Bento (7 Cols) & Teammates Glass Bento (5 Cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
-        {/* Left Column: My Assigned Tasks */}
-        <div className="lg:col-span-7 space-y-4">
-          <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-6 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] space-y-5">
-            {/* Header & Filter Capsules */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Section Filter Pills / View Selector */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+        <div className="inline-flex items-center p-1 bg-slate-100/90 rounded-full border border-slate-200/80 text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => setActiveSection("all")}
+            className={`px-4 py-1.5 rounded-full transition-all ${
+              activeSection === "all"
+                ? "bg-[#111317] text-white shadow-sm font-bold"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            All Sections
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveSection("tasks")}
+            className={`px-4 py-1.5 rounded-full transition-all ${
+              activeSection === "tasks"
+                ? "bg-[#111317] text-white shadow-sm font-bold"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            My Assigned Tasks ({currentTeam.myTasks.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveSection("team")}
+            className={`px-4 py-1.5 rounded-full transition-all ${
+              activeSection === "team"
+                ? "bg-[#111317] text-white shadow-sm font-bold"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Teammates Progress ({currentTeam.members.length})
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content Layout: Full Width Stacked Bento Sections */}
+      <div className="space-y-7">
+        {/* Full-Width Section: My Assigned Tasks */}
+        {(activeSection === "all" || activeSection === "tasks") && (
+          <div className="w-full space-y-4">
+            <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-6 sm:p-7 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] space-y-5">
+              {/* Header & Filter Capsules */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h3 className="text-xl font-bold text-[#111317] flex items-center gap-2">
                   <ClipboardList className="h-5 w-5 text-[#0D7A53]" />
@@ -743,26 +784,29 @@ export function StudentTeamView({ session }: { session: any }) {
             )}
           </div>
         </div>
+        )}
 
-        {/* Right Column: Teammates Progress (Frosted Glass Bento Card) */}
-        <div className="lg:col-span-5 space-y-4">
-          <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-6 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold text-[#111317] flex items-center gap-2">
-                  <Users className="h-5 w-5 text-[#0D7A53]" />
-                  Teammates Progress
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Monitor team member milestones & tasks.
-                </p>
+        {/* Full-Width Section: Teammates Progress (Frosted Glass Bento Card) */}
+        {(activeSection === "all" || activeSection === "team") && (
+          <div className="w-full space-y-4">
+            <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-6 sm:p-7 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-xl font-bold text-[#111317] flex items-center gap-2">
+                    <Users className="h-5 w-5 text-[#0D7A53]" />
+                    Teammates Progress
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Monitor team member milestones & tasks across your team ({currentTeam.members.length} member{currentTeam.members.length === 1 ? "" : "s"}).
+                  </p>
+                </div>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                  <span className="w-2 h-2 rounded-full bg-[#0D7A53]" />
+                  <span>{currentTeam.completedTasks} of {currentTeam.totalTasks} Milestones Completed</span>
+                </div>
               </div>
-              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
-                <ArrowUpRight className="h-4 w-4" />
-              </div>
-            </div>
 
-            <div className="space-y-3 pt-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start pt-1">
               {currentTeam.members.map((member) => {
                 const isCurrentUser =
                   member.student.id === session.id ||
@@ -913,9 +957,10 @@ export function StudentTeamView({ session }: { session: any }) {
                   </div>
                 );
               })}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* SUBMISSION MODAL */}
