@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Patch, UseGuards, Req } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -16,4 +16,17 @@ export class StudentController {
     const userId = req.user.id;
     return this.studentService.getMyCourses(userId);
   }
+
+  @Get('notifications')
+  getNotifications(@Req() req: any) {
+    const userId = req.user.id;
+    return this.studentService.getStudentNotifications(userId);
+  }
+
+  @Patch('notifications/read-all')
+  markAllRead(@Req() req: any) {
+    const userId = req.user.id;
+    return this.studentService.markAllStudentNotificationsRead(userId);
+  }
 }
+

@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getSession, signOut, type AdminSession } from "@/lib/auth";
 import { 
   LogOut, 
@@ -19,7 +19,8 @@ import {
   MessageSquare,
   Clock,
   Send,
-  CheckCircle2
+  CheckCircle2,
+  Loader2
 } from "lucide-react";
 import { createSeoHead } from "@/lib/seo";
 import { StudentTeamView } from "@/components/intern-portal/StudentTeamView";
@@ -52,14 +53,38 @@ function InterPortal() {
   const [courses, setCourses] = useState<any[]>([]);
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
 
-  // Notifications state
+  // Real Notifications state
   const [showNotifications, setShowNotifications] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(3);
-  const [notifications, setNotifications] = useState([
-    { id: 1, title: "New Sprint Tasks Assigned", desc: "Check your team deliverables for this week.", time: "10m ago", read: false },
-    { id: 2, title: "Sprint Progress Milestone", desc: "Your team completed active milestone goals.", time: "2h ago", read: false },
-    { id: 3, title: "Code Submission Verified", desc: "Mentor reviewed GitHub code deliverables.", time: "1d ago", read: false },
-  ]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notifications, setNotifications] = useState<Array<{
+    id: string | number;
+    title: string;
+    desc: string;
+    time: string;
+    type?: string;
+    linkView?: ViewState;
+    read: boolean;
+  }>>([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+
+  const fetchNotifications = useCallback(async () => {
+    try {
+      setLoadingNotifications(true);
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${API_URL}/api/student/notifications`, {
+        credentials: 'include',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setNotifications(Array.isArray(data.notifications) ? data.notifications : []);
+        setUnreadCount(typeof data.unreadCount === 'number' ? data.unreadCount : 0);
+      }
+    } catch (err) {
+      console.error("Failed to fetch student notifications:", err);
+    } finally {
+      setLoadingNotifications(false);
+    }
+  }, []);
 
   useEffect(() => {
     getSession().then((s) => {
@@ -88,18 +113,28 @@ function InterPortal() {
         };
         
         fetchCourses();
+        fetchNotifications();
       }
     });
-  }, [navigate]);
+  }, [navigate, fetchNotifications]);
 
   const handleLogout = async () => {
     await signOut();
     navigate({ to: "/login" });
   };
 
-  const handleMarkAllNotificationsRead = () => {
+  const handleMarkAllNotificationsRead = async () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
     setUnreadCount(0);
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      await fetch(`${API_URL}/api/student/notifications/read-all`, {
+        method: 'PATCH',
+        credentials: 'include',
+      });
+    } catch (err) {
+      console.error("Failed to mark notifications as read:", err);
+    }
   };
 
   if (loading || !session) {
@@ -168,10 +203,15 @@ function InterPortal() {
 
               {/* Functional Notification Bell */}
               <div className="relative">
+                {/* Notification Bell Button */}
                 <button
                   type="button"
                   title="Notifications"
-                  onClick={() => setShowNotifications(!showNotifications)}
+                  onClick={() => {
+                    const next = !showNotifications;
+                    setShowNotifications(next);
+                    if (next) fetchNotifications();
+                  }}
                   className="relative w-9 h-9 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 hover:text-[#111317] hover:bg-slate-50 transition-all shadow-xs cursor-pointer shrink-0"
                 >
                   <Bell className="h-4 w-4" />
@@ -186,9 +226,13 @@ function InterPortal() {
                     <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-extrabold text-[#111317]">Notifications</span>
-                        {unreadCount > 0 && (
+                        {unreadCount > 0 ? (
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30">
                             {unreadCount} new
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500">
+                            All read
                           </span>
                         )}
                       </div>
@@ -212,26 +256,60 @@ function InterPortal() {
                     </div>
 
                     <div className="mt-3 space-y-2.5 max-h-72 overflow-y-auto">
-                      {notifications.map((item) => (
-                        <div
-                          key={item.id}
-                          className={`p-3 rounded-2xl border transition-colors ${
-                            !item.read
-                              ? "bg-[#E6F7F0]/40 border-[#0D7A53]/30"
-                              : "bg-slate-50/70 border-slate-200/60"
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <span className="text-xs font-bold text-[#111317]">{item.title}</span>
-                            <span className="text-[10px] text-slate-400 whitespace-nowrap">{item.time}</span>
-                          </div>
-                          <p className="text-xs text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
+                      {loadingNotifications && notifications.length === 0 ? (
+                        <div className="py-8 flex items-center justify-center text-slate-400 gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin text-[#0D7A53]" />
+                          <span className="text-xs font-semibold">Loading real notifications...</span>
                         </div>
-                      ))}
+                      ) : notifications.length === 0 ? (
+                        <div className="py-8 px-4 text-center space-y-1.5">
+                          <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-2">
+                            <Bell className="h-5 w-5" />
+                          </div>
+                          <p className="text-xs font-bold text-slate-700">No Notifications</p>
+                          <p className="text-[11px] text-slate-400 max-w-[230px] mx-auto leading-relaxed">
+                            You're all caught up! Real task assignments, milestone completions, and reviews will appear here.
+                          </p>
+                        </div>
+                      ) : (
+                        notifications.map((item) => (
+                          <div
+                            key={item.id}
+                            onClick={() => {
+                              if (item.linkView) {
+                                setCurrentView(item.linkView);
+                              }
+                              setShowNotifications(false);
+                            }}
+                            className={`p-3 rounded-2xl border transition-all cursor-pointer hover:shadow-xs ${
+                              !item.read
+                                ? "bg-[#E6F7F0]/40 border-[#0D7A53]/30 hover:border-[#0D7A53]/60"
+                                : "bg-slate-50/70 border-slate-200/60 hover:border-slate-300"
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                {!item.read && (
+                                  <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53] shrink-0" />
+                                )}
+                                <span className="text-xs font-bold text-[#111317] truncate">
+                                  {item.title}
+                                </span>
+                              </div>
+                              <span className="text-[10px] text-slate-400 whitespace-nowrap shrink-0">
+                                {item.time}
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-600 mt-1 leading-relaxed pl-3">
+                              {item.desc}
+                            </p>
+                          </div>
+                        ))
+                      )}
                     </div>
 
                     <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                      <span className="text-slate-400 text-[11px]">Infynux Sprint Alerts</span>
+                      <span className="text-slate-400 text-[11px]">Infynux Activity Stream</span>
                       <button
                         type="button"
                         onClick={() => {
