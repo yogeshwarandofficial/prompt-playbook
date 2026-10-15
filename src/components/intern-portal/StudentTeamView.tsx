@@ -1036,35 +1036,23 @@ function SubmitTaskModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111317]/70 backdrop-blur-md">
       <div className="w-full max-w-lg rounded-[32px] bg-white/95 backdrop-blur-2xl p-7 shadow-2xl border border-white/80">
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-[#E6F7F0] text-[#0D7A53] rounded-full border border-[#0D7A53]/30">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="p-2.5 bg-[#E6F7F0] text-[#0D7A53] rounded-full border border-[#0D7A53]/30 shrink-0">
               <CheckCircle2 className="h-5 w-5" />
             </div>
-            <div>
+            <div className="min-w-0">
               <h4 className="text-lg font-black text-[#111317]">Submit Task Deliverable</h4>
-              <p className="text-xs text-slate-500">Provide GitHub repo and implementation notes</p>
+              <p className="text-xs text-slate-500 truncate max-w-sm">
+                Task: <span className="font-bold text-[#0D7A53]">{task.title}</span>
+              </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:text-[#111317] hover:bg-slate-200 flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:text-[#111317] hover:bg-slate-200 flex items-center justify-center transition-colors shrink-0"
           >
             <X className="h-4 w-4" />
           </button>
-        </div>
-
-        {/* Task Summary Banner */}
-        <div className="mt-4 p-4 bg-slate-50/80 rounded-[20px] border border-slate-200/80 space-y-1.5">
-          <div className="text-[11px] font-black uppercase tracking-wider text-slate-400">Task Title</div>
-          <div className="text-sm font-bold text-[#111317]">{task.title}</div>
-          {task.description && (
-            <div className="text-xs text-slate-600 whitespace-pre-wrap leading-relaxed max-h-40 overflow-y-auto p-2.5 bg-white rounded-xl border border-slate-200">
-              {task.description}
-            </div>
-          )}
-          {task.taskUrl && (
-            <TaskLinksView taskUrl={task.taskUrl} className="pt-1" />
-          )}
         </div>
 
         {error && (
