@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 import { DomainsView } from "../components/admin/DomainsView";
 import { BatchesView } from "../components/admin/BatchesView";
@@ -23,7 +23,7 @@ import {
   Briefcase,
   ClipboardList,
   Plus, Edit, ListChecks, UserCheck, ChevronUp, ChevronDown, Trash2, Eye, ArrowLeft, ExternalLink, MessageSquare, Check, XCircle,
-  Target, Map, Bell, Share2, Sparkles, RefreshCw, Search, ChevronLeft, ChevronRight, Loader2
+  Target, Map, Bell, Share2, Sparkles, RefreshCw, Search, ChevronLeft, ChevronRight, Loader2, MoreHorizontal
 } from "lucide-react";
 import { createSeoHead } from "@/lib/seo";
 
@@ -58,6 +58,21 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
+  const [othersOpen, setOthersOpen] = useState(false);
+  const othersDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close others dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (othersDropdownRef.current && !othersDropdownRef.current.contains(event.target as Node)) {
+        setOthersOpen(false);
+      }
+    }
+    if (othersOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [othersOpen]);
 
   // Live Notification center state
   const [showNotifications, setShowNotifications] = useState(false);
@@ -157,21 +172,27 @@ function AdminDashboard() {
     );
   }
 
-  const ADMIN_NAV_ITEMS: { id: ViewState; label: string; icon: any }[] = [
+  const MAIN_NAV_ITEMS: { id: ViewState; label: string; icon: any }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'teams', label: 'Teams', icon: Users },
     { id: 'applications', label: 'Applications', icon: UserPlus },
     { id: 'students', label: 'Students', icon: Users },
-    { id: 'mentors', label: 'Mentors', icon: UserCheck },
-    { id: 'domains', label: 'Domains', icon: CheckCircle2 },
+    { id: 'events', label: 'Events', icon: BookOpen },
+    { id: 'certificates', label: 'Certificates', icon: CheckCircle2 },
+  ];
+
+  const OTHER_NAV_ITEMS: { id: ViewState; label: string; icon: any }[] = [
     { id: 'batches', label: 'Batches', icon: Briefcase },
     { id: 'projects', label: 'Projects', icon: Briefcase },
     { id: 'courses', label: 'Courses', icon: BookOpen },
-    { id: 'events', label: 'Events', icon: BookOpen },
+    { id: 'domains', label: 'Domains', icon: CheckCircle2 },
     { id: 'submissions', label: 'Submissions', icon: ListChecks },
     { id: 'interviews', label: 'Interviews', icon: MessageSquare },
-    { id: 'certificates', label: 'Certificates', icon: CheckCircle2 },
+    { id: 'mentors', label: 'Mentors', icon: UserCheck },
   ];
+
+  const isOtherActive = OTHER_NAV_ITEMS.some((item) => item.id === currentView);
+  const activeOtherItem = OTHER_NAV_ITEMS.find((item) => item.id === currentView);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#EFF2F6] font-sans">
@@ -194,9 +215,9 @@ function AdminDashboard() {
               </div>
             </div>
 
-            {/* 2. Expanded Navbar Navigation */}
-            <nav className="hidden lg:flex items-center gap-1.5 p-1 rounded-full bg-slate-100/70 border border-slate-200/60 flex-1 min-w-0 max-w-4xl overflow-x-auto no-scrollbar mx-2">
-              {ADMIN_NAV_ITEMS.map((item) => {
+            {/* 2. Minimized Navbar Navigation with Others Dropdown */}
+            <nav className="hidden lg:flex items-center gap-1.5 p-1 rounded-full bg-slate-100/70 border border-slate-200/60 mx-2 shrink-0">
+              {MAIN_NAV_ITEMS.map((item) => {
                 const isActive = currentView === item.id;
                 const Icon = item.icon;
                 return (
@@ -204,6 +225,7 @@ function AdminDashboard() {
                     key={item.id}
                     onClick={() => {
                       setCurrentView(item.id);
+                      setOthersOpen(false);
                       setSidebarOpen(false);
                     }}
                     className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all shrink-0 ${
@@ -217,6 +239,63 @@ function AdminDashboard() {
                   </button>
                 );
               })}
+
+              {/* Others Dropdown */}
+              <div className="relative" ref={othersDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setOthersOpen((prev) => !prev)}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all shrink-0 cursor-pointer ${
+                    isOtherActive
+                      ? "bg-[#111317] text-white font-bold shadow-sm"
+                      : "bg-white/80 hover:bg-white text-slate-700 hover:text-[#111317] font-semibold border border-slate-200/80 shadow-xs"
+                  }`}
+                  aria-expanded={othersOpen}
+                  aria-haspopup="true"
+                >
+                  <MoreHorizontal className={`h-3.5 w-3.5 ${isOtherActive ? "text-[#34D399]" : "text-slate-500"}`} />
+                  <span>{isOtherActive && activeOtherItem ? `Others: ${activeOtherItem.label}` : "Others"}</span>
+                  <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${isOtherActive ? "text-[#34D399]" : "text-slate-400"} ${othersOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {othersOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-52 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)] p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 mb-1">
+                      Other Modules
+                    </div>
+                    <div className="space-y-0.5">
+                      {OTHER_NAV_ITEMS.map((item) => {
+                        const isActive = currentView === item.id;
+                        const Icon = item.icon;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => {
+                              setCurrentView(item.id);
+                              setOthersOpen(false);
+                              setSidebarOpen(false);
+                            }}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                              isActive
+                                ? "bg-[#111317] text-white shadow-xs"
+                                : "text-slate-700 hover:text-[#111317] hover:bg-slate-100/80"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <Icon className={`h-3.5 w-3.5 ${isActive ? "text-[#34D399]" : "text-slate-500"}`} />
+                              <span>{item.label}</span>
+                            </div>
+                            {isActive && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#34D399]"></span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
             </nav>
 
             {/* 3. Right: Our Name, Notification Bell, Logout */}
@@ -403,8 +482,11 @@ function AdminDashboard() {
 
         {/* Mobile Navigation Dropdown */}
         {sidebarOpen && (
-          <div className="lg:hidden border-t border-slate-200 bg-[#131622] px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
-            {ADMIN_NAV_ITEMS.map((item) => {
+          <div className="lg:hidden border-t border-slate-200 bg-[#131622] px-4 py-3 space-y-1 max-h-[75vh] overflow-y-auto">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pt-1 pb-1">
+              Main Menu
+            </div>
+            {MAIN_NAV_ITEMS.map((item) => {
               const isActive = currentView === item.id;
               const Icon = item.icon;
               return (
@@ -414,7 +496,32 @@ function AdminDashboard() {
                     setCurrentView(item.id);
                     setSidebarOpen(false);
                   }}
-                  className={`flex w-full items-center gap-2.5 px-4 py-2.5 rounded-full text-xs font-semibold transition-all ${
+                  className={`flex w-full items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                    isActive
+                      ? "bg-[#0D7A53] text-white font-bold"
+                      : "text-slate-300 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <Icon className={`h-4 w-4 ${isActive ? "text-white" : "text-slate-400"}`} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pt-3 pb-1 border-t border-white/10 mt-2">
+              Other Modules
+            </div>
+            {OTHER_NAV_ITEMS.map((item) => {
+              const isActive = currentView === item.id;
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setCurrentView(item.id);
+                    setSidebarOpen(false);
+                  }}
+                  className={`flex w-full items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                     isActive
                       ? "bg-[#0D7A53] text-white font-bold"
                       : "text-slate-300 hover:text-white hover:bg-white/5"
