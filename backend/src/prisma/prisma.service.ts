@@ -58,6 +58,9 @@ export class PrismaService
       await this.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "User_createdAt_idx" ON "User"("createdAt");`);
       await this.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "StudentCourse_studentId_idx" ON "StudentCourse"("studentId");`);
       await this.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "TeamMember_studentId_idx" ON "TeamMember"("studentId");`);
+      await this.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "TeamMember_teamId_idx" ON "TeamMember"("teamId");`);
+      await this.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "TeamTask_teamMemberId_createdAt_idx" ON "TeamTask"("teamMemberId", "createdAt" DESC);`);
+      await this.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "TeamTask_teamMemberId_status_idx" ON "TeamTask"("teamMemberId", "status");`);
     } catch (err) {
       this.logger.error('Failed to auto-create schema optimizations/indexes', err);
     }

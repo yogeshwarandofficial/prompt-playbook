@@ -1,9 +1,16 @@
-import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { AddTeamMemberDto } from './dto/add-team-member.dto';
 import { CreateTeamTaskDto } from './dto/create-team-task.dto';
+import { BulkCreateTeamTaskDto } from './dto/bulk-create-team-task.dto';
 import { UpdateTeamTaskDto } from './dto/update-team-task.dto';
 import { SubmitTeamTaskDto } from './dto/submit-team-task.dto';
 import { TeamTaskStatus } from '@prisma/client';
@@ -16,7 +23,10 @@ export class TeamsService {
 
   async createTeam(dto: CreateTeamDto) {
     return this.prisma.team.create({
-      data: dto,
+      data: {
+        name: dto.name.trim(),
+        description: dto.description?.trim() || null,
+      },
       include: { members: { include: { student: true, tasks: true } } },
     });
   }
@@ -69,7 +79,12 @@ export class TeamsService {
 
   async updateTeam(id: string, dto: UpdateTeamDto) {
     await this.findOneTeam(id);
-    return this.prisma.team.update({ where: { id }, data: dto });
+    const data: any = {};
+    if (dto.name !== undefined) data.name = dto.name.trim();
+    if (dto.description !== undefined) data.description = dto.description?.trim() || null;
+    if (dto.isActive !== undefined) data.isActive = dto.isActive;
+
+    return this.prisma.team.update({ where: { id }, data });
   }
 
   async removeTeam(id: string) {
@@ -120,20 +135,83 @@ export class TeamsService {
     return this.prisma.teamTask.create({
       data: {
         teamMemberId: memberId,
-        title: dto.title,
-        description: dto.description,
-        dueDate: dto.dueDate ? new Date(dto.dueDate) : undefined,
-        status: dto.status,
-        taskUrl: dto.taskUrl,
+        title: dto.title.trim(),
+        description: dto.description?.trim() || null,
+        dueDate: dto.dueDate ? new Date(dto.dueDate) : null,
+        status: dto.status || TeamTaskStatus.PENDING,
+        taskUrl: dto.taskUrl?.trim() || null,
       },
     });
+  }
+
+  /**
+   * Bulk assign task to multiple or all students in a team in a single database transaction.
+   * Efficiently handles 50+ students simultaneously with O(1) query complexity.
+   */
+  async createBulkTasks(teamId: string, dto: BulkCreateTeamTaskDto) {
+    const team = await this.prisma.team.findUnique({
+      where: { id: teamId },
+      include: { members: true },
+    });
+    if (!team) throw new NotFoundException(`Team #${teamId} not found`);
+
+    if (!team.members || team.members.length === 0) {
+      throw new BadRequestException('Cannot assign tasks: this team currently has no student members.');
+    }
+
+    let targetMembers = team.members;
+    if (dto.memberIds && dto.memberIds.length > 0) {
+      const allowedIds = new Set(dto.memberIds);
+      targetMembers = team.members.filter((m) => allowedIds.has(m.id));
+      if (targetMembers.length === 0) {
+        throw new BadRequestException('None of the specified member IDs belong to this team.');
+      }
+    }
+
+    const dueDate = dto.dueDate ? new Date(dto.dueDate) : null;
+    const cleanTitle = dto.title.trim();
+    const cleanDesc = dto.description?.trim() || null;
+    const cleanUrl = dto.taskUrl?.trim() || null;
+    const taskStatus = dto.status || TeamTaskStatus.PENDING;
+
+    const tasksData = targetMembers.map((member) => ({
+      teamMemberId: member.id,
+      title: cleanTitle,
+      description: cleanDesc,
+      dueDate,
+      status: taskStatus,
+      taskUrl: cleanUrl,
+    }));
+
+    // Atomically insert all tasks in a single multi-row INSERT
+    await this.prisma.teamTask.createMany({
+      data: tasksData,
+    });
+
+    return {
+      success: true,
+      assignedCount: targetMembers.length,
+      message: `Task successfully assigned to ${targetMembers.length} student${
+        targetMembers.length > 1 ? 's' : ''
+      }.`,
+    };
   }
 
   async updateTask(taskId: string, dto: UpdateTeamTaskDto) {
     const task = await this.prisma.teamTask.findUnique({ where: { id: taskId } });
     if (!task) throw new NotFoundException(`Task #${taskId} not found`);
-    const data: any = { ...dto };
-    if (dto.dueDate) data.dueDate = new Date(dto.dueDate);
+
+    const data: any = {};
+    if (dto.title !== undefined) data.title = dto.title.trim();
+    if (dto.description !== undefined) data.description = dto.description?.trim() || null;
+    if (dto.dueDate !== undefined) data.dueDate = dto.dueDate ? new Date(dto.dueDate) : null;
+    if (dto.status !== undefined) data.status = dto.status;
+    if (dto.taskUrl !== undefined) data.taskUrl = dto.taskUrl?.trim() || null;
+    if (dto.submissionContent !== undefined)
+      data.submissionContent = dto.submissionContent?.trim() || null;
+    if (dto.submissionUrl !== undefined)
+      data.submissionUrl = dto.submissionUrl?.trim() || null;
+
     return this.prisma.teamTask.update({ where: { id: taskId }, data });
   }
 
@@ -218,6 +296,16 @@ export class TeamsService {
   }
 
   async studentUpdateTaskStatus(userId: string, taskId: string, status: TeamTaskStatus) {
+    // Prevent students from directly marking task as COMPLETED or CANCELLED
+    if (status === TeamTaskStatus.COMPLETED) {
+      throw new ForbiddenException(
+        'To complete a task, please submit your deliverables through the submission form.',
+      );
+    }
+    if (status === TeamTaskStatus.CANCELLED) {
+      throw new ForbiddenException('Students cannot cancel tasks. Contact your administrator.');
+    }
+
     const task = await this.prisma.teamTask.findUnique({
       where: { id: taskId },
       include: {
@@ -243,6 +331,15 @@ export class TeamsService {
   }
 
   async studentSubmitTask(userId: string, taskId: string, dto: SubmitTeamTaskDto) {
+    const cleanContent = dto.content?.trim();
+    const cleanUrl = dto.submissionUrl?.trim();
+
+    if (!cleanContent && !cleanUrl) {
+      throw new BadRequestException(
+        'Please provide a repository/PR URL or a description of your completed work.',
+      );
+    }
+
     const task = await this.prisma.teamTask.findUnique({
       where: { id: taskId },
       include: {
@@ -265,8 +362,8 @@ export class TeamsService {
       where: { id: taskId },
       data: {
         status: TeamTaskStatus.COMPLETED,
-        submissionContent: dto.content?.trim() || undefined,
-        submissionUrl: dto.submissionUrl?.trim() || undefined,
+        submissionContent: cleanContent || null,
+        submissionUrl: cleanUrl || null,
         submittedAt: new Date(),
       },
     });
@@ -281,4 +378,5 @@ export class TeamsService {
     throw new ForbiddenException('Students cannot assign tasks. Tasks are assigned by administrators.');
   }
 }
+
 

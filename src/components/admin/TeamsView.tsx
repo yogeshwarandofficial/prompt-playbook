@@ -5,6 +5,7 @@ import {
   Edit, Loader2, ExternalLink, FileText, BarChart3, CheckSquare,
   ArrowUpRight, Sparkles
 } from "lucide-react";
+import { TaskLinksView, StructuredTaskDescription } from "../ui/task-content";
 
 const API_URL = (import.meta as any).env?.VITE_API_URL || "http://localhost:3001";
 
@@ -37,6 +38,16 @@ function statusIcon(status: string) {
   if (status === "IN_PROGRESS") return <Clock className="h-3.5 w-3.5 text-[#34D399]" />;
   if (status === "CANCELLED")   return <AlertCircle className="h-3.5 w-3.5 text-slate-400" />;
   return <Clock className="h-3.5 w-3.5 text-[#064E3B]" />;
+}
+
+// XSS Sanitizer: ensures only valid http/https URLs are rendered in anchor hrefs
+function safeUrl(url?: string): string | null {
+  if (!url) return null;
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+  return null;
 }
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -78,6 +89,7 @@ export function TeamsView() {
   const [showCreateTeam, setShowCreateTeam]   = useState(false);
   const [showAddMember, setShowAddMember]     = useState<string | null>(null);
   const [showAddTask, setShowAddTask]         = useState<{ teamId: string; memberId: string } | null>(null);
+  const [showBulkTask, setShowBulkTask]       = useState<{ teamId: string; teamName: string; members: TeamMember[] } | null>(null);
   const [editingTask, setEditingTask]         = useState<TeamTask | null>(null);
   const [viewingSubmission, setViewingSubmission] = useState<TeamTask | null>(null);
 
@@ -302,6 +314,7 @@ export function TeamsView() {
             onToggleMember={id => setExpandedMember(expandedMember === id ? null : id)}
             onDeleteTeam={() => deleteTeam(team.id)}
             onAddMember={() => setShowAddMember(team.id)}
+            onBulkTask={() => setShowBulkTask({ teamId: team.id, teamName: team.name, members: team.members })}
             onRemoveMember={memberId => removeMember(team.id, memberId)}
             onAddTask={memberId => setShowAddTask({ teamId: team.id, memberId })}
             onDeleteTask={deleteTask}
@@ -323,6 +336,15 @@ export function TeamsView() {
           existingMemberIds={teams.find(t => t.id === showAddMember)?.members.map(m => m.studentId) ?? []}
           onClose={() => setShowAddMember(null)}
           onAdded={() => { setShowAddMember(null); fetchTeams(); }}
+        />
+      )}
+      {showBulkTask && (
+        <BulkTaskModal
+          teamId={showBulkTask.teamId}
+          teamName={showBulkTask.teamName}
+          members={showBulkTask.members}
+          onClose={() => setShowBulkTask(null)}
+          onAdded={() => { setShowBulkTask(null); fetchTeams(); }}
         />
       )}
       {showAddTask && (
@@ -354,11 +376,12 @@ export function TeamsView() {
 
 function TeamCard({
   team, expanded, expandedMember, onToggle, onToggleMember, onDeleteTeam,
-  onAddMember, onRemoveMember, onAddTask, onDeleteTask, onCycleTaskStatus, onEditTask, onViewSubmission
+  onAddMember, onBulkTask, onRemoveMember, onAddTask, onDeleteTask, onCycleTaskStatus, onEditTask, onViewSubmission
 }: {
   team: Team; expanded: boolean; expandedMember: string | null;
   onToggle: () => void; onToggleMember: (id: string) => void;
   onDeleteTeam: () => void; onAddMember: () => void;
+  onBulkTask: () => void;
   onRemoveMember: (id: string) => void; onAddTask: (memberId: string) => void;
   onDeleteTask: (id: string) => void; onCycleTaskStatus: (t: TeamTask) => void;
   onEditTask: (t: TeamTask) => void; onViewSubmission: (t: TeamTask) => void;
@@ -410,6 +433,18 @@ function TeamCard({
             </div>
           </div>
 
+          {/* Quick Bulk Assign Action on Header */}
+          {team.members.length > 0 && (
+            <button
+              onClick={e => { e.stopPropagation(); onBulkTask(); }}
+              title="Assign a task to all students in this team"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#0D7A53] hover:bg-[#0A6B48] text-white shadow-xs transition-colors"
+            >
+              <CheckSquare className="h-3.5 w-3.5" />
+              <span>Assign to Team</span>
+            </button>
+          )}
+
           <button
             onClick={e => { e.stopPropagation(); onDeleteTeam(); }}
             title="Delete team"
@@ -454,6 +489,15 @@ function TeamCard({
             </div>
 
             <div className="flex items-center gap-2">
+              {team.members.length > 0 && (
+                <button
+                  onClick={onBulkTask}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-white hover:bg-[#0A6B48] bg-[#0D7A53] rounded-full px-4 py-1.5 transition-colors shadow-xs"
+                >
+                  <CheckSquare className="h-3.5 w-3.5" /> Assign Task to Team (Bulk)
+                </button>
+              )}
+
               {activeTab === "dashboard" && (
                 <button
                   onClick={() => setActiveTab("members")}
@@ -908,37 +952,15 @@ function TaskRow({
             </button>
             <h5 className="text-sm font-bold text-[#111317]">{task.title}</h5>
           </div>
-          {task.description && (
-            <div>
-              {!expanded ? (
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{task.description}</p>
-                  {isLongDescription && (
-                    <button
-                      type="button"
-                      onClick={() => setExpanded(true)}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#111317] hover:underline transition-colors"
-                    >
-                      <span>Show full description</span>
-                      <ChevronDown className="h-3 w-3" />
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1.5 mt-1">
-                  <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">{task.description}</p>
-                  <button
-                    type="button"
-                    onClick={() => setExpanded(false)}
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-[#111317] transition-colors"
-                  >
-                    <span>Minimize</span>
-                    <ChevronUp className="h-3 w-3" />
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+          {/* Structured Task Description & Acceptance Criteria */}
+          <StructuredTaskDescription
+            description={task.description}
+            expanded={expanded}
+            onToggle={() => setExpanded(!expanded)}
+          />
+
+          {/* Reference Links: Rendered on consecutive separate lines */}
+          <TaskLinksView taskUrl={task.taskUrl} className="pt-1" />
         </div>
 
         <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
@@ -971,57 +993,35 @@ function TaskRow({
         </div>
       </div>
 
-      {/* Link Column / Section */}
-      <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
-        {/* Admin Reference Link */}
-        <div className="flex items-center gap-1.5">
-          <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">Reference Link:</span>
-          {task.taskUrl ? (
-            <a
-              href={task.taskUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[#064E3B] hover:underline font-bold bg-[#E6F7F0] hover:bg-[#d5f3e4] border border-[#0D7A53]/30 px-3 py-0.5 rounded-full transition-colors break-all"
-            >
-              <ExternalLink className="h-3 w-3 text-[#0D7A53]" />
-              <span>{task.taskUrl.length > 35 ? task.taskUrl.slice(0, 32) + "..." : task.taskUrl}</span>
-            </a>
-          ) : (
-            <span className="text-slate-400 italic">None assigned</span>
-          )}
+      {/* Deliverable Submission Section (if submitted) */}
+      {hasSubmission && (
+        <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">Student Deliverable:</span>
+          <div className="flex items-center gap-2">
+            {task.submissionUrl && (
+              <a
+                href={task.submissionUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 font-bold text-[#064E3B] bg-white hover:bg-[#E6F7F0] border border-[#0D7A53]/30 px-3 py-1 rounded-full transition-colors shadow-xs"
+              >
+                <GithubIcon className="h-3.5 w-3.5 text-[#0D7A53]" />
+                <span>GitHub Code</span>
+                <ExternalLink className="h-2.5 w-2.5 text-slate-400" />
+              </a>
+            )}
+            {task.submissionContent && (
+              <button
+                onClick={onViewSubmission}
+                className="inline-flex items-center gap-1 text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 font-bold px-3 py-1 rounded-full transition-colors"
+              >
+                <FileText className="h-3 w-3" />
+                View Notes
+              </button>
+            )}
+          </div>
         </div>
-
-        {/* Student Deliverable Submission */}
-        <div className="flex items-center gap-2">
-          {hasSubmission ? (
-            <div className="flex items-center gap-2">
-              {task.submissionUrl && (
-                <a
-                  href={task.submissionUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 font-bold text-[#064E3B] bg-white hover:bg-[#E6F7F0] border border-[#0D7A53]/30 px-3 py-1 rounded-full transition-colors shadow-xs"
-                >
-                  <GithubIcon className="h-3.5 w-3.5 text-[#0D7A53]" />
-                  <span>GitHub Code</span>
-                  <ExternalLink className="h-2.5 w-2.5 text-slate-400" />
-                </a>
-              )}
-              {task.submissionContent && (
-                <button
-                  onClick={onViewSubmission}
-                  className="inline-flex items-center gap-1 text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 font-bold px-3 py-1 rounded-full transition-colors"
-                >
-                  <FileText className="h-3 w-3" />
-                  View Notes
-                </button>
-              )}
-            </div>
-          ) : (
-            <span className="text-slate-400 italic text-[11px]">No student submission yet</span>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -1190,13 +1190,26 @@ function AddTaskModal({ teamId, memberId, onClose, onAdded }: {
           <input required autoFocus className={inputCls} placeholder="e.g. Build login page" value={form.title}
             onChange={e => setForm({ ...form, title: e.target.value })} />
         </Field>
-        <Field label="Description">
-          <textarea className={inputCls} rows={3} placeholder="Detailed instructions..." value={form.description}
-            onChange={e => setForm({ ...form, description: e.target.value })} />
+        <Field label="Description & Technical Requirements">
+          <textarea
+            className={inputCls}
+            rows={6}
+            placeholder="Paste detailed instructions, objectives, requirements, deliverables, constraints..."
+            value={form.description}
+            onChange={e => setForm({ ...form, description: e.target.value })}
+          />
         </Field>
-        <Field label="Task / Reference Link (Optional)">
-          <input type="url" className={inputCls} placeholder="e.g. https://github.com/... or Figma / documentation link" value={form.taskUrl}
-            onChange={e => setForm({ ...form, taskUrl: e.target.value })} />
+        <Field label="Task / Reference Links (Optional)">
+          <textarea
+            rows={3}
+            className={inputCls}
+            placeholder="Enter one or multiple links separated by commas (',') or on new lines:&#10;e.g. React Quick Start: https://react.dev/learn, Managing State: https://react.dev/learn/managing-state, Vite Guide: https://vite.dev/guide/"
+            value={form.taskUrl}
+            onChange={e => setForm({ ...form, taskUrl: e.target.value })}
+          />
+          <p className="text-[11px] text-slate-400 mt-1">
+            Separate multiple links with commas (<strong className="text-[#0D7A53]">,</strong>) or newlines. They will be displayed on consecutive rows in the student dashboard.
+          </p>
         </Field>
         <Field label="Due Date">
           <input type="date" className={inputCls} value={form.dueDate}
@@ -1250,13 +1263,25 @@ function EditTaskModal({ task, onClose, onSaved }: {
           <input required className={inputCls} value={form.title}
             onChange={e => setForm({ ...form, title: e.target.value })} />
         </Field>
-        <Field label="Description">
-          <textarea className={inputCls} rows={3} value={form.description}
-            onChange={e => setForm({ ...form, description: e.target.value })} />
+        <Field label="Description & Technical Requirements">
+          <textarea
+            className={inputCls}
+            rows={6}
+            value={form.description}
+            onChange={e => setForm({ ...form, description: e.target.value })}
+          />
         </Field>
-        <Field label="Task / Reference Link (Optional)">
-          <input type="url" className={inputCls} placeholder="e.g. https://github.com/... or Figma / documentation link" value={form.taskUrl}
-            onChange={e => setForm({ ...form, taskUrl: e.target.value })} />
+        <Field label="Task / Reference Links (Optional)">
+          <textarea
+            rows={3}
+            className={inputCls}
+            placeholder="Enter one or multiple links separated by commas (',') or on new lines:&#10;e.g. React Quick Start: https://react.dev/learn, Managing State: https://react.dev/learn/managing-state"
+            value={form.taskUrl}
+            onChange={e => setForm({ ...form, taskUrl: e.target.value })}
+          />
+          <p className="text-[11px] text-slate-400 mt-1">
+            Separate multiple links with commas (<strong className="text-[#0D7A53]">,</strong>) or newlines.
+          </p>
         </Field>
         <Field label="Status">
           <select className={inputCls} value={form.status}
@@ -1297,13 +1322,13 @@ function SubmissionDetailsModal({
           )}
         </div>
 
-        {task.submissionUrl && (
+        {task.submissionUrl && safeUrl(task.submissionUrl) && (
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               GitHub Repository / Pull Request Link
             </label>
             <a
-              href={task.submissionUrl}
+              href={safeUrl(task.submissionUrl)!}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 p-3 bg-white hover:bg-[#E6F7F0] border border-[#0D7A53]/30 rounded-full text-[#064E3B] font-bold text-xs w-full break-all transition-colors shadow-xs"
@@ -1327,19 +1352,8 @@ function SubmissionDetailsModal({
         )}
 
         {task.taskUrl && (
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
-              Assigned Reference Link
-            </label>
-            <a
-              href={task.taskUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-[#064E3B] font-bold bg-[#E6F7F0] border border-[#0D7A53]/30 px-3.5 py-1.5 rounded-full hover:bg-[#0D7A53] hover:text-white transition-colors"
-            >
-              <ExternalLink className="h-3.5 w-3.5" />
-              <span>{task.taskUrl}</span>
-            </a>
+          <div className="pt-1">
+            <TaskLinksView taskUrl={task.taskUrl} />
           </div>
         )}
 
@@ -1355,3 +1369,226 @@ function SubmissionDetailsModal({
     </Modal>
   );
 }
+
+// ─── Bulk Task Modal (Assign Task to 50+ students in a day) ───────────────────
+
+function BulkTaskModal({
+  teamId,
+  teamName,
+  members,
+  onClose,
+  onAdded,
+}: {
+  teamId: string;
+  teamName: string;
+  members: TeamMember[];
+  onClose: () => void;
+  onAdded: () => void;
+}) {
+  const [form, setForm] = useState({ title: "", description: "", taskUrl: "", dueDate: "" });
+  const [assignAll, setAssignAll] = useState(true);
+  const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>(members.map(m => m.id));
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const toggleMember = (id: string) => {
+    setSelectedMemberIds(prev =>
+      prev.includes(id) ? prev.filter(mId => mId !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = () => setSelectedMemberIds(members.map(m => m.id));
+  const handleDeselectAll = () => setSelectedMemberIds([]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    const cleanTitle = form.title.trim();
+    if (!cleanTitle) {
+      setError("Task title is required.");
+      return;
+    }
+
+    if (form.taskUrl.trim() && !/^https?:\/\//i.test(form.taskUrl.trim())) {
+      setError("Task URL must be a valid link starting with http:// or https://");
+      return;
+    }
+
+    const memberIds = assignAll ? undefined : selectedMemberIds;
+    if (!assignAll && selectedMemberIds.length === 0) {
+      setError("Please select at least one student or choose 'Assign to All Members'.");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const payload: any = {
+        title: cleanTitle,
+        description: form.description.trim() || undefined,
+        taskUrl: form.taskUrl.trim() || undefined,
+      };
+      if (memberIds) payload.memberIds = memberIds;
+      if (form.dueDate) payload.dueDate = new Date(form.dueDate).toISOString();
+
+      const res = await fetch(`${API_URL}/api/admin/teams/${teamId}/tasks/bulk`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to assign tasks in bulk.");
+      }
+      onAdded();
+    } catch (err: any) {
+      setError(err.message || "An error occurred while creating bulk tasks.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const targetCount = assignAll ? members.length : selectedMemberIds.length;
+
+  return (
+    <Modal title={`Assign Task to Team (${members.length} Students)`} onClose={onClose}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {error && (
+          <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 shrink-0 text-rose-500" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <div className="p-3.5 bg-[#E6F7F0] border border-[#0D7A53]/20 rounded-2xl flex items-center justify-between">
+          <div>
+            <div className="text-xs font-bold text-[#064E3B]">{teamName}</div>
+            <div className="text-xs text-[#0D7A53] mt-0.5">
+              Simultaneously assigning task to <strong>{targetCount}</strong> student{targetCount === 1 ? '' : 's'}
+            </div>
+          </div>
+          <span className="px-3 py-1 rounded-full text-xs font-black bg-[#0D7A53] text-white">
+            {targetCount} Selected
+          </span>
+        </div>
+
+        <Field label="Task Title" required>
+          <input
+            required
+            autoFocus
+            maxLength={200}
+            className={inputCls}
+            placeholder="e.g. Day 14: Build Real-time Chat Frontend & Connect WebSocket"
+            value={form.title}
+            onChange={e => setForm({ ...form, title: e.target.value })}
+          />
+        </Field>
+
+        <Field label="Description & Acceptance Criteria">
+          <textarea
+            maxLength={20000}
+            className={inputCls}
+            rows={6}
+            placeholder="Detailed instructions for today's assignment, objectives, requirements, or deliverables..."
+            value={form.description}
+            onChange={e => setForm({ ...form, description: e.target.value })}
+          />
+        </Field>
+
+        <Field label="Task / Reference Links (Optional)">
+          <textarea
+            rows={3}
+            maxLength={5000}
+            className={inputCls}
+            placeholder="Enter one or multiple links separated by commas (',') or on new lines:&#10;e.g. React Quick Start: https://react.dev/learn, Managing State: https://react.dev/learn/managing-state, Vite Guide: https://vite.dev/guide/"
+            value={form.taskUrl}
+            onChange={e => setForm({ ...form, taskUrl: e.target.value })}
+          />
+          <p className="text-[11px] text-slate-400 mt-1">
+            Tip: You can paste multiple links separated by commas (<strong className="text-[#0D7A53]">,</strong>) or newlines. They will be displayed on consecutive rows in student dashboards.
+          </p>
+        </Field>
+
+        <Field label="Due Date (Optional)">
+          <input
+            type="date"
+            className={inputCls}
+            value={form.dueDate}
+            onChange={e => setForm({ ...form, dueDate: e.target.value })}
+          />
+        </Field>
+
+        <div className="pt-2 border-t border-slate-100">
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-700">
+              Target Students
+            </label>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setAssignAll(true)}
+                className={`text-[11px] font-bold px-3 py-1 rounded-full transition-colors ${
+                  assignAll ? "bg-[#111317] text-[#34D399]" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                All Members ({members.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setAssignAll(false)}
+                className={`text-[11px] font-bold px-3 py-1 rounded-full transition-colors ${
+                  !assignAll ? "bg-[#111317] text-[#34D399]" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                Custom Selection
+              </button>
+            </div>
+          </div>
+
+          {!assignAll && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs text-slate-500 pb-1">
+                <span>Select students to receive this task:</span>
+                <div className="flex gap-2">
+                  <button type="button" onClick={handleSelectAll} className="text-[#0D7A53] hover:underline font-bold">
+                    Select All
+                  </button>
+                  <span>•</span>
+                  <button type="button" onClick={handleDeselectAll} className="text-slate-500 hover:underline">
+                    Clear
+                  </button>
+                </div>
+              </div>
+              <div className="max-h-48 overflow-y-auto space-y-1.5 p-2 bg-slate-50 rounded-2xl border border-slate-200">
+                {members.map(m => (
+                  <label
+                    key={m.id}
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white text-xs cursor-pointer transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedMemberIds.includes(m.id)}
+                      onChange={() => toggleMember(m.id)}
+                      className="rounded text-[#0D7A53] focus:ring-[#0D7A53]"
+                    />
+                    <span className="font-bold text-[#111317]">{m.student.name}</span>
+                    <span className="text-slate-400 text-[11px]">({m.student.studentId || m.student.email})</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <ModalFooter
+          onCancel={onClose}
+          saving={saving}
+          label={`Assign to ${targetCount} Student${targetCount === 1 ? '' : 's'}`}
+        />
+      </form>
+    </Modal>
+  );
+}
+

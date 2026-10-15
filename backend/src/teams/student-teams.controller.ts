@@ -7,6 +7,7 @@ import {
   Param,
   UseGuards,
   Req,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { TeamsService } from './teams.service';
 import { StudentCreateTeamDto } from './dto/student-create-team.dto';
@@ -36,7 +37,7 @@ export class StudentTeamsController {
   @Patch('tasks/:taskId/status')
   updateTaskStatus(
     @Req() req: any,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseUUIDPipe) taskId: string,
     @Body() dto: UpdateTaskStatusDto,
   ) {
     return this.teamsService.studentUpdateTaskStatus(req.user.id, taskId, dto.status);
@@ -45,7 +46,7 @@ export class StudentTeamsController {
   @Post('tasks/:taskId/submit')
   submitTask(
     @Req() req: any,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseUUIDPipe) taskId: string,
     @Body() dto: SubmitTeamTaskDto,
   ) {
     return this.teamsService.studentSubmitTask(req.user.id, taskId, dto);
@@ -54,10 +55,11 @@ export class StudentTeamsController {
   @Post(':id/members/:memberId/tasks')
   createTask(
     @Req() req: any,
-    @Param('id') teamId: string,
-    @Param('memberId') memberId: string,
+    @Param('id', ParseUUIDPipe) teamId: string,
+    @Param('memberId', ParseUUIDPipe) memberId: string,
     @Body() dto: CreateTeamTaskDto,
   ) {
     return this.teamsService.studentCreateTask(req.user.id, teamId, memberId, dto);
   }
 }
+

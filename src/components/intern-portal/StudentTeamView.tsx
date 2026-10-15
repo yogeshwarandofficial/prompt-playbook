@@ -20,6 +20,8 @@ import {
   Sparkles
 } from "lucide-react";
 
+import { TaskLinksView, StructuredTaskDescription } from "../ui/task-content";
+
 const API_URL = (import.meta as any).env?.VITE_API_URL || "http://localhost:3001";
 
 function GithubIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -99,6 +101,16 @@ function statusIcon(status: string) {
   if (status === "IN_PROGRESS") return <Clock className="h-3.5 w-3.5 text-[#34D399]" />;
   if (status === "CANCELLED") return <AlertCircle className="h-3.5 w-3.5 text-slate-400" />;
   return <Clock className="h-3.5 w-3.5 text-[#064E3B]" />;
+}
+
+// XSS Sanitizer: ensures only valid http/https URLs are rendered in anchor hrefs
+function safeUrl(url?: string): string | null {
+  if (!url) return null;
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+  return null;
 }
 
 export function StudentTeamView({ session }: { session: any }) {
@@ -551,47 +563,14 @@ export function StudentTeamView({ session }: { session: any }) {
                             </span>
                           </div>
 
-                          {/* Collapsible / Expandable Task Description */}
-                          {task.description && (
-                            <div>
-                              {!isExpanded ? (
-                                <div className="space-y-1">
-                                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                                    {task.description}
-                                  </p>
-                                  {isLongDescription && (
-                                    <button
-                                      type="button"
-                                      onClick={() => toggleTaskExpand(task.id)}
-                                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0D7A53] hover:underline pt-0.5"
-                                    >
-                                      <span>Read full description</span>
-                                      <ChevronDown className="h-3 w-3" />
-                                    </button>
-                                  )}
-                                </div>
-                              ) : (
-                                <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-200/80 space-y-2 shadow-xs">
-                                  <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                                    <span>Task Requirements & Instructions</span>
-                                    <button
-                                      type="button"
-                                      onClick={() => toggleTaskExpand(task.id)}
-                                      className="inline-flex items-center gap-1 text-slate-600 hover:text-[#111317] text-[11px] font-semibold transition-colors"
-                                    >
-                                      <span>Minimize</span>
-                                      <ChevronUp className="h-3 w-3" />
-                                    </button>
-                                  </div>
-                                  <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">
-                                    {task.description}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          )}
+                          {/* Structured Task Description: preserves paragraphs, headings, bullet points */}
+                          <StructuredTaskDescription
+                            description={task.description}
+                            expanded={isExpanded}
+                            onToggle={() => toggleTaskExpand(task.id)}
+                          />
 
-                          {/* Meta: Assigned Date, Due Date & Reference Link */}
+                          {/* Meta: Assigned Date, Due Date */}
                           <div className="flex items-center gap-2.5 pt-1 flex-wrap text-xs">
                             {task.createdAt && (
                               <span className="inline-flex items-center gap-1 font-semibold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">
@@ -613,20 +592,10 @@ export function StudentTeamView({ session }: { session: any }) {
                                 {isOverdue && " (Overdue)"}
                               </span>
                             )}
-
-                            {/* Assigned Reference Spec */}
-                            {task.taskUrl && (
-                              <a
-                                href={task.taskUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs text-[#064E3B] bg-[#E6F7F0] hover:bg-[#d5f3e4] border border-[#0D7A53]/30 font-bold px-3 py-1 rounded-full transition-colors"
-                              >
-                                <ExternalLink className="h-3 w-3 text-[#0D7A53]" />
-                                Assigned Spec / Link
-                              </a>
-                            )}
                           </div>
+
+                          {/* Reference Links: Each on separate consecutive lines */}
+                          <TaskLinksView taskUrl={task.taskUrl} className="pt-2" />
                         </div>
 
                         {/* Action Buttons: Pill-shaped CTA in Velvet Emerald */}
@@ -920,10 +889,12 @@ export function StudentTeamView({ session }: { session: any }) {
                                 )}
                               </div>
 
-                              {t.submissionUrl && (
+                              <TaskLinksView taskUrl={t.taskUrl} className="pl-5 pt-1" />
+
+                              {t.submissionUrl && safeUrl(t.submissionUrl) && (
                                 <div className="pl-5 pt-0.5">
                                   <a
-                                    href={t.submissionUrl}
+                                    href={safeUrl(t.submissionUrl)!}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1.5 text-[11px] text-[#064E3B] hover:underline font-bold bg-[#E6F7F0] px-2.5 py-0.5 rounded-full border border-[#0D7A53]/30"
@@ -984,6 +955,12 @@ function SubmitTaskModal({
       setError("Please provide your GitHub repository link and/or describe what you did.");
       return;
     }
+
+    if (submissionUrl.trim() && !/^https?:\/\//i.test(submissionUrl.trim())) {
+      setError("Submission URL must be a valid link starting with http:// or https://");
+      return;
+    }
+
     setSubmitting(true);
     setError("");
 
@@ -1036,17 +1013,12 @@ function SubmitTaskModal({
           <div className="text-[11px] font-black uppercase tracking-wider text-slate-400">Task Title</div>
           <div className="text-sm font-bold text-[#111317]">{task.title}</div>
           {task.description && (
-            <p className="text-xs text-slate-600 line-clamp-2">{task.description}</p>
+            <div className="text-xs text-slate-600 whitespace-pre-wrap leading-relaxed max-h-40 overflow-y-auto p-2.5 bg-white rounded-xl border border-slate-200">
+              {task.description}
+            </div>
           )}
           {task.taskUrl && (
-            <a
-              href={task.taskUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-[#0D7A53] font-bold pt-1 hover:underline"
-            >
-              <ExternalLink className="h-3 w-3" /> View Assigned Spec / Reference Link
-            </a>
+            <TaskLinksView taskUrl={task.taskUrl} className="pt-1" />
           )}
         </div>
 
