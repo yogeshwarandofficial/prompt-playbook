@@ -495,6 +495,48 @@ function LoginPage() {
                 font-size: 36px;
             }
         }
+
+        @media(max-width: 640px) {
+            .login-page-wrapper {
+                padding: 12px;
+                min-height: 100vh;
+            }
+
+            .login-container {
+                border-radius: 24px;
+                margin: 12px 0;
+            }
+
+            .login-left, .login-right {
+                padding: 28px 18px;
+            }
+
+            .login-title {
+                font-size: 26px;
+                letter-spacing: -0.5px;
+            }
+
+            .login-subtitle {
+                margin-bottom: 24px;
+                font-size: 14px;
+            }
+
+            .login-brand {
+                margin-bottom: 24px;
+            }
+
+            .login-brand h2 {
+                font-size: 20px;
+            }
+
+            .login-hero-text h1 {
+                font-size: 26px;
+            }
+
+            .login-input-wrapper input {
+                font-size: 16px;
+            }
+        }
       `}</style>
       <div className="login-page-wrapper">
         <div className="login-container">

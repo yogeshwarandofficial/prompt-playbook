@@ -222,7 +222,7 @@ function InterPortal() {
 
                 {/* Notifications Dropdown Popover */}
                 {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-[24px] bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)] p-4 z-50">
+                  <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-96 max-w-sm rounded-2xl sm:rounded-[24px] bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)] p-3.5 sm:p-4 z-50">
                     <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-extrabold text-[#111317]">Notifications</span>
@@ -329,7 +329,7 @@ function InterPortal() {
               <button
                 onClick={handleLogout}
                 title="Logout"
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-xs shrink-0"
+                className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-xs shrink-0"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Logout</span>
@@ -349,9 +349,10 @@ function InterPortal() {
 
         {/* Mobile Navigation Dropdown */}
         {sidebarOpen && (
-          <div className="md:hidden border-t border-slate-200 bg-[#131622] px-4 py-3 space-y-1">
+          <div className="md:hidden border-t border-slate-200 bg-white/95 backdrop-blur-xl px-3 py-2.5 space-y-1 shadow-lg">
             {NAV_ITEMS.map((item) => {
               const isActive = currentView === item.id;
+              const Icon = item.icon;
               return (
                 <button
                   key={item.id}
@@ -359,12 +360,13 @@ function InterPortal() {
                     setCurrentView(item.id as ViewState);
                     setSidebarOpen(false);
                   }}
-                  className={`flex w-full items-center justify-between px-4 py-2.5 rounded-full text-xs font-semibold transition-all ${
+                  className={`flex w-full items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     isActive
-                      ? "bg-[#5B50E6] text-white"
-                      : "text-slate-300 hover:text-white hover:bg-white/5"
+                      ? "bg-[#111317] text-white shadow-xs"
+                      : "text-slate-700 hover:text-[#111317] hover:bg-slate-100"
                   }`}
                 >
+                  <Icon className={`h-4 w-4 ${isActive ? "text-[#34D399]" : "text-slate-500"}`} />
                   <span>{item.label}</span>
                 </button>
               );
@@ -557,22 +559,22 @@ function ProjectsView() {
   if (selectedPhase) {
     return (
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden max-w-3xl mx-auto">
-        <div className="px-6 py-5 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
-          <button onClick={() => setSelectedPhase(null)} className="p-1 hover:bg-slate-200 rounded-md">
-            <X className="w-5 h-5 text-slate-600" />
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
+          <button onClick={() => setSelectedPhase(null)} className="p-1.5 hover:bg-slate-200 rounded-lg text-slate-600 transition-colors">
+            <X className="w-5 h-5" />
           </button>
-          <h3 className="text-lg font-semibold text-slate-900">Submit Work: {selectedPhase.phase.title}</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900 truncate">Submit Work: {selectedPhase.phase.title}</h3>
         </div>
-        <div className="p-6">
+        <div className="p-4 sm:p-6 space-y-4">
           {selectedPhase.phase.topics && selectedPhase.phase.topics.length > 0 && (
-            <div className="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
-              <h4 className="font-bold text-slate-800 mb-2">📚 Topics to Know</h4>
+            <div className="mb-4 sm:mb-6 p-3.5 sm:p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 className="font-bold text-slate-800 mb-2 text-sm">📚 Topics to Know</h4>
               <div className="space-y-4">
                 {selectedPhase.phase.topics.map((t: any, idx: number) => (
-                  <div key={idx} className="border-l-4 border-indigo-500 pl-4 py-1">
-                    <h5 className="font-semibold text-slate-800">{t.title}</h5>
-                    {t.description && <p className="text-sm text-slate-600 mt-1">{t.description}</p>}
-                    <a href={t.blogUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-semibold mt-2 hover:text-indigo-800">
+                  <div key={idx} className="border-l-4 border-indigo-500 pl-3.5 py-1">
+                    <h5 className="font-semibold text-slate-800 text-sm">{t.title}</h5>
+                    {t.description && <p className="text-xs sm:text-sm text-slate-600 mt-1">{t.description}</p>}
+                    <a href={t.blogUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs sm:text-sm text-indigo-600 font-semibold mt-2 hover:text-indigo-800">
                       Read Article &rarr;
                     </a>
                   </div>
@@ -580,28 +582,28 @@ function ProjectsView() {
               </div>
             </div>
           )}
-          <div className="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
-            <h4 className="font-bold text-slate-800 mb-2">📋 Instructions</h4>
-            <div className="text-sm text-slate-600 whitespace-pre-wrap">{selectedPhase.phase.instructions}</div>
+          <div className="mb-4 sm:mb-6 p-3.5 sm:p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <h4 className="font-bold text-slate-800 mb-2 text-sm">📋 Instructions</h4>
+            <div className="text-xs sm:text-sm text-slate-600 whitespace-pre-wrap break-words">{selectedPhase.phase.instructions}</div>
           </div>
           
-          {formError && <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{formError}</div>}
+          {formError && <div className="mb-4 text-xs sm:text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{formError}</div>}
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Work Description / Comments</label>
-              <textarea required value={content} onChange={e=>setContent(e.target.value)} rows={5} className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm" placeholder="Explain what you implemented..." />
+              <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Work Description / Comments</label>
+              <textarea required value={content} onChange={e=>setContent(e.target.value)} rows={5} className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-base sm:text-sm focus:border-indigo-600 focus:outline-none" placeholder="Explain what you implemented..." />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Repository URL</label>
-              <input type="url" required value={repoUrl} onChange={e=>setRepoUrl(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" placeholder="https://github.com/..." />
+              <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Repository URL</label>
+              <input type="url" required value={repoUrl} onChange={e=>setRepoUrl(e.target.value)} className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-base sm:text-sm focus:border-indigo-600 focus:outline-none" placeholder="https://github.com/..." />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Live Demo URL</label>
-              <input type="url" required value={liveUrl} onChange={e=>setLiveUrl(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" placeholder="https://..." />
+              <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Live Demo URL</label>
+              <input type="url" required value={liveUrl} onChange={e=>setLiveUrl(e.target.value)} className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-base sm:text-sm focus:border-indigo-600 focus:outline-none" placeholder="https://..." />
             </div>
-            <div className="pt-4">
-              <button disabled={isSubmitting} type="submit" className="w-full bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700">
+            <div className="pt-2 sm:pt-4">
+              <button disabled={isSubmitting} type="submit" className="w-full bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors text-sm disabled:opacity-60">
                 {isSubmitting ? "Submitting..." : "Submit for Review"}
               </button>
             </div>
@@ -612,11 +614,11 @@ function ProjectsView() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {loading ? (
         <div className="p-8 text-center text-slate-500">Loading projects...</div>
       ) : projects.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-slate-300 p-12 text-center bg-white/50">
+        <div className="rounded-2xl border-2 border-dashed border-slate-300 p-8 sm:p-12 text-center bg-white/50">
           <Briefcase className="mx-auto h-12 w-12 text-slate-400" />
           <h3 className="mt-4 text-lg font-semibold text-slate-900">No Projects Assigned</h3>
           <p className="mt-2 text-sm text-slate-500 max-w-md mx-auto">
@@ -626,41 +628,41 @@ function ProjectsView() {
       ) : (
         projects.map((sp: any) => (
           <div key={sp.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="px-6 py-5 border-b border-slate-100 bg-slate-50">
-              <h3 className="text-xl font-bold text-slate-900">{sp.project?.title}</h3>
-              <p className="text-sm text-slate-500 mt-1">{sp.project?.description}</p>
+            <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100 bg-slate-50">
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900">{sp.project?.title}</h3>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">{sp.project?.description}</p>
             </div>
-            <div className="p-6">
-              <h4 className="font-bold text-slate-800 mb-4">Internship Timeline</h4>
+            <div className="p-4 sm:p-6">
+              <h4 className="font-bold text-slate-800 mb-4 text-sm sm:text-base">Internship Timeline</h4>
               <div className="space-y-4">
                 {(!sp.phases || sp.phases.length === 0) && (
-                  <div className="p-6 bg-white border border-slate-200 rounded-xl text-center text-slate-500 shadow-sm">
+                  <div className="p-6 bg-white border border-slate-200 rounded-xl text-center text-slate-500 shadow-sm text-sm">
                     Your internship roadmap is being prepared.
                   </div>
                 )}
                 {sp.phases?.sort((a:any, b:any) => a.phase.phaseOrder - b.phase.phaseOrder).map((phase: any, idx: number) => {
                   const isInteractive = phase.status === 'AVAILABLE' || phase.status === 'CHANGES_REQUESTED';
                   return (
-                    <div key={phase.id} className={`flex gap-4 p-4 rounded-xl border ${getStatusColor(phase.status)} bg-white shadow-sm`}>
+                    <div key={phase.id} className={`flex flex-col sm:flex-row gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-xl border ${getStatusColor(phase.status)} bg-white shadow-sm`}>
                       <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm bg-slate-100 text-slate-600">
                         {idx + 1}
                       </div>
-                      <div className="flex-grow">
-                        <div className="flex justify-between items-start mb-1">
-                          <h5 className="font-bold text-slate-900">{phase.phase.title}</h5>
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${getStatusColor(phase.status).replace('bg-','bg-opacity-20 text-')}`}>{phase.status}</span>
+                      <div className="flex-grow min-w-0">
+                        <div className="flex flex-wrap justify-between items-start gap-1.5 mb-1">
+                          <h5 className="font-bold text-slate-900 text-sm sm:text-base">{phase.phase.title}</h5>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 ${getStatusColor(phase.status).replace('bg-','bg-opacity-20 text-')}`}>{phase.status}</span>
                         </div>
-                        <p className="text-sm text-slate-600 mb-2">{phase.phase.description}</p>
+                        <p className="text-xs sm:text-sm text-slate-600 mb-2 leading-relaxed">{phase.phase.description}</p>
                         
                         <div className="flex flex-wrap gap-2 pt-3 mt-3 border-t border-slate-100">
                           <button 
                             onClick={() => setViewingPhaseId(viewingPhaseId === phase.id ? null : phase.id)} 
-                            className="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-200"
+                            className="bg-slate-100 text-slate-700 px-3.5 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold hover:bg-slate-200 transition-colors"
                           >
                             {viewingPhaseId === phase.id ? "Hide Instructions" : "View Instructions"}
                           </button>
                           {isInteractive && (
-                            <button onClick={() => setSelectedPhase(phase)} className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700">
+                            <button onClick={() => setSelectedPhase(phase)} className="bg-indigo-600 text-white px-3.5 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold hover:bg-indigo-700 transition-colors">
                               Submit Work
                             </button>
                           )}
@@ -733,7 +735,7 @@ function StudentCertificateView() {
   }, []);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-6">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-4 sm:p-6">
       <div className="flex items-center gap-3 mb-6">
         <div className="bg-indigo-100 p-2 rounded-lg">
           <Award className="h-6 w-6 text-indigo-600" />
@@ -754,7 +756,7 @@ function StudentCertificateView() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
           {certificates.map((cert) => (
-            <div key={cert.id} className="relative border border-slate-200 rounded-xl p-6 bg-gradient-to-br from-slate-50 to-white shadow-sm hover:shadow-md transition-shadow">
+            <div key={cert.id} className="relative border border-slate-200 rounded-xl p-4 sm:p-6 bg-gradient-to-br from-slate-50 to-white shadow-sm hover:shadow-md transition-shadow">
               {cert.status === 'REVOKED' && (
                 <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] rounded-xl flex items-center justify-center z-10">
                   <span className="bg-red-100 text-red-800 text-lg font-bold px-4 py-2 rounded-lg rotate-[-15deg] border-2 border-red-500">
@@ -827,20 +829,20 @@ function SubmissionsView() {
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="px-6 py-5 border-b border-slate-100 bg-slate-50">
-        <h3 className="text-lg font-semibold text-slate-900">My Submissions</h3>
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100 bg-slate-50">
+        <h3 className="text-base sm:text-lg font-semibold text-slate-900">My Submissions</h3>
       </div>
       <div className="overflow-x-auto">
         {loading ? (
           <div className="p-8 text-center text-slate-500">Loading submissions...</div>
         ) : allSubmissions.length === 0 ? (
-          <div className="p-12 text-center">
+          <div className="p-8 sm:p-12 text-center">
             <UploadCloud className="mx-auto h-12 w-12 text-slate-300 mb-3" />
             <h3 className="text-lg font-medium text-slate-900">No submissions yet</h3>
             <p className="mt-1 text-sm text-slate-500">When you submit work for a phase, it will appear here.</p>
           </div>
         ) : (
-          <table className="min-w-full divide-y divide-slate-200">
+          <table className="min-w-[640px] w-full divide-y divide-slate-200">
             <thead className="bg-slate-50">
               <tr>
                 <th className="py-3.5 pl-6 pr-3 text-left text-xs font-semibold text-slate-900 uppercase">Project / Phase</th>

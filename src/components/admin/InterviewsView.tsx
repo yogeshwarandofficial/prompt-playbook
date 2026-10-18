@@ -92,8 +92,8 @@ function ScheduleModal({ applicationId, applicantName, onClose, onScheduled }: S
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-4 sm:p-6 mx-auto max-h-[90vh] overflow-y-auto">
         <h3 className="text-lg font-bold text-slate-900 mb-1">Schedule Interview</h3>
         <p className="text-sm text-slate-500 mb-5">Applicant: <span className="font-medium text-slate-700">{applicantName}</span></p>
         {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{error}</div>}
@@ -105,7 +105,7 @@ function ScheduleModal({ applicationId, applicantName, onClose, onScheduled }: S
               required
               value={scheduledAt}
               onChange={(e) => setScheduledAt(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
           </div>
           <div>
@@ -115,7 +115,7 @@ function ScheduleModal({ applicationId, applicantName, onClose, onScheduled }: S
               value={meetingLink}
               onChange={(e) => setMeetingLink(e.target.value)}
               placeholder="https://meet.google.com/..."
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
           </div>
           <div className="flex gap-3 pt-2">
@@ -176,8 +176,8 @@ function RecordResultModal({ interview, onClose, onSaved }: RecordResultModalPro
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 mx-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-4 sm:p-6 mx-auto max-h-[90vh] overflow-y-auto">
         <h3 className="text-lg font-bold text-slate-900 mb-1">Record Interview Result</h3>
         <p className="text-sm text-slate-500 mb-5">Applicant: <span className="font-medium">{interview.application?.name}</span></p>
         {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{error}</div>}
@@ -489,7 +489,7 @@ export function InterviewsView() {
       )}
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200">
+      <div className="flex border-b border-slate-200 overflow-x-auto no-scrollbar">
         {[['interviews', 'Scheduled Interviews'], ['shortlist', 'Shortlist Applicants']].map(([id, label]) => (
           <button
             key={id}
@@ -528,7 +528,8 @@ export function InterviewsView() {
             </div>
           ) : (
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-              <table className="min-w-full divide-y divide-slate-200">
+              <div className="overflow-x-auto">
+                <table className="min-w-[640px] w-full divide-y divide-slate-200">
                 <thead className="bg-slate-50">
                   <tr>
                     {['Applicant', 'Scheduled At', 'Meeting', 'Status', 'Result', 'Actions'].map((h) => (
@@ -608,6 +609,7 @@ export function InterviewsView() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
         </>
@@ -616,7 +618,8 @@ export function InterviewsView() {
       {activeTab === 'shortlist' && (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           {appsLoading ? <div className="animate-pulse h-40 bg-slate-100 m-4 rounded-xl" /> : (
-            <table className="min-w-full divide-y divide-slate-200">
+            <div className="overflow-x-auto">
+              <table className="min-w-[640px] w-full divide-y divide-slate-200">
               <thead className="bg-slate-50">
                 <tr>
                   {['Applicant', 'Email', 'Applied On', 'Actions'].map((h) => (
@@ -650,6 +653,7 @@ export function InterviewsView() {
                 )}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       )}

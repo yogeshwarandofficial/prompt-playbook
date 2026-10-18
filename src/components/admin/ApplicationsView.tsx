@@ -56,7 +56,7 @@ export function ApplicationsView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h3 className="text-xl font-bold text-slate-800">Student Applications</h3>
         <select 
           className="rounded-lg border-slate-300 text-sm focus:border-indigo-500 focus:ring-indigo-500"
@@ -75,76 +75,78 @@ export function ApplicationsView() {
         <div className="animate-pulse h-64 bg-slate-200 rounded-xl"></div>
       ) : (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Applicant</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Education</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Applied On</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-slate-200">
-              {applications.map(app => (
-                <tr key={app.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-bold text-slate-900">{app.name}</div>
-                    <div className="text-sm text-slate-500">{app.email}</div>
-                    <div className="text-xs text-slate-400">{app.phone}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-slate-900">{app.college || '-'}</div>
-                    <div className="text-sm text-slate-500">{app.degree} {app.graduationYear ? `(${app.graduationYear})` : ''}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                    {new Date(app.appliedAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      app.status === 'ACCEPTED' ? 'bg-green-100 text-green-800' : 
-                      app.status === 'REJECTED' ? 'bg-red-100 text-red-800' : 
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {app.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button 
-                      onClick={() => setSelectedApp(app)}
-                      className="text-slate-400 hover:text-slate-700 mr-3" 
-                      title="View details"
-                    >
-                      <Eye className="h-5 w-5"/>
-                    </button>
-                    {app.status === 'PENDING' && (
-                      <>
-                        <button 
-                          onClick={() => handleReview(app.id, 'SHORTLISTED')}
-                          className="text-green-600 hover:text-green-900 mr-3" title="Shortlist"
-                        >
-                          <Check className="h-5 w-5"/>
-                        </button>
-                        <button 
-                          onClick={() => handleReview(app.id, 'REJECTED')}
-                          className="text-red-600 hover:text-red-900" title="Reject"
-                        >
-                          <XCircle className="h-5 w-5"/>
-                        </button>
-                      </>
-                    )}
-                  </td>
-                </tr>
-              ))}
-              {applications.length === 0 && (
+          <div className="overflow-x-auto">
+            <table className="min-w-[640px] w-full divide-y divide-slate-200">
+              <thead className="bg-slate-50">
                 <tr>
-                  <td colSpan={5} className="px-6 py-10 text-center text-sm text-slate-500">
-                    No applications found for this filter.
-                  </td>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Applicant</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Education</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Applied On</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-slate-200">
+                {applications.map(app => (
+                  <tr key={app.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-bold text-slate-900">{app.name}</div>
+                      <div className="text-sm text-slate-500">{app.email}</div>
+                      <div className="text-xs text-slate-400">{app.phone}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-slate-900">{app.college || '-'}</div>
+                      <div className="text-sm text-slate-500">{app.degree} {app.graduationYear ? `(${app.graduationYear})` : ''}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                      {new Date(app.appliedAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        app.status === 'ACCEPTED' ? 'bg-green-100 text-green-800' : 
+                        app.status === 'REJECTED' ? 'bg-red-100 text-red-800' : 
+                        'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {app.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button 
+                        onClick={() => setSelectedApp(app)}
+                        className="text-slate-400 hover:text-slate-700 mr-3" 
+                        title="View details"
+                      >
+                        <Eye className="h-5 w-5"/>
+                      </button>
+                      {app.status === 'PENDING' && (
+                        <>
+                          <button 
+                            onClick={() => handleReview(app.id, 'SHORTLISTED')}
+                            className="text-green-600 hover:text-green-900 mr-3" title="Shortlist"
+                          >
+                            <Check className="h-5 w-5"/>
+                          </button>
+                          <button 
+                            onClick={() => handleReview(app.id, 'REJECTED')}
+                            className="text-red-600 hover:text-red-900" title="Reject"
+                          >
+                            <XCircle className="h-5 w-5"/>
+                          </button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+                {applications.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-10 text-center text-sm text-slate-500">
+                      No applications found for this filter.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

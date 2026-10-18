@@ -243,27 +243,27 @@ export function StudentTeamView({ session }: { session: any }) {
   };
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-6 sm:space-y-7">
       {/* Top Header with Team Illustration from Screenshot */}
-      <div className="relative overflow-hidden rounded-[32px] bg-white/80 backdrop-blur-xl border border-white/90 p-6 sm:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-[32px] bg-white/80 backdrop-blur-xl border border-white/90 p-4 sm:p-7 lg:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6">
         <div className="flex-1 min-w-0 z-10 w-full">
           {/* Breadcrumb pill tags matching screenshot */}
-          <div className="flex items-center gap-2 mb-2.5">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30 shadow-xs">
+          <div className="flex items-center gap-2 mb-2.5 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30 shadow-xs">
               <Sparkles className="h-3.5 w-3.5 text-[#0D7A53]" />
               Team Workspace
             </span>
-            <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold bg-white/80 backdrop-blur-md border border-slate-200 text-slate-600 shadow-xs">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/80 backdrop-blur-md border border-slate-200 text-slate-600 shadow-xs">
               Active Sprint
             </span>
           </div>
 
-          <div className="flex items-center gap-3 flex-wrap">
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-[#111317]">
+          <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-[#111317] break-words">
               {currentTeam.name}
             </h2>
             <span
-              className={`inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold ${
+              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
                 currentTeam.isActive
                   ? "bg-[#0D7A53] text-white shadow-xs"
                   : "bg-slate-100 text-slate-600 border border-slate-200"
@@ -274,20 +274,20 @@ export function StudentTeamView({ session }: { session: any }) {
           </div>
 
           {currentTeam.description && (
-            <p className="text-sm text-slate-500 mt-2 max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-500 mt-2 max-w-xl leading-relaxed">
               {currentTeam.description}
             </p>
           )}
 
           {/* Action Controls / Team Switcher */}
-          <div className="flex items-center gap-3 mt-4 pt-1 flex-wrap">
+          <div className="flex items-center gap-2.5 sm:gap-3 mt-4 pt-1 flex-wrap">
             {teams.length > 1 && (
-              <div className="flex items-center gap-2 bg-slate-100/80 px-3.5 py-1.5 rounded-full border border-slate-200/90 shadow-xs">
-                <span className="text-xs font-bold text-slate-500 pl-1">Switch Team:</span>
+              <div className="flex items-center gap-2 bg-slate-100/80 px-3 py-1.5 rounded-full border border-slate-200/90 shadow-xs max-w-full">
+                <span className="text-xs font-bold text-slate-500 pl-1 shrink-0">Team:</span>
                 <select
                   value={currentTeam.id}
                   onChange={(e) => setSelectedTeamId(e.target.value)}
-                  className="bg-transparent text-xs font-bold text-[#111317] focus:outline-none cursor-pointer pr-2"
+                  className="bg-transparent text-xs font-bold text-[#111317] focus:outline-none cursor-pointer pr-2 max-w-[170px] sm:max-w-xs truncate"
                 >
                   {teams.map((t) => (
                     <option key={t.id} value={t.id}>
@@ -302,7 +302,7 @@ export function StudentTeamView({ session }: { session: any }) {
               type="button"
               onClick={fetchTeams}
               title="Refresh team data"
-              className="w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-[#111317] hover:text-[#34D399] hover:border-[#111317] transition-all shadow-xs"
+              className="w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-[#111317] hover:text-[#34D399] hover:border-[#111317] transition-all shadow-xs shrink-0"
             >
               <ArrowUpRight className="h-4 w-4" />
             </button>
@@ -310,7 +310,7 @@ export function StudentTeamView({ session }: { session: any }) {
         </div>
 
         {/* Team Graphic with transparent PNG fitting box fully */}
-        <div className="shrink-0 w-full md:w-[380px] lg:w-[460px] h-36 sm:h-44 md:h-52 flex items-center justify-center md:justify-end z-10">
+        <div className="shrink-0 w-full md:w-[360px] lg:w-[440px] h-32 sm:h-40 md:h-48 flex items-center justify-center md:justify-end z-10">
           <img
             src="/Teamwork Around Giant TEAM Letters.png"
             alt="Teamwork Around Giant TEAM Letters"
@@ -320,9 +320,9 @@ export function StudentTeamView({ session }: { session: any }) {
       </div>
 
       {/* Bento Grid: 4 Frosted Glass Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Card 1: Team Progress (Frosted Glass Card) */}
-        <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+        <div className="rounded-2xl sm:rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-4 sm:p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-start justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Team Progress
@@ -331,11 +331,11 @@ export function StudentTeamView({ session }: { session: any }) {
               <ArrowUpRight className="h-4 w-4" />
             </div>
           </div>
-          <div className="my-3">
-            <div className="text-3xl font-black text-[#111317] tracking-tight">
+          <div className="my-2.5 sm:my-3">
+            <div className="text-2xl sm:text-3xl font-black text-[#111317] tracking-tight">
               {currentTeam.progressPercentage}%
             </div>
-            <div className="mt-3 w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div className="mt-2.5 sm:mt-3 w-full bg-slate-100 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-[#0D7A53] h-2 rounded-full transition-all duration-500"
                 style={{ width: `${currentTeam.progressPercentage}%` }}
@@ -344,14 +344,14 @@ export function StudentTeamView({ session }: { session: any }) {
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-slate-400 font-medium">Milestones Done</span>
-            <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/20">
+            <span className="px-2.5 sm:px-3 py-0.5 rounded-full text-[11px] font-bold bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/20">
               {currentTeam.completedTasks}/{currentTeam.totalTasks}
             </span>
           </div>
         </div>
 
         {/* Card 2: Teammates (Frosted Glass Card) */}
-        <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+        <div className="rounded-2xl sm:rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-4 sm:p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-start justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Teammates
@@ -361,7 +361,7 @@ export function StudentTeamView({ session }: { session: any }) {
             </div>
           </div>
           <div className="my-2">
-            <div className="text-3xl font-black text-[#111317] tracking-tight">
+            <div className="text-2xl sm:text-3xl font-black text-[#111317] tracking-tight">
               {currentTeam.members.length}
             </div>
             <p className="text-xs text-slate-400 mt-1">Colleagues collaborating</p>
@@ -386,7 +386,7 @@ export function StudentTeamView({ session }: { session: any }) {
         </div>
 
         {/* Card 3: My Assigned Tasks (Frosted Glass Card) */}
-        <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+        <div className="rounded-2xl sm:rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-4 sm:p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-start justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
               My Tasks
@@ -396,7 +396,7 @@ export function StudentTeamView({ session }: { session: any }) {
             </div>
           </div>
           <div className="my-2">
-            <div className="text-3xl font-black text-[#111317] tracking-tight">
+            <div className="text-2xl sm:text-3xl font-black text-[#111317] tracking-tight">
               {currentTeam.myTasks.filter((t) => t.status === "COMPLETED").length}/
               {currentTeam.myTasks.length}
             </div>
@@ -413,7 +413,7 @@ export function StudentTeamView({ session }: { session: any }) {
         </div>
 
         {/* Card 4: Team In-Progress Sprints (Frosted Glass Card) */}
-        <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
+        <div className="rounded-2xl sm:rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-4 sm:p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-start justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Active Sprints
@@ -423,7 +423,7 @@ export function StudentTeamView({ session }: { session: any }) {
             </div>
           </div>
           <div className="my-2">
-            <div className="text-3xl font-black text-[#111317] tracking-tight">
+            <div className="text-2xl sm:text-3xl font-black text-[#111317] tracking-tight">
               {currentTeam.inProgressTasks}
             </div>
             <p className="text-xs text-slate-400 mt-1">In-flight across entire team</p>
@@ -437,245 +437,246 @@ export function StudentTeamView({ session }: { session: any }) {
         </div>
       </div>
 
-      {/* Section Filter Pills / View Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-        <div className="inline-flex items-center p-1 bg-slate-100/90 rounded-full border border-slate-200/80 text-xs font-semibold">
-          <button
-            type="button"
-            onClick={() => setActiveSection("all")}
-            className={`px-4 py-1.5 rounded-full transition-all ${
-              activeSection === "all"
-                ? "bg-[#111317] text-white shadow-sm font-bold"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            All Sections
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveSection("tasks")}
-            className={`px-4 py-1.5 rounded-full transition-all ${
-              activeSection === "tasks"
-                ? "bg-[#111317] text-white shadow-sm font-bold"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            My Assigned Tasks ({currentTeam.myTasks.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveSection("team")}
-            className={`px-4 py-1.5 rounded-full transition-all ${
-              activeSection === "team"
-                ? "bg-[#111317] text-white shadow-sm font-bold"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Teammates Progress ({currentTeam.members.length})
-          </button>
+      {/* Section Filter Pills / View Selector (Scrollable on small mobile) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 w-full">
+        <div className="w-full overflow-x-auto no-scrollbar py-0.5">
+          <div className="inline-flex items-center p-1 bg-slate-100/90 rounded-2xl sm:rounded-full border border-slate-200/80 text-xs font-semibold shrink-0 gap-1">
+            <button
+              type="button"
+              onClick={() => setActiveSection("all")}
+              className={`shrink-0 whitespace-nowrap px-3.5 sm:px-4 py-1.5 rounded-xl sm:rounded-full transition-all ${
+                activeSection === "all"
+                  ? "bg-[#111317] text-white shadow-sm font-bold"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              All Sections
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveSection("tasks")}
+              className={`shrink-0 whitespace-nowrap px-3.5 sm:px-4 py-1.5 rounded-xl sm:rounded-full transition-all ${
+                activeSection === "tasks"
+                  ? "bg-[#111317] text-white shadow-sm font-bold"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              My Assigned Tasks ({currentTeam.myTasks.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveSection("team")}
+              className={`shrink-0 whitespace-nowrap px-3.5 sm:px-4 py-1.5 rounded-xl sm:rounded-full transition-all ${
+                activeSection === "team"
+                  ? "bg-[#111317] text-white shadow-sm font-bold"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Teammates Progress ({currentTeam.members.length})
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Main Content Layout: Full Width Stacked Bento Sections */}
-      <div className="space-y-7">
+      <div className="space-y-6 sm:space-y-7">
         {/* Full-Width Section: My Assigned Tasks */}
         {(activeSection === "all" || activeSection === "tasks") && (
           <div className="w-full space-y-4">
-            <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-6 sm:p-7 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] space-y-5">
+            <div className="rounded-2xl sm:rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-4 sm:p-7 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] space-y-4 sm:space-y-5">
               {/* Header & Filter Capsules */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h3 className="text-xl font-bold text-[#111317] flex items-center gap-2">
-                  <ClipboardList className="h-5 w-5 text-[#0D7A53]" />
-                  My Assigned Tasks
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Tasks assigned to you by administrators and mentors.
-                </p>
-              </div>
-
-              {/* Capsule Filter Pills */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-full text-xs font-semibold border border-slate-200/60">
-                  {(["ALL", "PENDING", "IN_PROGRESS", "COMPLETED"] as const).map((filter) => {
-                    const isActive = taskFilter === filter;
-                    return (
-                      <button
-                        key={filter}
-                        onClick={() => setTaskFilter(filter)}
-                        className={`px-3 py-1.5 rounded-full transition-all ${
-                          isActive
-                            ? "bg-[#111317] text-white font-bold shadow-sm"
-                            : "text-slate-600 hover:text-slate-900"
-                        }`}
-                      >
-                        {filter === "ALL"
-                          ? `All (${currentTeam.myTasks.length})`
-                          : filter === "PENDING"
-                          ? `Pending (${currentTeam.myTasks.filter((t) => t.status === "PENDING").length})`
-                          : filter === "IN_PROGRESS"
-                          ? `Active (${currentTeam.myTasks.filter((t) => t.status === "IN_PROGRESS").length})`
-                          : `Done (${currentTeam.myTasks.filter((t) => t.status === "COMPLETED").length})`}
-                      </button>
-                    );
-                  })}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                <div>
+                  <h3 className="text-lg sm:text-xl font-bold text-[#111317] flex items-center gap-2">
+                    <ClipboardList className="h-5 w-5 text-[#0D7A53] shrink-0" />
+                    My Assigned Tasks
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Tasks assigned to you by administrators and mentors.
+                  </p>
                 </div>
 
-                {myFilteredTasks.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={toggleExpandAll}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-700 hover:text-[#111317] bg-white border border-slate-200 hover:border-slate-300 transition-colors shadow-xs"
-                    title={allExpanded ? "Minimize all task descriptions" : "Expand all task descriptions"}
-                  >
-                    <ChevronsUpDown className="h-3.5 w-3.5 text-slate-400" />
-                    <span>{allExpanded ? "Minimize All" : "Expand All"}</span>
-                  </button>
-                )}
-              </div>
-            </div>
+                {/* Capsule Filter Pills (Horizontal scroll on mobile) */}
+                <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+                  <div className="w-full sm:w-auto overflow-x-auto no-scrollbar py-0.5">
+                    <div className="inline-flex items-center gap-1 bg-slate-100 p-1 rounded-xl sm:rounded-full text-xs font-semibold border border-slate-200/60 shrink-0">
+                      {(["ALL", "PENDING", "IN_PROGRESS", "COMPLETED"] as const).map((filter) => {
+                        const isActive = taskFilter === filter;
+                        return (
+                          <button
+                            key={filter}
+                            onClick={() => setTaskFilter(filter)}
+                            className={`shrink-0 whitespace-nowrap px-2.5 sm:px-3 py-1.5 rounded-lg sm:rounded-full transition-all text-xs ${
+                              isActive
+                                ? "bg-[#111317] text-white font-bold shadow-sm"
+                                : "text-slate-600 hover:text-slate-900"
+                            }`}
+                          >
+                            {filter === "ALL"
+                              ? `All (${currentTeam.myTasks.length})`
+                              : filter === "PENDING"
+                              ? `Pending (${currentTeam.myTasks.filter((t) => t.status === "PENDING").length})`
+                              : filter === "IN_PROGRESS"
+                              ? `Active (${currentTeam.myTasks.filter((t) => t.status === "IN_PROGRESS").length})`
+                              : `Done (${currentTeam.myTasks.filter((t) => t.status === "COMPLETED").length})`}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
 
-            {/* Task Cards List */}
-            {myFilteredTasks.length === 0 ? (
-              <div className="rounded-[22px] border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center">
-                <div className="w-12 h-12 rounded-full bg-[#E6F7F0] flex items-center justify-center text-[#0D7A53] mx-auto mb-3">
-                  <CheckSquare className="h-6 w-6" />
-                </div>
-                <h5 className="text-sm font-bold text-[#111317]">No tasks in this view</h5>
-                <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-                  {taskFilter === "ALL"
-                    ? "You have no tasks assigned in this team yet. Your mentor or administrator will assign tasks to you."
-                    : `You don't have any tasks marked as ${taskFilter.toLowerCase().replace("_", " ")}.`}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {myFilteredTasks.map((task) => {
-                  const isOverdue =
-                    task.dueDate &&
-                    new Date(task.dueDate).getTime() < Date.now() &&
-                    task.status !== "COMPLETED";
-
-                  const isExpanded = Boolean(expandedTaskIds[task.id]);
-                  const isLongDescription = Boolean(
-                    task.description && (task.description.length > 120 || task.description.includes("\n"))
-                  );
-
-                  return (
-                    <div
-                      key={task.id}
-                      className="bg-white/90 backdrop-blur-md rounded-[22px] border border-slate-200/90 p-5 shadow-xs transition-all space-y-3 hover:border-slate-300 hover:shadow-sm"
+                  {myFilteredTasks.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={toggleExpandAll}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-700 hover:text-[#111317] bg-white border border-slate-200 hover:border-slate-300 transition-colors shadow-xs shrink-0"
+                      title={allExpanded ? "Minimize all task descriptions" : "Expand all task descriptions"}
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="space-y-2 flex-1 min-w-0">
-                          {/* Title & Status Row */}
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <button
-                              type="button"
-                              onClick={() => toggleTaskExpand(task.id)}
-                              title={isExpanded ? "Minimize details" : "Expand details"}
-                              className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-[#111317] hover:border-slate-300 transition-colors shadow-xs"
-                            >
-                              {isExpanded ? (
-                                <ChevronUp className="h-3.5 w-3.5" />
-                              ) : (
-                                <ChevronDown className="h-3.5 w-3.5" />
-                              )}
-                            </button>
+                      <ChevronsUpDown className="h-3.5 w-3.5 text-slate-400" />
+                      <span>{allExpanded ? "Minimize All" : "Expand All"}</span>
+                    </button>
+                  )}
+                </div>
+              </div>
 
-                            <h4
-                              onClick={() => toggleTaskExpand(task.id)}
-                              className={`text-base font-bold cursor-pointer transition-colors ${
-                                task.status === "COMPLETED"
-                                  ? "line-through text-slate-400"
-                                  : "text-[#111317] hover:text-[#0D7A53]"
-                              }`}
-                            >
-                              {task.title}
-                            </h4>
+              {/* Task Cards List */}
+              {myFilteredTasks.length === 0 ? (
+                <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-6 sm:p-8 text-center">
+                  <div className="w-12 h-12 rounded-full bg-[#E6F7F0] flex items-center justify-center text-[#0D7A53] mx-auto mb-3">
+                    <CheckSquare className="h-6 w-6" />
+                  </div>
+                  <h5 className="text-sm font-bold text-[#111317]">No tasks in this view</h5>
+                  <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                    {taskFilter === "ALL"
+                      ? "You have no tasks assigned in this team yet. Your mentor or administrator will assign tasks to you."
+                      : `You don't have any tasks marked as ${taskFilter.toLowerCase().replace("_", " ")}.`}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {myFilteredTasks.map((task) => {
+                    const isOverdue =
+                      task.dueDate &&
+                      new Date(task.dueDate).getTime() < Date.now() &&
+                      task.status !== "COMPLETED";
 
-                            <span
-                              className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border ${statusBadge(
-                                task.status
-                              )}`}
-                            >
-                              {statusIcon(task.status)}
-                              {task.status.replace("_", " ")}
-                            </span>
-                          </div>
+                    const isExpanded = Boolean(expandedTaskIds[task.id]);
 
-                          {/* Structured Task Description: preserves paragraphs, headings, bullet points */}
-                          <StructuredTaskDescription
-                            description={task.description}
-                            expanded={isExpanded}
-                            onToggle={() => toggleTaskExpand(task.id)}
-                          />
+                    return (
+                      <div
+                        key={task.id}
+                        className="bg-white/90 backdrop-blur-md rounded-2xl sm:rounded-[22px] border border-slate-200/90 p-4 sm:p-5 shadow-xs transition-all space-y-3 hover:border-slate-300 hover:shadow-sm"
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                          <div className="space-y-2 flex-1 min-w-0 w-full">
+                            {/* Title & Status Row */}
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <button
+                                type="button"
+                                onClick={() => toggleTaskExpand(task.id)}
+                                title={isExpanded ? "Minimize details" : "Expand details"}
+                                className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-[#111317] hover:border-slate-300 transition-colors shadow-xs shrink-0"
+                              >
+                                {isExpanded ? (
+                                  <ChevronUp className="h-3.5 w-3.5" />
+                                ) : (
+                                  <ChevronDown className="h-3.5 w-3.5" />
+                                )}
+                              </button>
 
-                          {/* Meta: Assigned Date, Due Date */}
-                          <div className="flex items-center gap-2.5 pt-1 flex-wrap text-xs">
-                            {task.createdAt && (
-                              <span className="inline-flex items-center gap-1 font-semibold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">
-                                <Calendar className="h-3 w-3 text-slate-400" />
-                                Assigned: {new Date(task.createdAt).toLocaleDateString()}
-                              </span>
-                            )}
-
-                            {task.dueDate && (
-                              <span
-                                className={`inline-flex items-center gap-1 font-semibold px-2.5 py-1 rounded-full border ${
-                                  isOverdue
-                                    ? "bg-rose-50 text-rose-700 border-rose-200 font-bold"
-                                    : "bg-slate-50 text-slate-600 border-slate-200"
+                              <h4
+                                onClick={() => toggleTaskExpand(task.id)}
+                                className={`text-sm sm:text-base font-bold cursor-pointer transition-colors break-words flex-1 min-w-0 ${
+                                  task.status === "COMPLETED"
+                                    ? "line-through text-slate-400"
+                                    : "text-[#111317] hover:text-[#0D7A53]"
                                 }`}
                               >
-                                <Clock className="h-3 w-3" />
-                                Due: {new Date(task.dueDate).toLocaleDateString()}
-                                {isOverdue && " (Overdue)"}
+                                {task.title}
+                              </h4>
+
+                              <span
+                                className={`inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold border shrink-0 ${statusBadge(
+                                  task.status
+                                )}`}
+                              >
+                                {statusIcon(task.status)}
+                                {task.status.replace("_", " ")}
                               </span>
-                            )}
+                            </div>
+
+                            {/* Structured Task Description */}
+                            <StructuredTaskDescription
+                              description={task.description}
+                              expanded={isExpanded}
+                              onToggle={() => toggleTaskExpand(task.id)}
+                            />
+
+                            {/* Meta: Assigned Date, Due Date */}
+                            <div className="flex items-center gap-2 pt-1 flex-wrap text-xs">
+                              {task.createdAt && (
+                                <span className="inline-flex items-center gap-1 font-semibold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200 text-[11px]">
+                                  <Calendar className="h-3 w-3 text-slate-400" />
+                                  Assigned: {new Date(task.createdAt).toLocaleDateString()}
+                                </span>
+                              )}
+
+                              {task.dueDate && (
+                                <span
+                                  className={`inline-flex items-center gap-1 font-semibold px-2.5 py-1 rounded-full border text-[11px] ${
+                                    isOverdue
+                                      ? "bg-rose-50 text-rose-700 border-rose-200 font-bold"
+                                      : "bg-slate-50 text-slate-600 border-slate-200"
+                                  }`}
+                                >
+                                  <Clock className="h-3 w-3" />
+                                  Due: {new Date(task.dueDate).toLocaleDateString()}
+                                  {isOverdue && " (Overdue)"}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Reference Links */}
+                            <TaskLinksView taskUrl={task.taskUrl} className="pt-2" />
                           </div>
 
-                          {/* Reference Links: Each on separate consecutive lines */}
-                          <TaskLinksView taskUrl={task.taskUrl} className="pt-2" />
-                        </div>
+                          {/* Action Buttons: Stack cleanly on mobile with easy touchscreen buttons */}
+                          <div className="w-full sm:w-auto flex items-center justify-start sm:justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 shrink-0">
+                            {task.status === "PENDING" && (
+                              <>
+                                <button
+                                  disabled={updatingTaskId === task.id}
+                                  onClick={() => handleUpdateStatus(task.id, "IN_PROGRESS")}
+                                  className="flex-1 sm:flex-none justify-center inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-[#111317] border border-slate-300 hover:bg-slate-100 text-xs font-bold transition-all shadow-xs disabled:opacity-50"
+                                >
+                                  {updatingTaskId === task.id ? (
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                  ) : (
+                                    <Clock className="h-3.5 w-3.5" />
+                                  )}
+                                  Start
+                                </button>
+                                <button
+                                  onClick={() => setSubmittingTask(task)}
+                                  className="flex-1 sm:flex-none justify-center inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0D7A53] hover:bg-[#0A6B48] text-white text-xs font-bold transition-all shadow-sm shadow-[#0D7A53]/20"
+                                >
+                                  <Send className="h-3.5 w-3.5" />
+                                  Submit
+                                </button>
+                              </>
+                            )}
 
-                        {/* Action Buttons: Pill-shaped CTA in Velvet Emerald */}
-                        <div className="shrink-0 flex items-center gap-2">
-                          {task.status === "PENDING" && (
-                            <>
-                              <button
-                                disabled={updatingTaskId === task.id}
-                                onClick={() => handleUpdateStatus(task.id, "IN_PROGRESS")}
-                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-[#111317] border border-slate-300 hover:bg-slate-100 text-xs font-bold transition-all shadow-xs disabled:opacity-50"
-                              >
-                                {updatingTaskId === task.id ? (
-                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                ) : (
-                                  <Clock className="h-3.5 w-3.5" />
-                                )}
-                                Start
-                              </button>
+                            {task.status === "IN_PROGRESS" && (
                               <button
                                 onClick={() => setSubmittingTask(task)}
-                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0D7A53] hover:bg-[#0A6B48] text-white text-xs font-bold transition-all shadow-sm shadow-[#0D7A53]/20"
+                                className="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 px-4.5 py-2 rounded-full bg-[#0D7A53] hover:bg-[#0A6B48] text-white text-xs font-bold transition-all shadow-sm shadow-[#0D7A53]/20"
                               >
                                 <Send className="h-3.5 w-3.5" />
-                                Submit
+                                Submit Work
                               </button>
-                            </>
-                          )}
-
-                          {task.status === "IN_PROGRESS" && (
-                            <button
-                              onClick={() => setSubmittingTask(task)}
-                              className="inline-flex items-center gap-1.5 px-4.5 py-2 rounded-full bg-[#0D7A53] hover:bg-[#0A6B48] text-white text-xs font-bold transition-all shadow-sm shadow-[#0D7A53]/20"
-                            >
-                              <Send className="h-3.5 w-3.5" />
-                              Submit Work
-                            </button>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      </div>
 
                       {/* Submitted Deliverable Details (Glass Card) */}
                       {(task.submissionUrl || task.submissionContent) && (() => {
@@ -789,24 +790,24 @@ export function StudentTeamView({ session }: { session: any }) {
         {/* Full-Width Section: Teammates Progress (Frosted Glass Bento Card) */}
         {(activeSection === "all" || activeSection === "team") && (
           <div className="w-full space-y-4">
-            <div className="rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-6 sm:p-7 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] space-y-5">
+            <div className="rounded-2xl sm:rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/90 p-4 sm:p-7 shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] space-y-4 sm:space-y-5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-xl font-bold text-[#111317] flex items-center gap-2">
-                    <Users className="h-5 w-5 text-[#0D7A53]" />
+                  <h3 className="text-lg sm:text-xl font-bold text-[#111317] flex items-center gap-2">
+                    <Users className="h-5 w-5 text-[#0D7A53] shrink-0" />
                     Teammates Progress
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
                     Monitor team member milestones & tasks across your team ({currentTeam.members.length} member{currentTeam.members.length === 1 ? "" : "s"}).
                   </p>
                 </div>
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
                   <span className="w-2 h-2 rounded-full bg-[#0D7A53]" />
                   <span>{currentTeam.completedTasks} of {currentTeam.totalTasks} Milestones Completed</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start pt-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 items-start pt-1">
               {currentTeam.members.map((member) => {
                 const isCurrentUser =
                   member.student.id === session.id ||
@@ -824,36 +825,36 @@ export function StudentTeamView({ session }: { session: any }) {
                 return (
                   <div
                     key={member.id}
-                    className="bg-white/90 backdrop-blur-md rounded-[22px] border border-slate-200/90 p-4 shadow-xs transition-all hover:border-slate-300"
+                    className="bg-white/90 backdrop-blur-md rounded-xl sm:rounded-[22px] border border-slate-200/90 p-3.5 sm:p-4 shadow-xs transition-all hover:border-slate-300"
                   >
                     <div
-                      className="flex items-center justify-between cursor-pointer"
+                      className="flex items-center justify-between cursor-pointer gap-2"
                       onClick={() =>
                         setExpandedMemberId(isExpanded ? null : member.id)
                       }
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-[#111317] text-[#34D399] font-extrabold text-sm flex items-center justify-center shadow-xs">
+                      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                        <div className="h-9 sm:h-10 w-9 sm:w-10 rounded-full bg-[#111317] text-[#34D399] font-extrabold text-xs sm:text-sm flex items-center justify-center shadow-xs shrink-0">
                           {member.student.name.charAt(0).toUpperCase()}
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-[#111317]">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-xs sm:text-sm font-bold text-[#111317] truncate">
                               {member.student.name}
                             </span>
                             {isCurrentUser && (
-                              <span className="text-[10px] bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30 font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                              <span className="text-[9px] sm:text-[10px] bg-[#E6F7F0] text-[#064E3B] border border-[#0D7A53]/30 font-black px-1.5 sm:px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0">
                                 YOU
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-slate-400 font-mono">
+                          <p className="text-[11px] sm:text-xs text-slate-400 font-mono truncate">
                             {member.student.studentId}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                         <div className="text-right">
                           <span className="text-xs font-extrabold text-[#111317]">
                             {completedMemberTasks}/{totalMemberTasks}
@@ -862,7 +863,7 @@ export function StudentTeamView({ session }: { session: any }) {
                             {progress}% Done
                           </span>
                         </div>
-                        <div className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200/80 flex items-center justify-center text-slate-500 shadow-xs">
+                        <div className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200/80 flex items-center justify-center text-slate-500 shadow-xs shrink-0">
                           {isExpanded ? (
                             <ChevronDown className="h-3.5 w-3.5" />
                           ) : (
@@ -1033,15 +1034,15 @@ function SubmitTaskModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111317]/70 backdrop-blur-md">
-      <div className="w-full max-w-lg rounded-[32px] bg-white/95 backdrop-blur-2xl p-7 shadow-2xl border border-white/80">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="p-2.5 bg-[#E6F7F0] text-[#0D7A53] rounded-full border border-[#0D7A53]/30 shrink-0">
-              <CheckCircle2 className="h-5 w-5" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#111317]/70 backdrop-blur-md">
+      <div className="w-full max-w-lg rounded-2xl sm:rounded-[32px] bg-white/95 backdrop-blur-2xl p-4 sm:p-7 shadow-2xl border border-white/80 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+            <div className="p-2 sm:p-2.5 bg-[#E6F7F0] text-[#0D7A53] rounded-full border border-[#0D7A53]/30 shrink-0">
+              <CheckCircle2 className="h-4 sm:h-5 w-4 sm:w-5" />
             </div>
-            <div className="min-w-0">
-              <h4 className="text-lg font-black text-[#111317]">Submit Task Deliverable</h4>
+            <div className="min-w-0 flex-1">
+              <h4 className="text-base sm:text-lg font-black text-[#111317]">Submit Task Deliverable</h4>
               <p className="text-xs text-slate-500 truncate max-w-sm">
                 Task: <span className="font-bold text-[#0D7A53]">{task.title}</span>
               </p>
@@ -1056,13 +1057,13 @@ function SubmitTaskModal({
         </div>
 
         {error && (
-          <div className="mt-4 p-3.5 rounded-2xl bg-rose-50 text-rose-700 text-xs font-semibold border border-rose-200 flex items-center gap-2">
+          <div className="mt-3.5 sm:mt-4 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-rose-50 text-rose-700 text-xs font-semibold border border-rose-200 flex items-center gap-2">
             <AlertCircle className="h-4 w-4 shrink-0" />
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-3.5 sm:mt-4 space-y-3.5 sm:space-y-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               GitHub Repository / Pull Request Link <span className="text-rose-500">*</span>
@@ -1077,7 +1078,7 @@ function SubmitTaskModal({
                 value={submissionUrl}
                 onChange={(e) => setSubmissionUrl(e.target.value)}
                 placeholder="https://github.com/username/project or PR link"
-                className="w-full rounded-2xl border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-[#111317] placeholder:text-slate-400 focus:border-[#0D7A53] focus:ring-2 focus:ring-[#0D7A53]/20 focus:outline-none bg-white"
+                className="w-full rounded-xl sm:rounded-2xl border border-slate-300 pl-10 pr-3.5 py-2.5 text-base sm:text-sm text-[#111317] placeholder:text-slate-400 focus:border-[#0D7A53] focus:ring-2 focus:ring-[#0D7A53]/20 focus:outline-none bg-white"
               />
             </div>
             <p className="text-[11px] text-slate-400 mt-1">
@@ -1095,11 +1096,11 @@ function SubmitTaskModal({
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Explain your implementation, what was built, features added, files changed, or instructions for review..."
-              className="w-full rounded-2xl border border-slate-300 px-3.5 py-2.5 text-sm text-[#111317] placeholder:text-slate-400 focus:border-[#0D7A53] focus:ring-2 focus:ring-[#0D7A53]/20 focus:outline-none bg-white"
+              className="w-full rounded-xl sm:rounded-2xl border border-slate-300 px-3.5 py-2.5 text-base sm:text-sm text-[#111317] placeholder:text-slate-400 focus:border-[#0D7A53] focus:ring-2 focus:ring-[#0D7A53]/20 focus:outline-none bg-white"
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="flex justify-end gap-2.5 sm:gap-3 pt-3 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}

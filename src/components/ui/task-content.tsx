@@ -100,25 +100,25 @@ export function TaskLinksView({
   if (links.length === 0) return null;
 
   return (
-    <div className={`space-y-1.5 w-full ${className}`}>
+    <div className={`space-y-1.5 w-full min-w-0 ${className}`}>
       <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-        <BookOpen className="h-3 w-3 text-[#0D7A53]" />
-        <span>Reference & Learning Resources ({links.length})</span>
+        <BookOpen className="h-3 w-3 text-[#0D7A53] shrink-0" />
+        <span className="truncate">Reference & Learning Resources ({links.length})</span>
       </div>
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1.5 w-full min-w-0">
         {links.map((link, idx) => (
           <a
             key={idx}
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#E6F7F0] hover:bg-[#d5f3e4] border border-[#0D7A53]/25 text-[#064E3B] text-xs font-bold transition-all shadow-xs group"
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#E6F7F0] hover:bg-[#d5f3e4] border border-[#0D7A53]/25 text-[#064E3B] text-xs font-bold transition-all shadow-xs group w-full min-w-0"
           >
             <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center text-[#0D7A53] shadow-xs shrink-0 group-hover:scale-105 transition-transform">
               <ExternalLink className="h-2.5 w-2.5" />
             </div>
-            <span className="font-bold flex-1 truncate">{link.label}</span>
-            <span className="text-[11px] text-[#0D7A53]/80 font-mono truncate max-w-xs hidden sm:inline">
+            <span className="font-bold flex-1 truncate min-w-0">{link.label}</span>
+            <span className="text-[11px] text-[#0D7A53]/80 font-mono truncate max-w-xs hidden sm:inline shrink-0">
               {link.url}
             </span>
             <ArrowUpRight className="h-3 w-3 text-[#0D7A53] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
@@ -239,8 +239,8 @@ export function StructuredTaskDescription({
 
   // Fully expanded / structured view:
   return (
-    <div className="space-y-3">
-      <div className="p-4 bg-slate-50/95 rounded-2xl border border-slate-200/90 text-xs sm:text-sm text-slate-800 space-y-2.5 shadow-xs">
+    <div className="space-y-3 min-w-0 w-full">
+      <div className="p-3.5 sm:p-4 bg-slate-50/95 rounded-2xl border border-slate-200/90 text-xs sm:text-sm text-slate-800 space-y-2.5 shadow-xs min-w-0 w-full break-words">
         {lines.map((line, idx) => {
           const trimmed = line.trim();
 

@@ -58,8 +58,8 @@ function IssueModal({ onClose, onIssued }: IssueModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
         <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
           <Award className="h-5 w-5 text-indigo-600" />
           Issue Certificate
@@ -74,7 +74,7 @@ function IssueModal({ onClose, onIssued }: IssueModalProps) {
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
               placeholder="Database UUID of the Student"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
           </div>
           <div>
@@ -82,7 +82,7 @@ function IssueModal({ onClose, onIssued }: IssueModalProps) {
             <select
               value={courseId}
               onChange={(e) => setCourseId(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             >
               <option value="">-- Auto-select assigned course --</option>
               {courses.map(c => (
@@ -144,9 +144,9 @@ export function CertificatesView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h3 className="text-xl font-bold text-slate-800">Certificates Management</h3>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             onClick={() => setShowEventModal(true)}
             className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700 flex items-center gap-2 shadow-sm"
@@ -170,7 +170,7 @@ export function CertificatesView() {
             placeholder="Search by Cert No, Student Name or ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-1 focus:ring-indigo-500"
+            className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-base sm:text-sm focus:ring-1 focus:ring-indigo-500"
           />
         </div>
       </div>
@@ -184,54 +184,56 @@ export function CertificatesView() {
             <p className="text-slate-500 text-sm">No certificates found.</p>
           </div>
         ) : (
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
-              <tr>
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Certificate No</th>
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Student</th>
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Project / Batch</th>
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Issued At</th>
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
-                <th className="px-5 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filtered.map((cert) => (
-                <tr key={cert.id} className="hover:bg-slate-50">
-                  <td className="px-5 py-4 font-mono text-xs font-medium text-slate-700">{cert.certificateNo}</td>
-                  <td className="px-5 py-4">
-                    <div className="font-medium text-slate-900 text-sm">{cert.studentCourse?.student?.name}</div>
-                    <div className="text-xs text-slate-500">{cert.studentCourse?.student?.studentId}</div>
-                  </td>
-                  <td className="px-5 py-4">
-                    <div className="text-sm text-slate-700 truncate max-w-xs">{cert.studentCourse?.course?.name}</div>
-                    <div className="text-xs text-slate-500 mt-0.5">Assigned</div>
-                  </td>
-                  <td className="px-5 py-4 text-sm text-slate-600">
-                    {new Date(cert.issuedAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-5 py-4">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${statusBadge(cert.status)}`}>{cert.status}</span>
-                    {cert.status === 'REVOKED' && cert.revokedReason && (
-                      <div className="text-[10px] text-red-500 mt-1 max-w-[150px] truncate" title={cert.revokedReason}>
-                        {cert.revokedReason}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-5 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      {cert.status === 'ACTIVE' && (
-                        <button
-                          onClick={() => handleRevoke(cert.id)}
-                          className="text-xs bg-red-50 text-red-700 px-2 py-1 rounded-lg font-medium hover:bg-red-100"
-                        >Revoke</button>
-                      )}
-                    </div>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-[640px] w-full divide-y divide-slate-200">
+              <thead className="bg-slate-50">
+                <tr>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Certificate No</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Student</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Project / Batch</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Issued At</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
+                  <th className="px-5 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filtered.map((cert) => (
+                  <tr key={cert.id} className="hover:bg-slate-50">
+                    <td className="px-5 py-4 font-mono text-xs font-medium text-slate-700">{cert.certificateNo}</td>
+                    <td className="px-5 py-4">
+                      <div className="font-medium text-slate-900 text-sm">{cert.studentCourse?.student?.name}</div>
+                      <div className="text-xs text-slate-500">{cert.studentCourse?.student?.studentId}</div>
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="text-sm text-slate-700 truncate max-w-xs">{cert.studentCourse?.course?.name}</div>
+                      <div className="text-xs text-slate-500 mt-0.5">Assigned</div>
+                    </td>
+                    <td className="px-5 py-4 text-sm text-slate-600">
+                      {new Date(cert.issuedAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${statusBadge(cert.status)}`}>{cert.status}</span>
+                      {cert.status === 'REVOKED' && cert.revokedReason && (
+                        <div className="text-[10px] text-red-500 mt-1 max-w-[150px] truncate" title={cert.revokedReason}>
+                          {cert.revokedReason}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-5 py-4 text-right">
+                      <div className="flex justify-end gap-2">
+                        {cert.status === 'ACTIVE' && (
+                          <button
+                            onClick={() => handleRevoke(cert.id)}
+                            className="text-xs bg-red-50 text-red-700 px-2 py-1 rounded-lg font-medium hover:bg-red-100"
+                          >Revoke</button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
@@ -295,8 +297,8 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
         <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
           <Award className="h-5 w-5 text-indigo-600" />
           Generate Event Certificate
@@ -311,7 +313,7 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
               value={studentName}
               onChange={(e) => setStudentName(e.target.value)}
               placeholder="e.g. John Doe"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
           </div>
           <div>
@@ -322,7 +324,7 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
               value={eventName}
               onChange={(e) => setEventName(e.target.value)}
               placeholder="e.g. INFYHACKATHON 2.0 2026"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
           </div>
           <div>
@@ -332,7 +334,7 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
               value={eventDescription}
               onChange={(e) => setEventDescription(e.target.value)}
               placeholder="e.g. A 24-HOUR ONLINE HACKATHON ORGANIZED BY INFYNUX ACADEMY"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
           </div>
           <div>
@@ -342,10 +344,10 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
               value={eventContent}
               onChange={(e) => setEventContent(e.target.value)}
               placeholder="e.g. in recognition of their participation..."
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Date</label>
               <input
@@ -353,7 +355,7 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 placeholder="Defaults to Today"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               />
             </div>
             <div>
@@ -363,7 +365,7 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
                 value={certificateCode}
                 onChange={(e) => setCertificateCode(e.target.value)}
                 placeholder="Auto-generated if empty"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               />
             </div>
           </div>

@@ -331,7 +331,7 @@ function AdminDashboard() {
 
                 {/* Notifications Dropdown Popover */}
                 {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-[24px] bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)] p-4 z-50">
+                  <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-96 max-w-sm rounded-2xl sm:rounded-[24px] bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)] p-4 z-50">
                     <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-extrabold text-[#111317]">Notifications</span>
@@ -1135,7 +1135,7 @@ function StudentsView() {
                     : "No students found."}
                 </div>
               ) : (
-                <table className="min-w-full divide-y divide-slate-200">
+                <table className="min-w-[700px] w-full divide-y divide-slate-200">
                   <thead className="bg-slate-50">
                     <tr>
                       <th scope="col" className="py-3.5 pl-6 pr-3 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
@@ -1608,7 +1608,7 @@ function CoursesView() {
           ) : courses.length === 0 ? (
             <div className="p-8 text-center text-slate-500">No courses found.</div>
           ) : (
-            <table className="min-w-full divide-y divide-slate-200">
+            <table className="min-w-[600px] w-full divide-y divide-slate-200">
               <thead className="bg-slate-50">
                 <tr>
                   <th scope="col" className="py-3.5 pl-6 pr-3 text-left text-xs font-semibold text-slate-900 uppercase tracking-wider">
@@ -1903,7 +1903,7 @@ export function EventsView() {
             <div className="p-8 text-center text-slate-500">No events found. Create one.</div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200">
+              <table className="min-w-[500px] w-full divide-y divide-slate-200">
                 <thead className="bg-slate-50">
                   <tr>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-900 uppercase">Title</th>
@@ -2519,41 +2519,43 @@ export function ProjectsView() {
               <p className="mt-1 text-sm text-slate-500">Get started by creating a new project template.</p>
             </div>
           ) : (
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="py-3.5 pl-6 pr-3 text-left text-xs font-semibold text-slate-900 uppercase">Title</th>
-                  <th className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase">Status</th>
-                  <th className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase">Phases</th>
-                  <th className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase">Students</th>
-                  <th className="px-3 py-3.5 text-right text-xs font-semibold text-slate-900 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {projects.map(p => (
-                  <tr key={p.id} className="hover:bg-slate-50">
-                    <td className="py-4 pl-6 pr-3 text-sm font-medium text-slate-900">{p.title}</td>
-                    <td className="px-3 py-4 text-sm">
-                      <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                        p.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' : 
-                        p.status === 'DRAFT' ? 'bg-amber-50 text-amber-700 ring-amber-600/20' : 
-                        'bg-slate-50 text-slate-700 ring-slate-600/20'
-                      }`}>
-                        {p.status}
-                      </span>
-                    </td>
-                    <td className="px-3 py-4 text-sm text-slate-500">{p._count?.phases || 0} phases</td>
-                    <td className="px-3 py-4 text-sm text-slate-500">{p._count?.assignments || 0} assigned</td>
-                    <td className="px-3 py-4 text-sm text-right flex items-center justify-end gap-2">
-                      <button onClick={() => { setSelectedProject(p); setTitle(p.title); setDescription(p.description); setCourseId(p.courseId||""); setProjectLink(p.projectLink||""); setStatus(p.status); reloadSelectedProject(p.id).then(()=>setViewMode('edit')); }} className="text-slate-400 hover:text-indigo-600" title="Edit"><Edit className="w-4 h-4"/></button>
-                      <button onClick={() => { setSelectedProject(p); reloadSelectedProject(p.id).then(()=>setViewMode('phases')); }} className="text-slate-400 hover:text-indigo-600" title="Manage Phases"><ListChecks className="w-4 h-4"/></button>
-                      <button onClick={() => { setSelectedProject(p); setViewMode('assign'); }} className="text-slate-400 hover:text-emerald-600" title="Assign Student"><UserCheck className="w-4 h-4"/></button>
-                      <button onClick={() => handleDeleteProject(p.id)} className="text-slate-400 hover:text-red-600" title="Delete Project"><Trash2 className="w-4 h-4"/></button>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="min-w-[640px] w-full divide-y divide-slate-200">
+                <thead className="bg-slate-50">
+                  <tr>
+                    <th className="py-3.5 pl-6 pr-3 text-left text-xs font-semibold text-slate-900 uppercase">Title</th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase">Status</th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase">Phases</th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase">Students</th>
+                    <th className="px-3 py-3.5 text-right text-xs font-semibold text-slate-900 uppercase">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {projects.map(p => (
+                    <tr key={p.id} className="hover:bg-slate-50">
+                      <td className="py-4 pl-6 pr-3 text-sm font-medium text-slate-900">{p.title}</td>
+                      <td className="px-3 py-4 text-sm">
+                        <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+                          p.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' : 
+                          p.status === 'DRAFT' ? 'bg-amber-50 text-amber-700 ring-amber-600/20' : 
+                          'bg-slate-50 text-slate-700 ring-slate-600/20'
+                        }`}>
+                          {p.status}
+                        </span>
+                      </td>
+                      <td className="px-3 py-4 text-sm text-slate-500">{p._count?.phases || 0} phases</td>
+                      <td className="px-3 py-4 text-sm text-slate-500">{p._count?.assignments || 0} assigned</td>
+                      <td className="px-3 py-4 text-sm text-right flex items-center justify-end gap-2">
+                        <button onClick={() => { setSelectedProject(p); setTitle(p.title); setDescription(p.description); setCourseId(p.courseId||""); setProjectLink(p.projectLink||""); setStatus(p.status); reloadSelectedProject(p.id).then(()=>setViewMode('edit')); }} className="text-slate-400 hover:text-indigo-600" title="Edit"><Edit className="w-4 h-4"/></button>
+                        <button onClick={() => { setSelectedProject(p); reloadSelectedProject(p.id).then(()=>setViewMode('phases')); }} className="text-slate-400 hover:text-indigo-600" title="Manage Phases"><ListChecks className="w-4 h-4"/></button>
+                        <button onClick={() => { setSelectedProject(p); setViewMode('assign'); }} className="text-slate-400 hover:text-emerald-600" title="Assign Student"><UserCheck className="w-4 h-4"/></button>
+                        <button onClick={() => handleDeleteProject(p.id)} className="text-slate-400 hover:text-red-600" title="Delete Project"><Trash2 className="w-4 h-4"/></button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>
@@ -2754,48 +2756,50 @@ export function SubmissionsView() {
               <p className="mt-1 text-sm text-slate-500">Try changing the filter or check back later.</p>
             </div>
           ) : (
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="py-3.5 pl-6 pr-3 text-left text-xs font-semibold text-slate-900 uppercase">Student</th>
-                  <th className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase">Project / Phase</th>
-                  <th className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase">Date</th>
-                  <th className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase">Status</th>
-                  <th className="px-3 py-3.5 text-right text-xs font-semibold text-slate-900 uppercase">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {submissions.map(sub => (
-                  <tr key={sub.id} className="hover:bg-slate-50">
-                    <td className="py-4 pl-6 pr-3 text-sm font-medium text-slate-900">
-                      {sub.studentProjectPhase?.studentProject?.student?.name}
-                    </td>
-                    <td className="px-3 py-4 text-sm text-slate-600">
-                      <div className="font-semibold text-slate-800">{sub.studentProjectPhase?.project?.title || "Unknown Project"}</div>
-                      <div className="text-xs">{sub.studentProjectPhase?.phase?.title}</div>
-                    </td>
-                    <td className="px-3 py-4 text-sm text-slate-500">
-                      {new Date(sub.submittedAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-3 py-4 text-sm">
-                      <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                        sub.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' : 
-                        sub.status === 'REJECTED' ? 'bg-red-50 text-red-700 ring-red-600/20' : 
-                        sub.status === 'CHANGES_REQUESTED' ? 'bg-amber-50 text-amber-700 ring-amber-600/20' : 
-                        'bg-blue-50 text-blue-700 ring-blue-600/20'
-                      }`}>
-                        {sub.status}
-                      </span>
-                    </td>
-                    <td className="px-3 py-4 text-sm text-right">
-                      <button onClick={() => setSelectedSub(sub)} className="text-indigo-600 hover:text-indigo-900 font-semibold inline-flex items-center gap-1">
-                        Review <ArrowLeft className="w-3 h-3 rotate-180" />
-                      </button>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="min-w-[640px] w-full divide-y divide-slate-200">
+                <thead className="bg-slate-50">
+                  <tr>
+                    <th className="py-3.5 pl-6 pr-3 text-left text-xs font-semibold text-slate-900 uppercase">Student</th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase">Project / Phase</th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase">Date</th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-slate-900 uppercase">Status</th>
+                    <th className="px-3 py-3.5 text-right text-xs font-semibold text-slate-900 uppercase">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {submissions.map(sub => (
+                    <tr key={sub.id} className="hover:bg-slate-50">
+                      <td className="py-4 pl-6 pr-3 text-sm font-medium text-slate-900">
+                        {sub.studentProjectPhase?.studentProject?.student?.name}
+                      </td>
+                      <td className="px-3 py-4 text-sm text-slate-600">
+                        <div className="font-semibold text-slate-800">{sub.studentProjectPhase?.project?.title || "Unknown Project"}</div>
+                        <div className="text-xs">{sub.studentProjectPhase?.phase?.title}</div>
+                      </td>
+                      <td className="px-3 py-4 text-sm text-slate-500">
+                        {new Date(sub.submittedAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-3 py-4 text-sm">
+                        <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+                          sub.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' : 
+                          sub.status === 'REJECTED' ? 'bg-red-50 text-red-700 ring-red-600/20' : 
+                          sub.status === 'CHANGES_REQUESTED' ? 'bg-amber-50 text-amber-700 ring-amber-600/20' : 
+                          'bg-blue-50 text-blue-700 ring-blue-600/20'
+                        }`}>
+                          {sub.status}
+                        </span>
+                      </td>
+                      <td className="px-3 py-4 text-sm text-right">
+                        <button onClick={() => setSelectedSub(sub)} className="text-indigo-600 hover:text-indigo-900 font-semibold inline-flex items-center gap-1">
+                          Review <ArrowLeft className="w-3 h-3 rotate-180" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>

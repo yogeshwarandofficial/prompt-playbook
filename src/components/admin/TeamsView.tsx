@@ -460,10 +460,10 @@ function TeamCard({
 
       {/* Expanded Team Body */}
       {expanded && (
-        <div className="border-t border-slate-100 px-6 py-5 bg-slate-50/50 space-y-5">
+        <div className="border-t border-slate-100 px-4 sm:px-6 py-4 sm:py-5 bg-slate-50/50 space-y-5">
           {/* View Mode Tabs: Progress Dashboard vs Manage Members & Tasks */}
           <div className="flex items-center justify-between pb-3 border-b border-slate-200/80 gap-3 flex-wrap">
-            <div className="flex items-center gap-1 bg-slate-200/70 p-1 rounded-full text-xs font-semibold">
+            <div className="flex items-center gap-1 bg-slate-200/70 p-1 rounded-full text-xs font-semibold max-w-full overflow-x-auto no-scrollbar">
               <button
                 onClick={() => setActiveTab("dashboard")}
                 className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full transition-all ${
@@ -939,7 +939,7 @@ function TaskRow({
 
   return (
     <div className="bg-white rounded-[20px] border border-slate-200/90 p-4 shadow-xs space-y-3 hover:border-slate-300 transition-colors">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div className="space-y-1.5 min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <button
@@ -963,7 +963,7 @@ function TaskRow({
           <TaskLinksView taskUrl={task.taskUrl} className="pt-1" />
         </div>
 
-        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-start sm:justify-end">
           {task.createdAt && (
             <span className="text-xs font-semibold text-slate-500 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full inline-flex items-center gap-1">
               <Calendar className="h-3 w-3 text-slate-400" />
@@ -1031,7 +1031,7 @@ function TaskRow({
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
     <div className="fixed inset-0 bg-[#111317]/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-[32px] p-7 w-full max-w-lg shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl sm:rounded-[32px] p-4 sm:p-7 w-full max-w-lg shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
           <h3 className="text-lg font-black text-[#111317]">{title}</h3>
           <button onClick={onClose} className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:text-[#111317] hover:bg-slate-200 flex items-center justify-center transition-colors">
@@ -1069,7 +1069,7 @@ function ModalFooter({ onCancel, saving, label }: { onCancel: () => void; saving
   );
 }
 
-const inputCls = "w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-sm text-[#111317] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0D7A53] focus:border-[#0D7A53] transition-all";
+const inputCls = "w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-base sm:text-sm text-[#111317] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0D7A53] focus:border-[#0D7A53] transition-all";
 
 // ─── Create Team Modal ────────────────────────────────────────────────────────
 
@@ -1331,7 +1331,7 @@ function SubmissionDetailsModal({
               href={safeUrl(task.submissionUrl)!}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 p-3 bg-white hover:bg-[#E6F7F0] border border-[#0D7A53]/30 rounded-full text-[#064E3B] font-bold text-xs w-full break-all transition-colors shadow-xs"
+              className="inline-flex items-center gap-2 p-3 bg-white hover:bg-[#E6F7F0] border border-[#0D7A53]/30 rounded-2xl text-[#064E3B] font-bold text-xs w-full break-all transition-colors shadow-xs"
             >
               <GithubIcon className="h-4 w-4 shrink-0 text-[#0D7A53]" />
               <span className="flex-1">{task.submissionUrl}</span>
