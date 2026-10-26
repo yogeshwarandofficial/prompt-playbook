@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, Award, Download, Search, AlertCircle, XCircle } from 'lucide-react';
+import { CheckCircle2, Award, Download, Search, AlertCircle, XCircle, Mail, Send } from 'lucide-react';
 
 const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3001';
 
@@ -254,23 +254,42 @@ export function CertificatesView() {
 
 function EventCertModal({ onClose }: { onClose: () => void }) {
   const [studentName, setStudentName] = useState('');
+  const [recipientEmail, setRecipientEmail] = useState('');
   const [eventName, setEventName] = useState('');
   const [eventDescription, setEventDescription] = useState('A 24-HOUR ONLINE HACKATHON ORGANIZED BY INFYNUX ACADEMY');
   const [eventContent, setEventContent] = useState('in recognition of their participation, dedication, and efforts in developing a solution to a real-world technology challenge.');
   const [date, setDate] = useState('');
   const [certificateCode, setCertificateCode] = useState('');
   
+  const [sendEmail, setSendEmail] = useState(true);
+  const [downloadCopy, setDownloadCopy] = useState(true);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successInfo, setSuccessInfo] = useState<{ message: string; emailSent?: boolean } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuccessInfo(null);
     try {
-      const payload: any = { studentName, eventName, eventDescription, eventContent };
-      if (date) payload.date = date;
-      if (certificateCode) payload.certificateCode = certificateCode;
+      if (!downloadCopy && (!sendEmail || !recipientEmail.trim())) {
+        throw new Error('Please choose at least one option: either download the copy or provide an email to send it to.');
+      }
+
+      const payload: any = { 
+        studentName: studentName.trim(), 
+        eventName: eventName.trim(), 
+        eventDescription: eventDescription.trim(), 
+        eventContent: eventContent.trim(),
+        download: downloadCopy,
+      };
+      if (date.trim()) payload.date = date.trim();
+      if (certificateCode.trim()) payload.certificateCode = certificateCode.trim();
+      if (sendEmail && recipientEmail.trim()) {
+        payload.recipientEmail = recipientEmail.trim();
+      }
       
       const res = await fetch(`${API_URL}/api/admin/certificates/event`, {
         method: 'POST',
@@ -278,19 +297,50 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
         credentials: 'include',
         body: JSON.stringify(payload),
       });
+
       if (!res.ok) {
-        throw new Error('Failed to generate event certificate');
+        let errMsg = 'Failed to generate event certificate';
+        try {
+          const errData = await res.json();
+          if (errData.message) errMsg = errData.message;
+        } catch (_) {}
+        throw new Error(errMsg);
       }
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `event_certificate_${studentName.replace(/\s+/g, '_')}.png`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-      onClose();
+
+      const emailHeader = res.headers.get('X-Email-Sent');
+      const emailSent = emailHeader === 'true';
+
+      if (downloadCopy) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `event_certificate_${studentName.trim().replace(/\s+/g, '_')}.png`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } else {
+        const data = await res.json();
+        if (data.emailError) {
+          setError(`Certificate generated, but email delivery issue occurred: ${data.emailError}`);
+          return;
+        }
+      }
+
+      const willEmail = sendEmail && !!recipientEmail.trim();
+      const successMsg = willEmail
+        ? `Certificate successfully generated and emailed to ${recipientEmail.trim()}!`
+        : `Certificate successfully generated and downloaded!`;
+
+      setSuccessInfo({
+        message: successMsg,
+        emailSent: emailSent || willEmail,
+      });
+
+      setTimeout(() => {
+        onClose();
+      }, 2500);
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -298,24 +348,67 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
-        <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-          <Award className="h-5 w-5 text-indigo-600" />
-          Generate Event Certificate
-        </h3>
-        {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{error}</div>}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Student Name *</label>
-            <input
-              type="text"
-              required
-              value={studentName}
-              onChange={(e) => setStudentName(e.target.value)}
-              placeholder="e.g. John Doe"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-            />
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+          <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <Award className="h-5 w-5 text-indigo-600" />
+            Generate Event Certificate
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600 rounded-lg p-1 transition-colors"
+          >
+            <XCircle className="h-5 w-5" />
+          </button>
+        </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+            <span>{error}</span>
           </div>
+        )}
+
+        {successInfo && (
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded-lg text-sm flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
+            <div className="font-medium">{successInfo.message}</div>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Student Name *</label>
+              <input
+                type="text"
+                required
+                value={studentName}
+                onChange={(e) => setStudentName(e.target.value)}
+                placeholder="e.g. John Doe"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Recipient Email <span className="text-slate-400 font-normal">(optional)</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  value={recipientEmail}
+                  onChange={(e) => {
+                    setRecipientEmail(e.target.value);
+                    if (e.target.value && !sendEmail) setSendEmail(true);
+                  }}
+                  placeholder="student@example.com"
+                  className="w-full rounded-lg border border-slate-300 pl-9 pr-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                />
+                <Mail className="h-4 w-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              </div>
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Event Name *</label>
             <input
@@ -327,6 +420,7 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Event Description</label>
             <input
@@ -337,6 +431,7 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Event Content</label>
             <textarea
@@ -347,6 +442,7 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base sm:text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
           </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Date</label>
@@ -369,10 +465,62 @@ function EventCertModal({ onClose }: { onClose: () => void }) {
               />
             </div>
           </div>
+
+          {/* Delivery Options */}
+          <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <span className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+              Delivery Options
+            </span>
+            <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={downloadCopy}
+                onChange={(e) => setDownloadCopy(e.target.checked)}
+                className="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+              />
+              <span>Download certificate copy to computer</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={sendEmail}
+                onChange={(e) => setSendEmail(e.target.checked)}
+                disabled={!recipientEmail.trim()}
+                className="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4 disabled:opacity-40"
+              />
+              <span className={!recipientEmail.trim() ? 'text-slate-400' : ''}>
+                Email high-res certificate directly to student {recipientEmail.trim() ? `(${recipientEmail.trim()})` : '(enter email above)'}
+              </span>
+            </label>
+          </div>
+
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50 transition-colors">Cancel</button>
-            <button type="submit" disabled={loading} className="flex-1 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
-              {loading ? 'Generating…' : <><Download className="h-4 w-4" /> Generate</>}
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              className="flex-1 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading || (!downloadCopy && (!sendEmail || !recipientEmail.trim()))}
+              className="flex-1 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2 shadow-sm shadow-indigo-200"
+            >
+              {loading ? (
+                'Processing…'
+              ) : sendEmail && recipientEmail.trim() ? (
+                <>
+                  <Send className="h-4 w-4" />
+                  {downloadCopy ? 'Generate, Download & Email' : 'Generate & Email'}
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4" />
+                  Generate & Download
+                </>
+              )}
             </button>
           </div>
         </form>

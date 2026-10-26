@@ -239,7 +239,7 @@ export class CertificatesService {
     dateStr: string,
     certCode: string,
     verifyUrl: string
-  ): Promise<Buffer> {
+  ): Promise<{ buffer: Buffer; certificateCode: string; verifyUrl: string }> {
     try {
       const templatePath = path.join(process.cwd(), 'public', 'Your paragraph text (2).png');
       let image;
@@ -377,10 +377,14 @@ export class CertificatesService {
     // Position the QR code at the bottom center
     const qrX = (image.bitmap.width / 2) - (qrImage.bitmap.width / 2);
     const qrY = image.bitmap.height - 210;
-    
     image.composite(qrImage, qrX, qrY);
-
-    return await image.getBuffer(jimp.JimpMime.png);
+    
+    const buffer = await image.getBuffer(jimp.JimpMime.png);
+    return {
+      buffer,
+      certificateCode: finalCertCode,
+      verifyUrl: finalVerifyUrl,
+    };
     } catch (error: any) {
       throw new BadRequestException('Generation failed: ' + error.message + '\n' + error.stack);
     }

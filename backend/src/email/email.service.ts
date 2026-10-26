@@ -30,6 +30,11 @@ export class EmailService {
     subject: string;
     html: string;
     from?: string;
+    attachments?: Array<{
+      filename: string;
+      content: Buffer | string;
+      contentType?: string;
+    }>;
   }): Promise<boolean> {
     if (!this.resend) {
       this.logger.warn(
@@ -38,12 +43,16 @@ export class EmailService {
       return false;
     }
     try {
-      const { error } = await this.resend.emails.send({
+      const emailPayload: any = {
         from: opts.from ?? `Infynux Academy <${this.fromEmail}>`,
         to: opts.to,
         subject: opts.subject,
         html: opts.html,
-      });
+      };
+      if (opts.attachments && opts.attachments.length > 0) {
+        emailPayload.attachments = opts.attachments;
+      }
+      const { error } = await this.resend.emails.send(emailPayload);
       if (error) {
         this.logger.error(
           `Resend error for "${opts.subject}": ${JSON.stringify(error)}`,
@@ -56,6 +65,122 @@ export class EmailService {
       this.logger.error(`Email send exception for "${opts.subject}":`, err);
       return false;
     }
+  }
+
+  // ─── Event Certificate ─────────────────────────────────────────────────────
+
+  async sendEventCertificate(opts: {
+    studentName: string;
+    recipientEmail: string;
+    eventName: string;
+    certificateBuffer: Buffer;
+    verifyUrl?: string;
+    certificateCode?: string;
+  }): Promise<boolean> {
+    const subject = `Your Certificate of Participation — ${opts.eventName}`;
+    const filename = `${opts.studentName.replace(/[^a-zA-Z0-9_-]/g, '_')}_Certificate.png`;
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate of Participation</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1e293b;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:#f1f5f9;padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 25px -5px rgba(0,0,0,0.08);border:1px solid #e2e8f0;" cellspacing="0" cellpadding="0">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background:linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);padding:40px 32px;text-align:center;">
+              <h1 style="margin:0;color:#ffffff;font-size:26px;font-weight:800;letter-spacing:-0.025em;">INFYNUX ACADEMY</h1>
+              <p style="margin:8px 0 0;color:#e0e7ff;font-size:14px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600;">Certificate of Participation</p>
+            </td>
+          </tr>
+
+          <!-- Body Content -->
+          <tr>
+            <td style="padding:36px 32px;">
+              <div style="display:inline-block;background-color:#eef2ff;color:#4338ca;padding:4px 12px;border-radius:9999px;font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:16px;">
+                Verified Credential
+              </div>
+              <h2 style="margin:0 0 16px;color:#0f172a;font-size:20px;font-weight:700;">
+                Dear ${opts.studentName},
+              </h2>
+              <p style="margin:0 0 20px;color:#475569;font-size:15px;line-height:1.6;">
+                Congratulations! We are delighted to present your Certificate of Participation for actively participating in <strong>${opts.eventName}</strong> organized by Infynux Academy.
+              </p>
+
+              <!-- Event Details Box -->
+              <table role="presentation" width="100%" style="background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;border-left:4px solid #4f46e5;margin:20px 0;padding:16px;" cellspacing="0" cellpadding="8">
+                <tr>
+                  <td style="font-size:13px;color:#64748b;font-weight:600;width:120px;">Participant:</td>
+                  <td style="font-size:14px;color:#0f172a;font-weight:700;">${opts.studentName}</td>
+                </tr>
+                <tr>
+                  <td style="font-size:13px;color:#64748b;font-weight:600;">Event:</td>
+                  <td style="font-size:14px;color:#0f172a;font-weight:700;">${opts.eventName}</td>
+                </tr>
+                ${opts.certificateCode ? `
+                <tr>
+                  <td style="font-size:13px;color:#64748b;font-weight:600;">Certificate ID:</td>
+                  <td style="font-size:14px;color:#4338ca;font-weight:700;font-family:monospace;">${opts.certificateCode}</td>
+                </tr>` : ''}
+                <tr>
+                  <td style="font-size:13px;color:#64748b;font-weight:600;">Attachment:</td>
+                  <td style="font-size:13px;color:#16a34a;font-weight:600;">✓ Attached to this email (${filename})</td>
+                </tr>
+              </table>
+
+              ${opts.verifyUrl ? `
+              <div style="text-align:center;margin:32px 0 24px;">
+                <a href="${opts.verifyUrl}" style="display:inline-block;background:linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:700;font-size:14px;box-shadow:0 4px 12px rgba(79,70,229,0.25);" target="_blank">
+                  Verify Certificate Online
+                </a>
+              </div>
+              ` : ''}
+
+              <p style="margin:24px 0 0;color:#64748b;font-size:14px;line-height:1.6;">
+                Your official certificate is attached below as a high-resolution image file. Feel free to download, share it on LinkedIn, or add it to your portfolio.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:24px 32px;background:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
+              <p style="margin:0;font-size:13px;color:#64748b;">Warm regards,</p>
+              <p style="margin:4px 0 0;font-size:14px;font-weight:700;color:#4338ca;">Infynux Academy Team</p>
+              <p style="margin:16px 0 0;font-size:11px;color:#94a3b8;">
+                This certificate was issued to ${opts.recipientEmail}. If you have any inquiries, contact office@infynuxacademy.in.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `;
+
+    return this.send({
+      to: opts.recipientEmail,
+      subject,
+      html,
+      attachments: [
+        {
+          filename,
+          content: opts.certificateBuffer,
+          contentType: 'image/png',
+        },
+      ],
+    });
   }
 
   // ─── Interview Invitation ──────────────────────────────────────────────────

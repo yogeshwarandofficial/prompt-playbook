@@ -7,7 +7,7 @@ async function bootstrap() {
   const service = app.get(CertificatesService);
 
   try {
-    const buffer = await service.generateEventCertificate(
+    const result = await service.generateEventCertificate(
       'Test Student', 
       'Test Event', 
       'Description', 
@@ -16,7 +16,8 @@ async function bootstrap() {
       'EVT-001', 
       'https://infynuxsolutions.in'
     );
-    console.log('Success!', buffer.length);
+    const buf = result?.buffer || result;
+    console.log('Success!', buf.length);
   } catch (e) {
     console.error('ERROR:', e);
   }
