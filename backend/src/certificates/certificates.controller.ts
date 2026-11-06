@@ -61,7 +61,7 @@ export class CertificatesController {
         dto.eventName,
         dto.eventDescription || 'AN EVENT ORGANIZED BY INFYNUX ACADEMY',
         dto.eventContent || 'in recognition of their participation and efforts.',
-        dto.date || new Date().toLocaleDateString(),
+        dto.date || new Date().toLocaleDateString('en-GB'),
         dto.certificateCode || 'EVT-001',
         dto.verifyUrl || defaultVerifyUrl
       );

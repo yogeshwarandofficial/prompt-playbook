@@ -349,17 +349,38 @@ export class CertificatesService {
     // Aligning precisely under the gold line
     printColorized(image, font32, 240, 885, `Certificate Code : ${finalCertCode}`, undefined, 0.65, [12, 31, 56]);
 
-    // Save Event Certificate to DB
-    const verificationToken = randomUUID();
-    await this.prisma.eventCertificate.create({
-      data: {
-        studentName,
-        eventName,
-        eventDescription,
-        certificateNo: finalCertCode,
-        verificationToken
-      }
+    const issuedDate = this.parseIssuedDate(dateStr);
+
+    // Save Event Certificate to DB (create or update if already existing)
+    const existing = await this.prisma.eventCertificate.findUnique({
+      where: { certificateNo: finalCertCode },
     });
+
+    let verificationToken: string;
+    if (existing) {
+      verificationToken = existing.verificationToken;
+      await this.prisma.eventCertificate.update({
+        where: { certificateNo: finalCertCode },
+        data: {
+          studentName,
+          eventName,
+          eventDescription,
+          issuedAt: issuedDate,
+        },
+      });
+    } else {
+      verificationToken = randomUUID();
+      await this.prisma.eventCertificate.create({
+        data: {
+          studentName,
+          eventName,
+          eventDescription,
+          certificateNo: finalCertCode,
+          verificationToken,
+          issuedAt: issuedDate,
+        },
+      });
+    }
 
     const finalVerifyUrl = verifyUrl.replace('EVT-001', finalCertCode);
 
@@ -563,6 +584,48 @@ export class CertificatesService {
 
     const nextNum = maxNum + 1;
     return `IS-IN-${String(nextNum).padStart(3, '0')}`;
+  }
+
+  private parseIssuedDate(dateStr?: string): Date {
+    if (!dateStr || !dateStr.trim()) {
+      return new Date();
+    }
+    const trimmed = dateStr.trim();
+
+    // Match DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY
+    const dmyMatch = trimmed.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})$/);
+    if (dmyMatch) {
+      const p1 = parseInt(dmyMatch[1], 10);
+      const p2 = parseInt(dmyMatch[2], 10);
+      let year = parseInt(dmyMatch[3], 10);
+      if (year < 100) year += 2000;
+
+      let day = p1;
+      let month = p2;
+      if (p2 > 12 && p1 <= 12) {
+        day = p2;
+        month = p1;
+      }
+      const d = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+      if (!isNaN(d.getTime())) return d;
+    }
+
+    // Match YYYY-MM-DD or YYYY/MM/DD
+    const ymdMatch = trimmed.match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
+    if (ymdMatch) {
+      const year = parseInt(ymdMatch[1], 10);
+      const month = parseInt(ymdMatch[2], 10);
+      const day = parseInt(ymdMatch[3], 10);
+      const d = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+      if (!isNaN(d.getTime())) return d;
+    }
+
+    const parsed = new Date(trimmed);
+    if (!isNaN(parsed.getTime())) {
+      return parsed;
+    }
+
+    return new Date();
   }
 
   async revoke(id: string, dto: RevokeCertificateDto) {
